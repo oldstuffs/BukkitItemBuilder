@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
@@ -65,26 +66,30 @@ public final class ItemStackBuilder {
         return Optional.ofNullable(this.itemstack.getItemMeta());
     }
 
-    public void setItemMeta(@NotNull final ItemMeta itemMeta) {
-        this.itemstack.setItemMeta(itemMeta);
+    public void setItemMeta(@NotNull final ItemMeta meta) {
+        this.itemstack.setItemMeta(meta);
     }
 
     @NotNull
-    public BannerItemBuilder banner() {
-        return new BannerItemBuilder(this, this.validateMeta(BannerMeta.class));
+    public CrossbowItemBuilder crossbow() {
+        return new CrossbowItemBuilder(this, this.validateMeta(CrossbowMeta.class));
     }
 
     @NotNull
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
         final Optional<ItemMeta> optional = this.itemMeta();
-        if (!optional.isPresent()) {
-            throw new IllegalStateException(this.itemstack + " has not an item meta!");
-        }
-        if (meta.isAssignableFrom(optional.get().getClass())) {
+        final ItemMeta itemmeta = optional.orElseThrow(() ->
+            new IllegalStateException(this.itemstack + " has not an item meta!"));
+        if (meta.isAssignableFrom(itemmeta.getClass())) {
             throw new IllegalStateException(this.itemstack + " is not a banner!");
         }
         //noinspection unchecked
-        return (T) optional.get();
+        return (T) itemmeta;
+    }
+
+    @NotNull
+    public BannerItemBuilder banner() {
+        return new BannerItemBuilder(this, this.validateMeta(BannerMeta.class));
     }
 
     @NotNull
