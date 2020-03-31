@@ -23,7 +23,7 @@ public final class BannerItemBuilder {
 
     @NotNull
     @Deprecated
-    public BannerItemBuilder baseColor(@NotNull final DyeColor color) {
+    public BannerItemBuilder color(@NotNull final DyeColor color) {
         this.bannerMeta.setBaseColor(color);
         this.change();
         return this;

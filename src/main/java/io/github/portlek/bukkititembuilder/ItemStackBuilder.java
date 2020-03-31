@@ -9,10 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.CrossbowMeta;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
 
 public final class ItemStackBuilder {
@@ -116,8 +113,8 @@ public final class ItemStackBuilder {
     }
 
     @NotNull
-    public ItemStackBuilder data(final int data) {
-        return this.data((byte) data);
+    public FireworkItemBuilder firework() {
+        return new FireworkItemBuilder(this, this.validateMeta(FireworkMeta.class));
     }
 
     @NotNull
