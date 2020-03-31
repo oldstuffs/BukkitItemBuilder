@@ -32,9 +32,7 @@ public final class ItemStackBuilder {
     public static ItemStackBuilder from(@NotNull final XMaterial material) {
         return ItemStackBuilder.from(
             Optional.ofNullable(material.parseMaterial()).orElseThrow(() ->
-                new IllegalStateException("Material from the " + material.name() + " cannot be null!")
-            )
-        );
+                new IllegalStateException("Material from the " + material.name() + " cannot be null!")));
     }
 
     @NotNull
@@ -143,7 +141,7 @@ public final class ItemStackBuilder {
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
         final ItemMeta itemmeta = this.itemMeta().orElseThrow(() ->
             new IllegalStateException(this.itemstack + " has not an item meta!"));
-        if (meta.isAssignableFrom(itemmeta.getClass())) {
+        if (!meta.isAssignableFrom(itemmeta.getClass())) {
             throw new IllegalStateException(this.itemstack + " is not a banner!");
         }
         //noinspection unchecked
