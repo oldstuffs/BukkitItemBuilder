@@ -4,49 +4,34 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class BannerItemBuilder {
+public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMeta> {
 
-    @NotNull
-    private final ItemStackBuilder builder;
-
-    @NotNull
-    private final BannerMeta bannerMeta;
-
-    public BannerItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final BannerMeta bannerMeta) {
-        this.builder = builder;
-        this.bannerMeta = bannerMeta;
+    public BannerItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final BannerMeta meta) {
+        super(builder, meta);
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder color(@NotNull final DyeColor color) {
         return this.change(() ->
-            this.bannerMeta.setBaseColor(color));
-    }
-
-    @NotNull
-    private BannerItemBuilder change(@NotNull final Runnable runnable) {
-        runnable.run();
-        this.builder.setItemMeta(this.bannerMeta);
-        return this;
+            this.meta.setBaseColor(color));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder removePatterns(@NotNull final int... index) {
         return this.change(() ->
-            Arrays.stream(index).forEach(this.bannerMeta::removePattern));
+            Arrays.stream(index).forEach(this.meta::removePattern));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
         return this.change(() ->
-            Arrays.stream(patterns).forEach(this.bannerMeta::addPattern));
+            Arrays.stream(patterns).forEach(this.meta::addPattern));
     }
 
     @NotNull
@@ -59,19 +44,19 @@ public final class BannerItemBuilder {
     @Deprecated
     public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
         return this.change(() ->
-            this.bannerMeta.setPatterns(patterns));
+            this.meta.setPatterns(patterns));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder setPattern(@NotNull final int index, @NotNull final Pattern pattern) {
         return this.change(() ->
-            this.bannerMeta.setPattern(index, pattern));
+            this.meta.setPattern(index, pattern));
     }
 
-    @NotNull
-    public ItemStack build() {
-        return this.builder.build();
+    @Override
+    protected BannerItemBuilder get() {
+        return this;
     }
 
 }

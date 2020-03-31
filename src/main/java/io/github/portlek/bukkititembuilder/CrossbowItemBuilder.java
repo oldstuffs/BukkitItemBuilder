@@ -7,17 +7,10 @@ import org.bukkit.inventory.meta.CrossbowMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CrossbowItemBuilder {
+public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, CrossbowMeta> {
 
-    @NotNull
-    private final ItemStackBuilder builder;
-
-    @NotNull
-    private final CrossbowMeta crossbowMeta;
-
-    public CrossbowItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final CrossbowMeta crossbowMeta) {
-        this.builder = builder;
-        this.crossbowMeta = crossbowMeta;
+    public CrossbowItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final CrossbowMeta meta) {
+        super(builder, meta);
     }
 
     @NotNull
@@ -28,25 +21,18 @@ public final class CrossbowItemBuilder {
     @NotNull
     public CrossbowItemBuilder chargedProjectiles(@Nullable final List<ItemStack> projectiles) {
         return this.change(() ->
-            this.crossbowMeta.setChargedProjectiles(projectiles));
-    }
-
-    @NotNull
-    private CrossbowItemBuilder change(@NotNull final Runnable runnable) {
-        runnable.run();
-        this.builder.setItemMeta(this.crossbowMeta);
-        return this;
+            this.meta.setChargedProjectiles(projectiles));
     }
 
     @NotNull
     public CrossbowItemBuilder chargedProjectile(@NotNull final ItemStack projectile) {
         return this.change(() ->
-            this.crossbowMeta.addChargedProjectile(projectile));
+            this.meta.addChargedProjectile(projectile));
     }
 
-    @NotNull
-    public ItemStack build() {
-        return this.builder.build();
+    @Override
+    protected CrossbowItemBuilder get() {
+        return this;
     }
 
 }
