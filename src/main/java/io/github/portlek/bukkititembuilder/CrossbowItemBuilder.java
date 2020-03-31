@@ -27,9 +27,8 @@ public final class CrossbowItemBuilder {
 
     @NotNull
     public CrossbowItemBuilder chargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-        this.crossbowMeta.setChargedProjectiles(projectiles);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.crossbowMeta.setChargedProjectiles(projectiles));
     }
 
     @NotNull

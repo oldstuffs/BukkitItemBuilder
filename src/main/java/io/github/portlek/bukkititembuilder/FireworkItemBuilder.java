@@ -31,8 +31,9 @@ public final class FireworkItemBuilder {
     }
 
     @NotNull
-    public FireworkItemBuilder removeEffect(final int effectId) {
-        return this.change(() -> this.fireworkMeta.removeEffect(effectId));
+    public FireworkItemBuilder removeEffect(final int effectid) {
+        return this.change(() ->
+            this.fireworkMeta.removeEffect(effectid));
     }
 
     @NotNull
