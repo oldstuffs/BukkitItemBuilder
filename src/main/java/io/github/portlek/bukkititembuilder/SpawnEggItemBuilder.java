@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
+public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
 
     public SpawnEggItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final SpawnEggMeta meta) {
         super(builder, meta);
@@ -18,6 +18,7 @@ public class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMe
             this.meta.setSpawnedType(type));
     }
 
+    @NotNull
     @Override
     protected SpawnEggItemBuilder get() {
         return this;

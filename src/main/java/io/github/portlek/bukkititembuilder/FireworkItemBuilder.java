@@ -46,6 +46,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
             this.meta.addEffects(effects));
     }
 
+    @NotNull
     @Override
     protected FireworkItemBuilder get() {
         return this;

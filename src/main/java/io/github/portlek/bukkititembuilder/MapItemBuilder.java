@@ -45,6 +45,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
             this.meta.setColor(color));
     }
 
+    @NotNull
     @Override
     protected MapItemBuilder get() {
         return this;

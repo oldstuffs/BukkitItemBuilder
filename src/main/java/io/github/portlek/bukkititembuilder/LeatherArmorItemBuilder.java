@@ -19,6 +19,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
             this.meta.setColor(color));
     }
 
+    @NotNull
     @Override
     protected LeatherArmorItemBuilder get() {
         return this;

@@ -32,6 +32,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
             this.meta.addChargedProjectile(projectile));
     }
 
+    @NotNull
     @Override
     protected CrossbowItemBuilder get() {
         return this;

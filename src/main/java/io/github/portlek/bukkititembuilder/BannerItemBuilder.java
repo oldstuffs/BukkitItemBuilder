@@ -56,6 +56,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
             this.meta.setPattern(index, pattern));
     }
 
+    @NotNull
     @Override
     protected BannerItemBuilder get() {
         return this;

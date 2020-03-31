@@ -29,6 +29,7 @@ public abstract class Builder<X, T extends ItemMeta> {
         return this.get();
     }
 
+    @NotNull
     protected abstract X get();
 
 }

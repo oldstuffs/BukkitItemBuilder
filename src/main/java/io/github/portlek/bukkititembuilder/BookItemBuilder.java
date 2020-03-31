@@ -55,6 +55,7 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
             this.meta.setAuthor(author));
     }
 
+    @NotNull
     @Override
     protected BookItemBuilder get() {
         return this;

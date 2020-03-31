@@ -26,6 +26,7 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
             this.meta.setOwningPlayer(player));
     }
 
+    @NotNull
     @Override
     protected SkullItemBuilder get() {
         return this;
