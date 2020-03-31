@@ -3,6 +3,7 @@ package io.github.portlek.bukkititembuilder;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import java.util.*;
+import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ItemStackBuilder {
 
-    @NotNull    
+    @NotNull
     private final ItemStack itemstack;
 
     private ItemStackBuilder(@NotNull final ItemStack item) {
@@ -46,13 +47,21 @@ public final class ItemStackBuilder {
 
     @NotNull
     public ItemStackBuilder name(@NotNull final String name, final boolean colored) {
+        final String fnlname;
+        if (colored) {
+            fnlname = ColorUtil.colored(name);
+        } else {
+            fnlname = name;
+        }
+        return this.change(itemMeta ->
+            itemMeta.setDisplayName(fnlname));
+    }
+
+    @NotNull
+    private ItemStackBuilder change(@NotNull final Consumer<ItemMeta> consumer) {
         this.itemMeta().ifPresent(itemMeta -> {
-            if (colored) {
-                itemMeta.setDisplayName(ColorUtil.colored(name));
-            } else {
-                itemMeta.setDisplayName(name);
-            }
-            this.setItemMeta(itemMeta);
+            consumer.accept(itemMeta);
+            this.itemstack.setItemMeta(itemMeta);
         });
         return this;
     }
@@ -60,10 +69,6 @@ public final class ItemStackBuilder {
     @NotNull
     private Optional<ItemMeta> itemMeta() {
         return Optional.ofNullable(this.itemstack.getItemMeta());
-    }
-
-    public void setItemMeta(@NotNull final ItemMeta meta) {
-        this.itemstack.setItemMeta(meta);
     }
 
     @NotNull
@@ -100,15 +105,8 @@ public final class ItemStackBuilder {
 
     @NotNull
     public ItemStackBuilder flag(@NotNull final ItemFlag... flags) {
-        return change(itemMeta ->
+        return this.change(itemMeta ->
             itemMeta.addItemFlags(flags));
-    }
-
-    @NotNull
-    private LeatherArmorItemBuilder change(@org.jetbrains.annotations.NotNull final Runnable runnable) {
-        runnable.run();
-        this.builder.setItemMeta(this.leatherArmorMeta);
-        return this;
     }
 
     @NotNull
@@ -131,19 +129,18 @@ public final class ItemStackBuilder {
 
     @NotNull
     public ItemStackBuilder lore(@NotNull final List<String> lore, final boolean colored) {
-        this.acceptItemMeta(itemMeta -> {
-            if (colored) {
-                itemMeta.setLore(
-                    ColorUtil.colored(lore)
-                );
-            } else {
-                itemMeta.setLore(
-                    lore
-                );
-            }
-            this.setItemMeta(itemMeta);
-        });
-        return this;
+        final List<String> fnllore;
+        if (colored) {
+            fnllore = ColorUtil.colored(lore);
+        } else {
+            fnllore = lore;
+        }
+        return this.change(itemMeta ->
+            itemMeta.setLore(fnllore));
+    }
+
+    public void setItemMeta(@NotNull final ItemMeta meta) {
+        this.itemstack.setItemMeta(meta);
     }
 
     @NotNull
@@ -159,7 +156,8 @@ public final class ItemStackBuilder {
                 enchantment = split[0];
                 level = this.getInt(split[1]);
             }
-            XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment -> this.enchantments(xEnchantment, level));
+            XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
+                this.enchantments(xEnchantment, level));
         }
         return this;
     }
@@ -176,8 +174,7 @@ public final class ItemStackBuilder {
     @NotNull
     public ItemStackBuilder enchantments(@NotNull final XEnchantment enchantment, final int level) {
         return Optional.ofNullable(enchantment.parseEnchantment()).map(value ->
-            this.enchantments(value, level)
-        ).orElse(this);
+            this.enchantments(value, level)).orElse(this);
     }
 
     @NotNull
