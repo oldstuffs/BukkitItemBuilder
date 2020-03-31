@@ -108,6 +108,8 @@ public final class ItemStackBuilder {
         return this;
     }
 
+
+
     private void acceptItemMeta(@NotNull final Consumer<ItemMeta> consumer) {
         this.itemMeta().ifPresent(consumer);
     }

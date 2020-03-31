@@ -25,6 +25,7 @@ public final class FireworkItemBuilder {
 
     @NotNull
     private FireworkItemBuilder change(@NotNull final Runnable runnable) {
+        runnable.run();
         this.builder.setItemMeta(this.fireworkMeta);
         return this;
     }

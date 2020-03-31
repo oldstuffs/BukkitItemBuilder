@@ -22,34 +22,34 @@ public final class BookItemBuilder {
 
     @NotNull
     public BookItemBuilder title(@Nullable final String title) {
-        this.bookMeta.setTitle(title);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.setTitle(title));
     }
 
-    private void change() {
+    @NotNull
+    private BookItemBuilder change(@NotNull final Runnable runnable) {
+        runnable.run();
         this.builder.setItemMeta(this.bookMeta);
+        return this;
     }
 
     @NotNull
     public BookItemBuilder generation(@Nullable final BookMeta.Generation generation) {
-        this.bookMeta.setGeneration(generation);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.setGeneration(generation));
     }
 
     @NotNull
     public BookItemBuilder setPage(final int page, @NotNull final String text) {
-        this.bookMeta.setPage(page, text);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.setPage(page, text));
+
     }
 
     @NotNull
     public BookItemBuilder addPages(@NotNull final String... list) {
-        this.bookMeta.addPage(list);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.addPage(list));
     }
 
     @NotNull
@@ -59,16 +59,14 @@ public final class BookItemBuilder {
 
     @NotNull
     public BookItemBuilder setPages(@NotNull final List<String> list) {
-        this.bookMeta.setPages(list);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.setPages(list));
     }
 
     @NotNull
     public BookItemBuilder author(@Nullable final String author) {
-        this.bookMeta.setAuthor(author);
-        this.change();
-        return this;
+        return this.change(() ->
+            this.bookMeta.setAuthor(author));
     }
 
     @NotNull

@@ -32,15 +32,17 @@ public final class CrossbowItemBuilder {
         return this;
     }
 
-    private void change() {
+    @NotNull
+    private CrossbowItemBuilder change(@NotNull final Runnable runnable) {
+        runnable.run();
         this.builder.setItemMeta(this.crossbowMeta);
+        return this;
     }
 
     @NotNull
-    public CrossbowItemBuilder chargedProjectile(@Nullable final ItemStack projectile) {
-        this.crossbowMeta.addChargedProjectile(projectile);
-        this.change();
-        return this;
+    public CrossbowItemBuilder chargedProjectile(@NotNull final ItemStack projectile) {
+        return this.change(() ->
+            this.crossbowMeta.addChargedProjectile(projectile));
     }
 
     @NotNull
