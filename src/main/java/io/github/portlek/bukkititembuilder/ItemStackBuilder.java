@@ -154,7 +154,7 @@ public final class ItemStackBuilder {
                 level = 1;
             } else {
                 enchantment = split[0];
-                level = this.getInt(split[1]);
+                level = ItemStackBuilder.getInt(split[1]);
             }
             XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
                 this.enchantments(xEnchantment, level));
@@ -162,9 +162,9 @@ public final class ItemStackBuilder {
         return this;
     }
 
-    private int getInt(@NotNull final String string) {
+    private static int getInt(@NotNull final String text) {
         try {
-            return Integer.parseInt(string);
+            return Integer.parseInt(text);
         } catch (final Exception ignored) {
             // ignored
         }
