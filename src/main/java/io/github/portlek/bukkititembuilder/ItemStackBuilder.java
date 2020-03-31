@@ -77,8 +77,7 @@ public final class ItemStackBuilder {
 
     @NotNull
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-        final Optional<ItemMeta> optional = this.itemMeta();
-        final ItemMeta itemmeta = optional.orElseThrow(() ->
+        final ItemMeta itemmeta = this.itemMeta().orElseThrow(() ->
             new IllegalStateException(this.itemstack + " has not an item meta!"));
         if (meta.isAssignableFrom(itemmeta.getClass())) {
             throw new IllegalStateException(this.itemstack + " is not a banner!");
