@@ -1,5 +1,7 @@
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.base.Builder;
+import io.github.portlek.bukkititembuilder.base.ItemStackBuilder;
 import org.bukkit.Color;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;

@@ -1,5 +1,7 @@
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.base.Builder;
+import io.github.portlek.bukkititembuilder.base.ItemStackBuilder;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.inventory.meta.BookMeta;

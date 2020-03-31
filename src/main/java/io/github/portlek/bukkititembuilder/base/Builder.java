@@ -1,4 +1,4 @@
-package io.github.portlek.bukkititembuilder;
+package io.github.portlek.bukkititembuilder.base;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,7 +12,7 @@ public abstract class Builder<X, T extends ItemMeta> {
     @NotNull
     private final ItemStackBuilder builder;
 
-    Builder(@NotNull final ItemStackBuilder builder, @NotNull final T meta) {
+    protected Builder(@NotNull final ItemStackBuilder builder, @NotNull final T meta) {
         this.builder = builder;
         this.meta = meta;
     }

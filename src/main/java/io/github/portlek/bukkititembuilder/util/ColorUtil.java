@@ -1,4 +1,4 @@
-package io.github.portlek.bukkititembuilder;
+package io.github.portlek.bukkititembuilder.util;
 
 import java.util.Arrays;
 import java.util.Collection;
