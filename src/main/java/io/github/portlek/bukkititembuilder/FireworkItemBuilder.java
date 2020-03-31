@@ -31,6 +31,11 @@ public final class FireworkItemBuilder {
     }
 
     @NotNull
+    public ItemStack build() {
+        return this.builder.build();
+    }
+
+    @NotNull
     public FireworkItemBuilder removeEffect(final int effectid) {
         return this.change(() ->
             this.fireworkMeta.removeEffect(effectid));
@@ -57,11 +62,6 @@ public final class FireworkItemBuilder {
     public FireworkItemBuilder addEffects(@NotNull final Iterable<FireworkEffect> effects) {
         return this.change(() ->
             this.fireworkMeta.addEffects(effects));
-    }
-
-    @NotNull
-    public ItemStack build() {
-        return this.builder.build();
     }
 
 }

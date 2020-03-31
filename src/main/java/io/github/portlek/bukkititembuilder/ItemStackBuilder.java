@@ -2,19 +2,18 @@ package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import com.sun.istack.internal.NotNull;
 import java.util.*;
-import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.NotNull;
 
 public final class ItemStackBuilder {
 
-    @NotNull
+    @NotNull    
     private final ItemStack itemstack;
 
     private ItemStackBuilder(@NotNull final ItemStack item) {
@@ -101,17 +100,15 @@ public final class ItemStackBuilder {
 
     @NotNull
     public ItemStackBuilder flag(@NotNull final ItemFlag... flags) {
-        this.acceptItemMeta(itemMeta -> {
-            itemMeta.addItemFlags(flags);
-            this.setItemMeta(itemMeta);
-        });
-        return this;
+        return change(itemMeta ->
+            itemMeta.addItemFlags(flags));
     }
 
-
-
-    private void acceptItemMeta(@NotNull final Consumer<ItemMeta> consumer) {
-        this.itemMeta().ifPresent(consumer);
+    @NotNull
+    private LeatherArmorItemBuilder change(@org.jetbrains.annotations.NotNull final Runnable runnable) {
+        runnable.run();
+        this.builder.setItemMeta(this.leatherArmorMeta);
+        return this;
     }
 
     @NotNull
