@@ -90,6 +90,16 @@ public final class ItemStackBuilder {
     }
 
     @NotNull
+    public MapItemBuilder map() {
+        return new MapItemBuilder(this, this.validateMeta(MapMeta.class));
+    }
+
+    @NotNull
+    public SkullItemBuilder skull() {
+        return new SkullItemBuilder(this, this.validateMeta(SkullMeta.class));
+    }
+
+    @NotNull
     public BannerItemBuilder banner() {
         return new BannerItemBuilder(this, this.validateMeta(BannerMeta.class));
     }
