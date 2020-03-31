@@ -25,15 +25,19 @@ public final class BannerItemBuilder {
     @Deprecated
     public BannerItemBuilder baseColor(@NotNull final DyeColor color) {
         this.bannerMeta.setBaseColor(color);
-        this.builder.setItemMeta(this.bannerMeta);
+        this.change();
         return this;
+    }
+
+    private void change() {
+        this.builder.setItemMeta(this.bannerMeta);
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder removePatterns(@NotNull final int... index) {
         Arrays.stream(index).forEach(this.bannerMeta::removePattern);
-        this.builder.setItemMeta(this.bannerMeta);
+        this.change();
         return this;
     }
 
@@ -41,7 +45,7 @@ public final class BannerItemBuilder {
     @Deprecated
     public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
         Arrays.stream(patterns).forEach(this.bannerMeta::addPattern);
-        this.builder.setItemMeta(this.bannerMeta);
+        this.change();
         return this;
     }
 
@@ -55,7 +59,7 @@ public final class BannerItemBuilder {
     @Deprecated
     public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
         this.bannerMeta.setPatterns(patterns);
-        this.builder.setItemMeta(this.bannerMeta);
+        this.change();
         return this;
     }
 
@@ -63,7 +67,7 @@ public final class BannerItemBuilder {
     @Deprecated
     public BannerItemBuilder setPattern(@NotNull final int index, @NotNull final Pattern pattern) {
         this.bannerMeta.setPattern(index, pattern);
-        this.builder.setItemMeta(this.bannerMeta);
+        this.change();
         return this;
     }
 
