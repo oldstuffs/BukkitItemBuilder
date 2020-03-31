@@ -10,6 +10,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
@@ -70,14 +71,25 @@ public final class ItemStackBuilder {
 
     @NotNull
     public BannerItemBuilder banner() {
+        return new BannerItemBuilder(this, this.validateMeta(BannerMeta.class));
+    }
+
+    @NotNull
+    private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
         final Optional<ItemMeta> optional = this.itemMeta();
         if (!optional.isPresent()) {
             throw new IllegalStateException(this.itemstack + " has not an item meta!");
         }
-        if (!(optional.get() instanceof BannerMeta)) {
+        if (meta.isAssignableFrom(optional.get().getClass())) {
             throw new IllegalStateException(this.itemstack + " is not a banner!");
         }
-        return new BannerItemBuilder(this, (BannerMeta) optional.get());
+        //noinspection unchecked
+        return (T) optional.get();
+    }
+
+    @NotNull
+    public BookItemBuilder book() {
+        return new BookItemBuilder(this, this.validateMeta(BookMeta.class));
     }
 
     @NotNull
