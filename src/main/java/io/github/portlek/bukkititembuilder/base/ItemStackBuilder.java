@@ -2,17 +2,22 @@ package io.github.portlek.bukkititembuilder.base;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.collect.Multimap;
 import io.github.portlek.bukkititembuilder.*;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import java.util.*;
 import java.util.function.Consumer;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ItemStackBuilder {
 
@@ -43,20 +48,9 @@ public final class ItemStackBuilder {
     }
 
     @NotNull
-    public ItemStackBuilder name(@NotNull final String name) {
-        return this.name(name, true);
-    }
-
-    @NotNull
-    public ItemStackBuilder name(@NotNull final String name, final boolean colored) {
-        final String fnlname;
-        if (colored) {
-            fnlname = ColorUtil.colored(name);
-        } else {
-            fnlname = name;
-        }
+    public ItemStackBuilder localizedName(@Nullable final String name) {
         return this.change(itemMeta ->
-            itemMeta.setDisplayName(fnlname));
+            itemMeta.setLocalizedName(name));
     }
 
     @NotNull
@@ -71,6 +65,73 @@ public final class ItemStackBuilder {
     @NotNull
     private Optional<ItemMeta> itemMeta() {
         return Optional.ofNullable(this.itemstack.getItemMeta());
+    }
+
+    @NotNull
+    public ItemStackBuilder customModelData(@Nullable final Integer data) {
+        return this.change(itemMeta ->
+            itemMeta.setCustomModelData(data));
+    }
+
+    @NotNull
+    public ItemStackBuilder unbreakable(final boolean unbreakable) {
+        return this.change(itemMeta ->
+            itemMeta.setUnbreakable(unbreakable));
+    }
+
+    @NotNull
+    public ItemStackBuilder addAttributeModifier(@NotNull final Attribute attribute,
+                                                 @NotNull final AttributeModifier modifier) {
+        return this.change(itemMeta ->
+            itemMeta.addAttributeModifier(attribute, modifier));
+    }
+
+    @NotNull
+    public ItemStackBuilder addAttributeModifier(@NotNull final Multimap<Attribute, AttributeModifier> map) {
+        return this.change(itemMeta ->
+            itemMeta.setAttributeModifiers(map));
+    }
+
+    @NotNull
+    public ItemStackBuilder removeAttributeModifier(@NotNull final Attribute attribute) {
+        return this.change(itemMeta ->
+            itemMeta.removeAttributeModifier(attribute));
+    }
+
+    @NotNull
+    public ItemStackBuilder removeAttributeModifier(@NotNull final EquipmentSlot slot) {
+        return this.change(itemMeta ->
+            itemMeta.removeAttributeModifier(slot));
+    }
+
+    @NotNull
+    public ItemStackBuilder removeAttributeModifier(@NotNull final Attribute attribute,
+                                                    @NotNull final AttributeModifier modifier) {
+        return this.change(itemMeta ->
+            itemMeta.removeAttributeModifier(attribute, modifier));
+    }
+
+    @NotNull
+    public ItemStackBuilder version(final int version) {
+        return this.change(itemMeta ->
+            itemMeta.setVersion(version));
+    }
+
+    @NotNull
+    public ItemStackBuilder name(@NotNull final String name) {
+        return this.name(name, true);
+    }
+
+    @NotNull
+    public ItemStackBuilder name(@NotNull final String name, final boolean colored) {
+        final String fnlname;
+        if (colored) {
+            fnlname = ColorUtil.colored(name);
+        } else {
+            fnlname = name;
+        }
+        return this.change(itemMeta ->
+            itemMeta.setDisplayName(fnlname));
     }
 
     @NotNull

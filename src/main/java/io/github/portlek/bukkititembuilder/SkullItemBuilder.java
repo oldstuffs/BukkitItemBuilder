@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {
 
-    public SkullItemBuilder(final @NotNull ItemStackBuilder builder, final @NotNull SkullMeta meta) {
+    public SkullItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final SkullMeta meta) {
         super(builder, meta);
     }
 
