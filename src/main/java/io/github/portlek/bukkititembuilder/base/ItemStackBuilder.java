@@ -194,6 +194,12 @@ public final class ItemStackBuilder {
     }
 
     @NotNull
+    public ItemStackBuilder damage(final short damage) {
+        this.itemstack.setDurability(damage);
+        return this;
+    }
+
+    @NotNull
     public ItemStackBuilder lore(@NotNull final String... lore) {
         return this.lore(Arrays.asList(lore), true);
     }
