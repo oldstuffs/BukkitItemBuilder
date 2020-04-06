@@ -14,36 +14,36 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
 
     @NotNull
     public FireworkItemBuilder power(final int power) {
-        return this.change(() -> this.meta.setPower(power));
+        return this.change(meta -> meta.setPower(power));
     }
 
     @NotNull
     public FireworkItemBuilder removeEffect(final int effectid) {
-        return this.change(() ->
-            this.meta.removeEffect(effectid));
+        return this.change(meta ->
+            meta.removeEffect(effectid));
     }
 
     @NotNull
     public FireworkItemBuilder clearEffects() {
-        return this.change(this.meta::clearEffects);
+        return this.change(FireworkMeta::clearEffects);
     }
 
     @NotNull
     public FireworkItemBuilder addEffect(@NotNull final FireworkEffect effect) {
-        return this.change(() ->
-            this.meta.addEffect(effect));
+        return this.change(meta ->
+            meta.addEffect(effect));
     }
 
     @NotNull
     public FireworkItemBuilder addEffects(@NotNull final FireworkEffect... effects) {
-        return this.change(() ->
-            this.meta.addEffects(effects));
+        return this.change(meta ->
+            meta.addEffects(effects));
     }
 
     @NotNull
     public FireworkItemBuilder addEffects(@NotNull final Iterable<FireworkEffect> effects) {
-        return this.change(() ->
-            this.meta.addEffects(effects));
+        return this.change(meta ->
+            meta.addEffects(effects));
     }
 
     @NotNull

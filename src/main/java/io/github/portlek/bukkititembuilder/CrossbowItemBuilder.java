@@ -22,14 +22,14 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
 
     @NotNull
     public CrossbowItemBuilder chargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-        return this.change(() ->
-            this.meta.setChargedProjectiles(projectiles));
+        return this.change(meta ->
+            meta.setChargedProjectiles(projectiles));
     }
 
     @NotNull
     public CrossbowItemBuilder chargedProjectile(@NotNull final ItemStack projectile) {
-        return this.change(() ->
-            this.meta.addChargedProjectile(projectile));
+        return this.change(meta ->
+            meta.addChargedProjectile(projectile));
     }
 
     @NotNull

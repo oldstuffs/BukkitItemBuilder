@@ -15,8 +15,8 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
 
     @NotNull
     public LeatherArmorItemBuilder color(@Nullable final Color color) {
-        return this.change(() ->
-            this.meta.setColor(color));
+        return this.change(meta ->
+            meta.setColor(color));
     }
 
     @NotNull

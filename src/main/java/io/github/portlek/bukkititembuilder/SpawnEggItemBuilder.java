@@ -14,8 +14,8 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
 
     @NotNull
     public SpawnEggItemBuilder type(@NotNull final EntityType type) {
-        return this.change(() ->
-            this.meta.setSpawnedType(type));
+        return this.change(meta ->
+            meta.setSpawnedType(type));
     }
 
     @NotNull

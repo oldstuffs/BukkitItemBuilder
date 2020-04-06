@@ -1,5 +1,6 @@
 package io.github.portlek.bukkititembuilder.base;
 
+import java.util.function.Consumer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -7,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Builder<X, T extends ItemMeta> {
 
     @NotNull
-    protected final T meta;
+    private final T meta;
 
     @NotNull
     private final ItemStackBuilder builder;
@@ -23,8 +24,8 @@ public abstract class Builder<X, T extends ItemMeta> {
     }
 
     @NotNull
-    protected final X change(@NotNull final Runnable runnable) {
-        runnable.run();
+    protected final X change(@NotNull final Consumer<T> consumer) {
+        consumer.accept(this.meta);
         this.builder.setItemMeta(this.meta);
         return this.get();
     }

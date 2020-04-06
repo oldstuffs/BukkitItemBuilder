@@ -16,14 +16,14 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
     @NotNull
     @Deprecated
     public SkullItemBuilder owner(@Nullable final String owner) {
-        return this.change(() ->
-            this.meta.setOwner(owner));
+        return this.change(meta ->
+            meta.setOwner(owner));
     }
 
     @NotNull
     public SkullItemBuilder owner(@Nullable final OfflinePlayer player) {
-        return this.change(() ->
-            this.meta.setOwningPlayer(player));
+        return this.change(meta ->
+            meta.setOwningPlayer(player));
     }
 
     @NotNull
