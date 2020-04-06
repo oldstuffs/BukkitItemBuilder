@@ -1,7 +1,6 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.base.Builder;
-import io.github.portlek.bukkititembuilder.base.ItemStackBuilder;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.inventory.ItemStack;
@@ -11,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, CrossbowMeta> {
 
-    public CrossbowItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final CrossbowMeta meta) {
-        super(builder, meta);
+    public CrossbowItemBuilder(@NotNull final ItemStack item, @NotNull final CrossbowMeta meta) {
+        super(item, meta);
     }
 
     @NotNull
@@ -22,19 +21,19 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
 
     @NotNull
     public CrossbowItemBuilder chargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-        return this.change(meta ->
+        return this.update(meta ->
             meta.setChargedProjectiles(projectiles));
     }
 
     @NotNull
     public CrossbowItemBuilder chargedProjectile(@NotNull final ItemStack projectile) {
-        return this.change(meta ->
+        return this.update(meta ->
             meta.addChargedProjectile(projectile));
     }
 
     @NotNull
     @Override
-    protected CrossbowItemBuilder get() {
+    public CrossbowItemBuilder chain() {
         return this;
     }
 

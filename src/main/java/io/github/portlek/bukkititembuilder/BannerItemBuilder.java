@@ -1,38 +1,38 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.base.Builder;
-import io.github.portlek.bukkititembuilder.base.ItemStackBuilder;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
 
 public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMeta> {
 
-    public BannerItemBuilder(@NotNull final ItemStackBuilder builder, @NotNull final BannerMeta meta) {
-        super(builder, meta);
+    public BannerItemBuilder(@NotNull final ItemStack item, @NotNull final BannerMeta meta) {
+        super(item, meta);
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder color(@NotNull final DyeColor color) {
-        return this.change(meta ->
+        return this.update(meta ->
             meta.setBaseColor(color));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder removePatterns(@NotNull final int... index) {
-        return this.change(meta ->
+        return this.update(meta ->
             Arrays.stream(index).forEach(meta::removePattern));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
-        return this.change(meta ->
+        return this.update(meta ->
             Arrays.stream(patterns).forEach(meta::addPattern));
     }
 
@@ -45,20 +45,20 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
     @NotNull
     @Deprecated
     public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
-        return this.change(meta ->
+        return this.update(meta ->
             meta.setPatterns(patterns));
     }
 
     @NotNull
     @Deprecated
     public BannerItemBuilder setPattern(@NotNull final int index, @NotNull final Pattern pattern) {
-        return this.change(meta ->
+        return this.update(meta ->
             meta.setPattern(index, pattern));
     }
 
     @NotNull
     @Override
-    protected BannerItemBuilder get() {
+    public BannerItemBuilder chain() {
         return this;
     }
 

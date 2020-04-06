@@ -6,7 +6,6 @@ import com.google.common.collect.Multimap;
 import io.github.portlek.bukkititembuilder.*;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import java.util.*;
-import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -19,13 +18,11 @@ import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ItemStackBuilder {
-
-    @NotNull
-    private final ItemStack itemstack;
+public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> {
 
     private ItemStackBuilder(@NotNull final ItemStack item) {
-        this.itemstack = item;
+        super(item,
+            Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't chain!"));
     }
 
     @NotNull
@@ -45,73 +42,64 @@ public final class ItemStackBuilder {
         return new ItemStackBuilder(from);
     }
 
-    @NotNull
-    public ItemStackBuilder localizedName(@Nullable final String name) {
-        return this.change(itemMeta ->
-            itemMeta.setLocalizedName(name));
-    }
-
-    @NotNull
-    private ItemStackBuilder change(@NotNull final Consumer<ItemMeta> consumer) {
-        this.itemMeta().ifPresent(itemMeta -> {
-            consumer.accept(itemMeta);
-            this.itemstack.setItemMeta(itemMeta);
-        });
+    @Override
+    public ItemStackBuilder chain() {
         return this;
     }
 
     @NotNull
-    private Optional<ItemMeta> itemMeta() {
-        return Optional.ofNullable(this.itemstack.getItemMeta());
+    public ItemStackBuilder localizedName(@Nullable final String name) {
+        return this.update(meta ->
+            meta.setLocalizedName(name));
     }
 
     @NotNull
     public ItemStackBuilder customModelData(@Nullable final Integer data) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setCustomModelData(data));
     }
 
     @NotNull
     public ItemStackBuilder unbreakable(final boolean unbreakable) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setUnbreakable(unbreakable));
     }
 
     @NotNull
     public ItemStackBuilder addAttributeModifier(@NotNull final Attribute attribute,
                                                  @NotNull final AttributeModifier modifier) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.addAttributeModifier(attribute, modifier));
     }
 
     @NotNull
     public ItemStackBuilder addAttributeModifier(@NotNull final Multimap<Attribute, AttributeModifier> map) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setAttributeModifiers(map));
     }
 
     @NotNull
     public ItemStackBuilder removeAttributeModifier(@NotNull final Attribute attribute) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.removeAttributeModifier(attribute));
     }
 
     @NotNull
     public ItemStackBuilder removeAttributeModifier(@NotNull final EquipmentSlot slot) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.removeAttributeModifier(slot));
     }
 
     @NotNull
     public ItemStackBuilder removeAttributeModifier(@NotNull final Attribute attribute,
                                                     @NotNull final AttributeModifier modifier) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.removeAttributeModifier(attribute, modifier));
     }
 
     @NotNull
     public ItemStackBuilder version(final int version) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setVersion(version));
     }
 
@@ -128,74 +116,72 @@ public final class ItemStackBuilder {
         } else {
             fnlname = name;
         }
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setDisplayName(fnlname));
     }
 
     @NotNull
     public CrossbowItemBuilder crossbow() {
-        return new CrossbowItemBuilder(this, this.validateMeta(CrossbowMeta.class));
+        return new CrossbowItemBuilder(this.itemstack, this.validateMeta(CrossbowMeta.class));
     }
 
     @NotNull
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-        final ItemMeta itemmeta = this.itemMeta().orElseThrow(() ->
-            new IllegalStateException(this.itemstack + " has not an item meta!"));
-        if (!meta.isAssignableFrom(itemmeta.getClass())) {
+        if (!meta.isAssignableFrom(this.meta.getClass())) {
             throw new IllegalStateException(this.itemstack + " is not a banner!");
         }
         //noinspection unchecked
-        return (T) itemmeta;
+        return (T) this.meta;
     }
 
     @NotNull
     public MapItemBuilder map() {
-        return new MapItemBuilder(this, this.validateMeta(MapMeta.class));
+        return new MapItemBuilder(this.itemstack, this.validateMeta(MapMeta.class));
     }
 
     @NotNull
     public SkullItemBuilder skull() {
-        return new SkullItemBuilder(this, this.validateMeta(SkullMeta.class));
+        return new SkullItemBuilder(this.itemstack, this.validateMeta(SkullMeta.class));
     }
 
     @NotNull
     public BannerItemBuilder banner() {
-        return new BannerItemBuilder(this, this.validateMeta(BannerMeta.class));
+        return new BannerItemBuilder(this.itemstack, this.validateMeta(BannerMeta.class));
     }
 
     @NotNull
     public BookItemBuilder book() {
-        return new BookItemBuilder(this, this.validateMeta(BookMeta.class));
+        return new BookItemBuilder(this.itemstack, this.validateMeta(BookMeta.class));
     }
 
     @NotNull
     public ItemStackBuilder amount(final int size) {
-        this.itemstack.setAmount(size);
+        this.build().setAmount(size);
         return this;
     }
 
     @NotNull
     public ItemStackBuilder flag(@NotNull final ItemFlag... flags) {
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.addItemFlags(flags));
     }
 
     @NotNull
     public FireworkItemBuilder firework() {
-        return new FireworkItemBuilder(this, this.validateMeta(FireworkMeta.class));
+        return new FireworkItemBuilder(this.itemstack, this.validateMeta(FireworkMeta.class));
     }
 
     @NotNull
     public ItemStackBuilder data(final byte data) {
-        final MaterialData materialData = this.itemstack.getData();
+        final MaterialData materialData = this.build().getData();
         materialData.setData(data);
-        this.itemstack.setData(materialData);
+        this.build().setData(materialData);
         return this;
     }
 
     @NotNull
     public ItemStackBuilder damage(final short damage) {
-        this.itemstack.setDurability(damage);
+        this.build().setDurability(damage);
         return this;
     }
 
@@ -212,12 +198,8 @@ public final class ItemStackBuilder {
         } else {
             fnllore = lore;
         }
-        return this.change(itemMeta ->
+        return this.update(itemMeta ->
             itemMeta.setLore(fnllore));
-    }
-
-    public void setItemMeta(@NotNull final ItemMeta meta) {
-        this.itemstack.setItemMeta(meta);
     }
 
     @NotNull
@@ -263,13 +245,8 @@ public final class ItemStackBuilder {
 
     @NotNull
     public ItemStackBuilder enchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
-        this.itemstack.addUnsafeEnchantments(enchantments);
+        this.build().addUnsafeEnchantments(enchantments);
         return this;
-    }
-
-    @NotNull
-    public ItemStack build() {
-        return this.itemstack;
     }
 
 }

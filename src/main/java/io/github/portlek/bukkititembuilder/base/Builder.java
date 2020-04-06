@@ -1,36 +1,36 @@
 package io.github.portlek.bukkititembuilder.base;
 
+import io.github.portlek.bukkititembuilder.Buildable;
 import java.util.function.Consumer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Builder<X, T extends ItemMeta> {
+public abstract class Builder<X, T extends ItemMeta> implements Buildable<X, T> {
 
     @NotNull
-    private final T meta;
+    protected final T meta;
 
     @NotNull
-    private final ItemStackBuilder builder;
+    protected final ItemStack itemstack;
 
-    protected Builder(@NotNull final ItemStackBuilder builder, @NotNull final T meta) {
-        this.builder = builder;
+    public Builder(@NotNull final ItemStack itemstack, @NotNull final T meta) {
+        this.itemstack = itemstack;
         this.meta = meta;
     }
 
+    @Override
     @NotNull
-    public final ItemStack builder() {
-        return this.builder.build();
+    public final ItemStack build() {
+        return this.itemstack;
     }
 
+    @Override
     @NotNull
-    protected final X change(@NotNull final Consumer<T> consumer) {
+    public final X update(@NotNull final Consumer<T> consumer) {
         consumer.accept(this.meta);
-        this.builder.setItemMeta(this.meta);
-        return this.get();
+        this.itemstack.setItemMeta(this.meta);
+        return this.chain();
     }
-
-    @NotNull
-    protected abstract X get();
 
 }
