@@ -1,7 +1,6 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.base.Builder;
-import io.github.portlek.bukkititembuilder.base.ItemStackBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {
 
-    public SkullItemBuilder(@NotNull ItemStack itemstack, @NotNull SkullMeta meta) {
+    public SkullItemBuilder(@NotNull final ItemStack itemstack, @NotNull final SkullMeta meta) {
         super(itemstack, meta);
     }
 
