@@ -1,9 +1,8 @@
-package io.github.portlek.bukkititembuilder.base;
+package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Multimap;
-import io.github.portlek.bukkititembuilder.*;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import java.util.*;
 import org.bukkit.Material;

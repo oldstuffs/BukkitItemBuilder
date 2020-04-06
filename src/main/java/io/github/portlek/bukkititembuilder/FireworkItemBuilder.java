@@ -1,6 +1,5 @@
 package io.github.portlek.bukkititembuilder;
 
-import io.github.portlek.bukkititembuilder.base.Builder;
 import org.bukkit.FireworkEffect;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;

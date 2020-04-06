@@ -1,6 +1,5 @@
 package io.github.portlek.bukkititembuilder;
 
-import io.github.portlek.bukkititembuilder.base.Builder;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.DyeColor;

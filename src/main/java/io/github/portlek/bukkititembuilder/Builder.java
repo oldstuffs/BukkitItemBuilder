@@ -1,6 +1,5 @@
-package io.github.portlek.bukkititembuilder.base;
+package io.github.portlek.bukkititembuilder;
 
-import io.github.portlek.bukkititembuilder.Buildable;
 import java.util.function.Consumer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

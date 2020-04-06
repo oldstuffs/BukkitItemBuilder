@@ -1,6 +1,5 @@
 package io.github.portlek.bukkititembuilder;
 
-import io.github.portlek.bukkititembuilder.base.Builder;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
