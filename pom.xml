@@ -9,7 +9,7 @@
     <version>1.0</version>
     <name>BukkitItemBuilder</name>
     <description>An API for creating Bukkit ItemStack.</description>
-    <url>https://github.com/portlek/configs</url>
+    <url>https://github.com/portlek/BukkitItemBuilder</url>
 
     <licenses>
         <license>
@@ -178,6 +178,7 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>19.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
