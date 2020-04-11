@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.portlek:BukkitItemBuilder:1.0")
+    implementation("io.github.portlek:BukkitItemBuilder:1.1")
 }
 ```
 
@@ -16,7 +16,7 @@ dependencies {
     <depedency>
         <groupId>io.github.portlek</groupId>
         <artifactId>BukkitItemBuilder</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </depedency>
 </dependecies>
 ```
