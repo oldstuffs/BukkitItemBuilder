@@ -1,7 +1,7 @@
 # BukkitItemBuilder
 Useful item builder library for Bukkit plugins.
 
-```
+```gradle
 repositories {
     mavenCentral()
 }
