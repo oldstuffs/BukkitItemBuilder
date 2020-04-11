@@ -8,7 +8,7 @@
     <artifactId>BukkitItemBuilder</artifactId>
     <version>1.0</version>
     <name>BukkitItemBuilder</name>
-    <description>An API for creating and managing file.</description>
+    <description>An API for creating Bukkit ItemStack.</description>
     <url>https://github.com/portlek/configs</url>
 
     <licenses>
