@@ -41,6 +41,15 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
         return new ItemStackBuilder(from);
     }
 
+    private static int getInt(@NotNull final String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (final Exception ignored) {
+            // ignored
+        }
+        return 0;
+    }
+
     @Override
     public ItemStackBuilder chain() {
         return this;
@@ -122,15 +131,6 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     @NotNull
     public CrossbowItemBuilder crossbow() {
         return new CrossbowItemBuilder(this.itemstack, this.validateMeta(CrossbowMeta.class));
-    }
-
-    @NotNull
-    private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-        if (!meta.isAssignableFrom(this.meta.getClass())) {
-            throw new IllegalStateException(this.itemstack + " is not a banner!");
-        }
-        //noinspection unchecked
-        return (T) this.meta;
     }
 
     @NotNull
@@ -220,15 +220,6 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
         return this;
     }
 
-    private static int getInt(@NotNull final String text) {
-        try {
-            return Integer.parseInt(text);
-        } catch (final Exception ignored) {
-            // ignored
-        }
-        return 0;
-    }
-
     @NotNull
     public ItemStackBuilder enchantments(@NotNull final XEnchantment enchantment, final int level) {
         return Optional.ofNullable(enchantment.parseEnchantment()).map(value ->
@@ -246,6 +237,15 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     public ItemStackBuilder enchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
         this.build().addUnsafeEnchantments(enchantments);
         return this;
+    }
+
+    @NotNull
+    private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
+        if (!meta.isAssignableFrom(this.meta.getClass())) {
+            throw new IllegalStateException(this.itemstack + " is not a banner!");
+        }
+        //noinspection unchecked
+        return (T) this.meta;
     }
 
 }
