@@ -1,22 +1,37 @@
 # BukkitItemBuilder
 Useful item builder library for Bukkit plugins.
 
+[![idea](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
+[![rultor](https://www.rultor.com/b/yegor256/rultor)](https://www.rultor.com/p/portlek/BukkitItemBuilder)
+
+[![Build Status](https://travis-ci.com/portlek/BukkitItemBuilder.svg?branch=master)](https://travis-ci.com/portlek/BukkitItemBuilder)
+![maven-central](https://img.shields.io/maven-central/v/io.github.portlek/BukkitItemBuilder)
+## Setup
+
+<details>
+<summary>Gradle</summary>
+
 ```gradle
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.github.portlek:BukkitItemBuilder:1.1")
+    implementation("io.github.portlek:BukkitItemBuilder:${version}")
 }
 ```
+</details>
+
+<details>
+<summary>Maven</summary>
 
 ```xml
-<dependecies>
-    <depedency>
-        <groupId>io.github.portlek</groupId>
-        <artifactId>BukkitItemBuilder</artifactId>
-        <version>1.1</version>
-    </depedency>
-</dependecies>
+<dependencies>
+    <dependency>
+      <groupId>io.github.portlek</groupId>
+      <artifactId>BukkitItemBuilder</artifactId>
+      <version>${version}</version>
+    </dependency>
+</dependencies>
 ```
+</details>
