@@ -256,7 +256,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     @NotNull
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
         if (!meta.isAssignableFrom(this.meta().getClass())) {
-            throw new IllegalStateException(this.itemStack() + " is not a banner!");
+            throw new IllegalStateException(this.itemStack() + " is not a " + meta.getSimpleName() + "!");
         }
         //noinspection unchecked
         return (T) this.meta();
