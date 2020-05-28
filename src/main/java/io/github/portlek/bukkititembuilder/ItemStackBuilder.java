@@ -44,8 +44,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     private static int toInt(@NotNull final String text) {
         try {
             return Integer.parseInt(text);
-        } catch (final Exception ignored) {
-            // ignored
+        } catch (final NumberFormatException ignored) {
         }
         return 0;
     }
