@@ -36,6 +36,17 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
     }
 
     @NotNull
+    public SkullItemBuilder removeOwner() {
+        return this.update(meta -> {
+            if (XMaterial.isNewVersion()) {
+                meta.setOwningPlayer(null);
+            } else {
+                meta.setOwner(null);
+            }
+        });
+    }
+
+    @NotNull
     @Override
     public SkullItemBuilder chain() {
         return this;
