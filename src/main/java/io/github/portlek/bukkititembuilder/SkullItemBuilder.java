@@ -1,5 +1,6 @@
 package io.github.portlek.bukkititembuilder;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -15,24 +16,9 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
     }
 
     @NotNull
-    public SkullItemBuilder owner(@NotNull final String uniqueId) {
-        return this.owner(UUID.fromString(uniqueId));
-    }
-
-    @NotNull
-    public SkullItemBuilder owner(@NotNull final UUID uniqueId) {
-        return this.owner(Bukkit.getOfflinePlayer(uniqueId));
-    }
-
-    @NotNull
-    public SkullItemBuilder owner(@NotNull final OfflinePlayer player) {
-        return this.update(meta -> {
-            if (XMaterial.isNewVersion()) {
-                meta.setOwningPlayer(player);
-            } else {
-                meta.setOwner(player.getUniqueId().toString());
-            }
-        });
+    public SkullItemBuilder owner(@NotNull final String texture) {
+        return this.update(meta ->
+            SkullUtils.applySkin(meta, texture));
     }
 
     @NotNull
