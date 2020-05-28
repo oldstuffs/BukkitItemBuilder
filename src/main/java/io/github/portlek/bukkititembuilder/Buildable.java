@@ -14,6 +14,6 @@ public interface Buildable<X, T extends ItemMeta> {
     X update(@NotNull Consumer<T> consumer);
 
     @NotNull
-    X chain();
+    X get();
 
 }

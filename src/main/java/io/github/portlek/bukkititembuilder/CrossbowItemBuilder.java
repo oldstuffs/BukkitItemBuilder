@@ -32,7 +32,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
 
     @NotNull
     @Override
-    public CrossbowItemBuilder chain() {
+    public CrossbowItemBuilder get() {
         return this;
     }
 

@@ -29,7 +29,7 @@ public abstract class Builder<X, T extends ItemMeta> implements Buildable<X, T> 
     public final X update(@NotNull final Consumer<T> consumer) {
         consumer.accept(this.meta);
         this.itemstack.setItemMeta(this.meta);
-        return this.chain();
+        return this.get();
     }
 
 }

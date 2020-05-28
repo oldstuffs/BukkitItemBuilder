@@ -21,7 +21,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     private ItemStackBuilder(@NotNull final ItemStack item) {
         super(item,
-            Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't chain!"));
+            Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't get!"));
     }
 
     @NotNull
@@ -51,7 +51,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     }
 
     @Override
-    public ItemStackBuilder chain() {
+    public ItemStackBuilder get() {
         return this;
     }
 

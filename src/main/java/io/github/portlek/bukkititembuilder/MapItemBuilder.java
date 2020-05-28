@@ -46,7 +46,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
 
     @NotNull
     @Override
-    public MapItemBuilder chain() {
+    public MapItemBuilder get() {
         return this;
     }
 

@@ -47,7 +47,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
 
     @NotNull
     @Override
-    public FireworkItemBuilder chain() {
+    public FireworkItemBuilder get() {
         return this;
     }
 

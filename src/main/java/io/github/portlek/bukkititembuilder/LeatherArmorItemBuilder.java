@@ -20,7 +20,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
 
     @NotNull
     @Override
-    public LeatherArmorItemBuilder chain() {
+    public LeatherArmorItemBuilder get() {
         return this;
     }
 

@@ -48,7 +48,7 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
 
     @NotNull
     @Override
-    public SkullItemBuilder chain() {
+    public SkullItemBuilder get() {
         return this;
     }
 

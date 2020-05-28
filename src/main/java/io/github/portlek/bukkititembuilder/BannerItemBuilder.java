@@ -57,7 +57,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
 
     @NotNull
     @Override
-    public BannerItemBuilder chain() {
+    public BannerItemBuilder get() {
         return this;
     }
 

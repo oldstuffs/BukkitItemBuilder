@@ -19,7 +19,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
 
     @NotNull
     @Override
-    public SpawnEggItemBuilder chain() {
+    public SpawnEggItemBuilder get() {
         return this;
     }
 
