@@ -5,7 +5,7 @@ Useful item builder library for Bukkit plugins.
 [![rultor](https://www.rultor.com/b/yegor256/rultor)](https://www.rultor.com/p/portlek/BukkitItemBuilder)
 
 [![Build Status](https://travis-ci.com/portlek/BukkitItemBuilder.svg?branch=master)](https://travis-ci.com/portlek/BukkitItemBuilder)
-![maven-central](https://img.shields.io/maven-central/v/io.github.portlek/BukkitItemBuilder)
+![Maven Central](https://img.shields.io/maven-central/v/io.github.portlek/BukkitItemBuilder?label=version)
 ## Setup
 
 <details>
