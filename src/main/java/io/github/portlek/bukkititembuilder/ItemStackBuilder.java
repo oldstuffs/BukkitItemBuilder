@@ -123,32 +123,32 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     @NotNull
     public CrossbowItemBuilder crossbow() {
-        return new CrossbowItemBuilder(this.itemstack, this.validateMeta(CrossbowMeta.class));
+        return new CrossbowItemBuilder(this.itemStack(), this.validateMeta(CrossbowMeta.class));
     }
 
     @NotNull
     public MapItemBuilder map() {
-        return new MapItemBuilder(this.itemstack, this.validateMeta(MapMeta.class));
+        return new MapItemBuilder(this.itemStack(), this.validateMeta(MapMeta.class));
     }
 
     @NotNull
     public SkullItemBuilder skull() {
-        return new SkullItemBuilder(this.itemstack, this.validateMeta(SkullMeta.class));
+        return new SkullItemBuilder(this.itemStack(), this.validateMeta(SkullMeta.class));
     }
 
     @NotNull
     public BannerItemBuilder banner() {
-        return new BannerItemBuilder(this.itemstack, this.validateMeta(BannerMeta.class));
+        return new BannerItemBuilder(this.itemStack(), this.validateMeta(BannerMeta.class));
     }
 
     @NotNull
     public BookItemBuilder book() {
-        return new BookItemBuilder(this.itemstack, this.validateMeta(BookMeta.class));
+        return new BookItemBuilder(this.itemStack(), this.validateMeta(BookMeta.class));
     }
 
     @NotNull
     public ItemStackBuilder amount(final int size) {
-        this.build().setAmount(size);
+        this.itemStack().setAmount(size);
         return this;
     }
 
@@ -160,20 +160,20 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     @NotNull
     public FireworkItemBuilder firework() {
-        return new FireworkItemBuilder(this.itemstack, this.validateMeta(FireworkMeta.class));
+        return new FireworkItemBuilder(this.itemStack(), this.validateMeta(FireworkMeta.class));
     }
 
     @NotNull
     public ItemStackBuilder data(final byte data) {
-        final MaterialData materialData = this.build().getData();
+        final MaterialData materialData = this.itemStack().getData();
         materialData.setData(data);
-        this.build().setData(materialData);
+        this.itemStack().setData(materialData);
         return this;
     }
 
     @NotNull
     public ItemStackBuilder damage(final short damage) {
-        this.build().setDurability(damage);
+        this.itemStack().setDurability(damage);
         return this;
     }
 
@@ -249,17 +249,17 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     @NotNull
     public ItemStackBuilder enchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
-        this.build().addUnsafeEnchantments(enchantments);
+        this.itemStack().addUnsafeEnchantments(enchantments);
         return this;
     }
 
     @NotNull
     private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-        if (!meta.isAssignableFrom(this.meta.getClass())) {
-            throw new IllegalStateException(this.itemstack + " is not a banner!");
+        if (!meta.isAssignableFrom(this.meta().getClass())) {
+            throw new IllegalStateException(this.itemStack() + " is not a banner!");
         }
         //noinspection unchecked
-        return (T) this.meta;
+        return (T) this.meta();
     }
 
 }

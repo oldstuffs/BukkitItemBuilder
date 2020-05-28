@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Builder<X, T extends ItemMeta> implements Buildable<X, T> {
 
     @NotNull
-    protected final T meta;
+    private final T meta;
 
     @NotNull
-    protected final ItemStack itemstack;
+    private final ItemStack itemstack;
 
     public Builder(@NotNull final ItemStack itemstack, @NotNull final T meta) {
         this.itemstack = itemstack;
@@ -20,8 +20,14 @@ public abstract class Builder<X, T extends ItemMeta> implements Buildable<X, T> 
 
     @Override
     @NotNull
-    public final ItemStack build() {
+    public final ItemStack itemStack() {
         return this.itemstack;
+    }
+
+    @Override
+    @NotNull
+    public final ItemMeta meta() {
+        return this.meta;
     }
 
     @Override
