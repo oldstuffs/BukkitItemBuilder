@@ -41,7 +41,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
         return new ItemStackBuilder(from);
     }
 
-    private static int getInt(@NotNull final String text) {
+    private static int toInt(@NotNull final String text) {
         try {
             return Integer.parseInt(text);
         } catch (final Exception ignored) {
@@ -118,14 +118,8 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     @NotNull
     public ItemStackBuilder name(@NotNull final String name, final boolean colored) {
-        final String fnlname;
-        if (colored) {
-            fnlname = ColorUtil.colored(name);
-        } else {
-            fnlname = name;
-        }
         return this.update(itemMeta ->
-            itemMeta.setDisplayName(fnlname));
+            itemMeta.setDisplayName(colored ? ColorUtil.colored(name) : name));
     }
 
     @NotNull
@@ -186,19 +180,40 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     @NotNull
     public ItemStackBuilder lore(@NotNull final String... lore) {
-        return this.lore(Arrays.asList(lore), true);
+        this.update(itemMeta -> itemMeta.setLore(new ArrayList<>()));
+        return this.addLore(lore);
+    }
+
+    @NotNull
+    public ItemStackBuilder lore(@NotNull final List<String> lore) {
+        this.update(itemMeta -> itemMeta.setLore(new ArrayList<>()));
+        return this.addLore(lore);
     }
 
     @NotNull
     public ItemStackBuilder lore(@NotNull final List<String> lore, final boolean colored) {
-        final List<String> fnllore;
-        if (colored) {
-            fnllore = ColorUtil.colored(lore);
-        } else {
-            fnllore = lore;
-        }
-        return this.update(itemMeta ->
-            itemMeta.setLore(fnllore));
+        this.update(itemMeta -> itemMeta.setLore(new ArrayList<>()));
+        return this.addLore(lore, colored);
+    }
+
+    @NotNull
+    public ItemStackBuilder addLore(@NotNull final String... lore) {
+        return this.addLore(Arrays.asList(lore), true);
+    }
+
+    @NotNull
+    public ItemStackBuilder addLore(@NotNull final List<String> lore) {
+        return this.addLore(lore, true);
+    }
+
+    @NotNull
+    public ItemStackBuilder addLore(@NotNull final List<String> lore, final boolean colored) {
+        return this.update(itemMeta -> {
+            final List<String> join = Optional.ofNullable(itemMeta.getLore())
+                .orElse(new ArrayList<>());
+            join.addAll(colored ? ColorUtil.colored(lore) : lore);
+            itemMeta.setLore(join);
+        });
     }
 
     @NotNull
@@ -212,7 +227,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
                 level = 1;
             } else {
                 enchantment = split[0];
-                level = ItemStackBuilder.getInt(split[1]);
+                level = ItemStackBuilder.toInt(split[1]);
             }
             XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
                 this.enchantments(xEnchantment, level));
