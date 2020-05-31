@@ -46,7 +46,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
     /**
      * @return {@link CrossbowItemBuilder}
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException if server version less than 1.14
      */
     @NotNull
     public CrossbowItemBuilder crossbow() {
