@@ -44,8 +44,12 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
         return this;
     }
 
+    /**
+     * @return {@link CrossbowItemBuilder}
+     * @throws UnsupportedOperationException
+     */
     @NotNull
-    public CrossbowItemBuilder crossbow() throws UnsupportedOperationException {
+    public CrossbowItemBuilder crossbow() {
         if (Builder.VERSION < 14) {
             throw new UnsupportedOperationException("The method called #crosbow() can only use 1.14 and later!");
         }
