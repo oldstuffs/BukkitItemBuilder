@@ -11,6 +11,9 @@ public interface Buildable<X, T extends ItemMeta> {
     ItemStack itemStack();
 
     @NotNull
+    X itemStack(@NotNull ItemStack itemstack);
+
+    @NotNull
     ItemMeta meta();
 
     @NotNull
