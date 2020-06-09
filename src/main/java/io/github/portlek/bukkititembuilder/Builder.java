@@ -72,7 +72,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     @NotNull
     public final X customData(@NotNull final Object value, @NotNull final Object... keys) {
 
-        final NBTEditor.NBTCompound itemNBTTag = NBTEditor.getItemNBTTag(this.itemStack());
+        final NBTEditor.NBTCompound itemNBTTag = NBTEditor.getNBTCompound(this.itemStack());
         itemNBTTag.set(value, "tag", keys);
         return this.itemStack(NBTEditor.getItemFromTag(itemNBTTag));
     }
