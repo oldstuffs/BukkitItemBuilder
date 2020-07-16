@@ -29,6 +29,7 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -61,6 +62,68 @@ public class ItemStackUtil {
 
     private final int VERSION = new BukkitVersion()
         .minor();
+
+    @NotNull
+    public Map<String, Object> to(@NotNull final ItemStack itemStack) {
+        final Map<String, Object> map = new HashMap<>();
+        final String materialKey = ItemStackUtil.MATERIAL_KEYS[0];
+        final String amountKey = ItemStackUtil.AMOUNT_KEYS[0];
+        final String damageKey = ItemStackUtil.DAMAGE_KEYS[0];
+        final String dataKey = ItemStackUtil.DATA_KEYS[0];
+        final String displayNameKey = ItemStackUtil.DISPLAY_NAME_KEYS[0];
+        final String loreKey = ItemStackUtil.LORE_KEYS[0];
+        final String enchantmentKey = ItemStackUtil.ENCHANTMENT_KEYS[0];
+        final String flagKey = ItemStackUtil.FLAG_KEYS[0];
+        map.put(materialKey, itemStack.getType().toString());
+        map.put(amountKey, itemStack.getAmount());
+        if (itemStack.getDurability() != (short) 0) {
+            map.put(damageKey, itemStack.getDurability());
+        }
+        if (ItemStackUtil.VERSION < 13) {
+            Optional.ofNullable(itemStack.getData())
+                .filter(materialData -> materialData.getData() != 0)
+                .ifPresent(materialData ->
+                    map.put(dataKey, materialData.getData()));
+        }
+        final String skullTextureKey = ItemStackUtil.SKULL_TEXTURE_KEYS[0];
+        Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
+            if (itemMeta instanceof SkullMeta) {
+                Optional.ofNullable(SkullUtils.getSkinValue(itemStack)).ifPresent(s ->
+                    map.put(skullTextureKey, s));
+            }
+            if (itemMeta.hasDisplayName()) {
+                map.put(displayNameKey, itemMeta.getDisplayName().replace("§", "&"));
+            }
+            Optional.ofNullable(itemMeta.getLore()).ifPresent(lore ->
+                map.put(loreKey,
+                    lore.stream()
+                        .map(s -> s.replace("§", "&"))
+                        .collect(Collectors.toList())));
+            final Set<ItemFlag> flags = itemMeta.getItemFlags();
+            if (!flags.isEmpty()) {
+                map.put(flagKey, flags.stream()
+                    .map(Enum::name)
+                    .collect(Collectors.toList()));
+            }
+        });
+        final Map<String, Integer> enchantments = new HashMap<>();
+        itemStack.getEnchantments().forEach((enchantment, integer) ->
+            enchantments.put(enchantment.getName(), integer));
+        map.put(enchantmentKey, enchantments);
+        return map;
+    }
+
+    @NotNull
+    public void to(@NotNull final ConfigurationSection section, @NotNull final ItemStack itemStack) {
+        final Map<String, Object> map = ItemStackUtil.to(itemStack);
+        map.forEach((key, value) -> {
+            if (value instanceof Map<?, ?>) {
+                ItemStackUtil.to(section.createSection(key), itemStack);
+            } else {
+                section.set(key, value);
+            }
+        });
+    }
 
     @NotNull
     public Optional<ItemStack> from(@NotNull final ConfigurationSection section) {

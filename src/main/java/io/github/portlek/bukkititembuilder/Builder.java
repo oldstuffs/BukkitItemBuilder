@@ -32,7 +32,9 @@ import io.github.bananapuncher714.nbteditor.NBTEditor;
 import io.github.portlek.bukkititembuilder.util.BukkitVersion;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -58,14 +60,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     protected Builder(@NotNull final ItemStack itemstack, @NotNull final T meta) {
         this.itemstack = itemstack;
         this.meta = meta;
-    }
-
-    private static int toInt(@NotNull final String text) {
-        try {
-            return Integer.parseInt(text);
-        } catch (final NumberFormatException ignored) {
-        }
-        return 0;
     }
 
     @Override
@@ -96,10 +90,15 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
 
     @NotNull
     public final X customData(@NotNull final Object value, @NotNull final Object... keys) {
-
         final NBTEditor.NBTCompound itemNBTTag = NBTEditor.getNBTCompound(this.itemStack());
         itemNBTTag.set(value, "tag", keys);
         return this.itemStack(NBTEditor.getItemFromTag(itemNBTTag));
+    }
+
+    @NotNull
+    public final X material(@NotNull final Material material) {
+        this.itemstack.setType(material);
+        return this.get();
     }
 
     @NotNull
@@ -295,16 +294,19 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
         Arrays.stream(enchantments).forEach(enchstring -> {
             final String[] split = enchstring.split(":");
             final String enchantment;
-            final int level;
+            final AtomicInteger level = new AtomicInteger();
             if (split.length == 1) {
                 enchantment = split[0];
-                level = 1;
+                level.set(1);
             } else {
                 enchantment = split[0];
-                level = Builder.toInt(split[1]);
+                try {
+                    level.set(Integer.parseInt(split[1]));
+                } catch (final NumberFormatException ignored) {
+                }
             }
             XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
-                this.enchantments(xEnchantment, level));
+                this.enchantments(xEnchantment, level.get()));
         });
         return this.get();
     }
