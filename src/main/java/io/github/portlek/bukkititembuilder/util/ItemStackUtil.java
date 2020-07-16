@@ -29,7 +29,6 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
@@ -182,7 +181,8 @@ public class ItemStackUtil {
             ItemStackUtil.getOrDefault(map, String.class, ItemStackUtil.DISPLAY_NAME_KEYS).ifPresent(s ->
                 itemMeta.setDisplayName(ColorUtil.colored(s)));
             ItemStackUtil.getOrDefault(map, List.class, ItemStackUtil.LORE_KEYS)
-                .map((Function<List<String>, List<String>>) ColorUtil::colored)
+                .map(list -> (List<String>) list)
+                .map(ColorUtil::colored)
                 .ifPresent(itemMeta::setLore);
             ItemStackUtil.getOrDefault(map, Map.class, ItemStackUtil.ENCHANTMENT_KEYS)
                 .map(mp -> (Map<String, Integer>) mp)
