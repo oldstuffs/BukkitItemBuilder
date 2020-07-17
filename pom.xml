@@ -150,13 +150,9 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <!--suppress UnresolvedMavenProperty -->
                             <executable>${gpg.executable}</executable>
-                            <!--suppress UnresolvedMavenProperty -->
                             <passphrase>${gpg.passphrase}</passphrase>
-                            <!--suppress UnresolvedMavenProperty -->
                             <keyname>${gpg.keyname}</keyname>
-                            <!--suppress UnresolvedMavenProperty -->
                             <homedir>${gpg.homedir}</homedir>
                             <useAgent>true</useAgent>
                         </configuration>
@@ -168,12 +164,12 @@
 
     <repositories>
         <repository>
-            <id>bukkit</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>CodeMC</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+        <repository>
+            <id>nms</id>
+            <url>https://repo.codemc.org/repository/nms</url>
         </repository>
     </repositories>
 
@@ -189,8 +185,8 @@
             <version>7.16</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
