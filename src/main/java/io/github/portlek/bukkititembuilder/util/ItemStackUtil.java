@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -111,23 +110,6 @@ public class ItemStackUtil {
             enchantments.put(enchantment.getName(), integer));
         map.put(enchantmentKey, enchantments);
         return map;
-    }
-
-    @NotNull
-    public void to(@NotNull final ConfigurationSection section, @NotNull final ItemStack itemStack) {
-        final Map<String, Object> map = ItemStackUtil.to(itemStack);
-        map.forEach((key, value) -> {
-            if (value instanceof Map<?, ?>) {
-                ItemStackUtil.to(section.createSection(key), itemStack);
-            } else {
-                section.set(key, value);
-            }
-        });
-    }
-
-    @NotNull
-    public Optional<ItemStack> from(@NotNull final ConfigurationSection section) {
-        return ItemStackUtil.from(section.getValues(false));
     }
 
     @NotNull
