@@ -126,7 +126,7 @@ public class ItemStackUtil {
             if (!xmaterialoptional.isPresent()) {
                 return Optional.empty();
             }
-            final Optional<Material> mtrloptnl = Optional.ofNullable(xmaterialoptional.get().parseMaterial());
+            final Optional<Material> mtrloptnl = xmaterialoptional.get().parseMaterial();
             if (!mtrloptnl.isPresent()) {
                 return Optional.empty();
             }
