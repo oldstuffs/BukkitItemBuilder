@@ -28,6 +28,7 @@ package io.github.portlek.bukkititembuilder;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import java.util.Objects;
+import java.util.Optional;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
@@ -43,7 +44,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     @NotNull
     public static ItemStackBuilder from(@NotNull final XMaterial material) {
         return ItemStackBuilder.from(
-            material.parseMaterial().orElseThrow(() ->
+            Optional.ofNullable(material.parseMaterial()).orElseThrow(() ->
                 new IllegalStateException("Material from the " + material.name() + " cannot be null!")));
     }
 

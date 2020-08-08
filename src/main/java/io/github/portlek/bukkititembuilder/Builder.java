@@ -136,8 +136,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     @NotNull
     public final X glow() {
         return Optional.ofNullable(XMaterial.BOW.parseMaterial())
-            .filter(Optional::isPresent)
-            .map(Optional::get)
             .map(material ->
                 this.glow(this.itemStack().getType() != material
                     ? Enchantment.ARROW_INFINITE
