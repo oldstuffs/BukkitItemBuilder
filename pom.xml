@@ -9,7 +9,7 @@
         <version>1.5</version>
     </parent>
     <artifactId>BukkitItemBuilder</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.7.1</version>
     <name>BukkitItemBuilder</name>
     <description>An API for creating Bukkit ItemStack.</description>
     <url>https://github.com/portlek/BukkitItemBuilder</url>
