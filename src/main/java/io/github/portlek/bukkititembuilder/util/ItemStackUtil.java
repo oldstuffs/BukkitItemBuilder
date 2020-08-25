@@ -109,7 +109,9 @@ public class ItemStackUtil {
         final Map<String, Integer> enchantments = new HashMap<>();
         itemStack.getEnchantments().forEach((enchantment, integer) ->
             enchantments.put(enchantment.getName(), integer));
-        map.put(enchantmentKey, enchantments);
+        if (!enchantments.isEmpty()) {
+            map.put(enchantmentKey, enchantments);
+        }
         return map;
     }
 
