@@ -165,8 +165,8 @@ public class ItemStackUtil {
             }
             ItemStackUtil.getOrDefault(map, String.class, ItemStackUtil.DISPLAY_NAME_KEYS).ifPresent(s ->
                 itemMeta.setDisplayName(ColorUtil.colored(s)));
-            ItemStackUtil.getOrDefault(map, List.class, ItemStackUtil.LORE_KEYS)
-                .map(list -> (List<String>) list)
+            ItemStackUtil.getOrDefault(map, Collection.class, ItemStackUtil.LORE_KEYS)
+                .map(list -> new ArrayList<>((Collection<String>) list))
                 .map(ColorUtil::colored)
                 .ifPresent(itemMeta::setLore);
             ItemStackUtil.getOrDefault(map, Map.class, ItemStackUtil.ENCHANTMENT_KEYS)
@@ -177,8 +177,8 @@ public class ItemStackUtil {
                             Optional.ofNullable(xEnchantment.parseEnchantment())
                         ).ifPresent(enchantment ->
                             itemMeta.addEnchant(enchantment, value, true))));
-            ItemStackUtil.getOrDefault(map, List.class, ItemStackUtil.FLAG_KEYS)
-                .map(flags -> (List<String>) flags)
+            ItemStackUtil.getOrDefault(map, Collection.class, ItemStackUtil.FLAG_KEYS)
+                .map(flags -> new ArrayList<>((Collection<String>) flags))
                 .ifPresent(flags ->
                     flags.stream()
                         .map(ItemFlag::valueOf)
