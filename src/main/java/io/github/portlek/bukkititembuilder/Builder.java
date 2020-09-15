@@ -235,9 +235,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
 
     @NotNull
     public final X data(final byte data) {
-        final MaterialData materialData = this.itemStack().getData();
-        materialData.setData(data);
-        return this.data(materialData);
+        return this.data(this.itemStack().getType().getNewData(data));
     }
 
     @NotNull
