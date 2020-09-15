@@ -76,12 +76,12 @@ public class ItemStackUtil {
         final String flagKey = ItemStackUtil.FLAG_KEYS[0];
         map.put(materialKey, itemStack.getType().toString());
         map.put(amountKey, itemStack.getAmount());
-        if (itemStack.getDurability() != (short) 0) {
+        if ((int) itemStack.getDurability() != 0) {
             map.put(damageKey, (int) itemStack.getDurability());
         }
         if (ItemStackUtil.VERSION < 13) {
             Optional.ofNullable(itemStack.getData())
-                .filter(materialData -> materialData.getData() != 0)
+                .filter(materialData -> (int) materialData.getData() != 0)
                 .ifPresent(materialData ->
                     map.put(dataKey, (int) materialData.getData()));
         }
