@@ -77,13 +77,13 @@ public class ItemStackUtil {
         map.put(materialKey, itemStack.getType().toString());
         map.put(amountKey, itemStack.getAmount());
         if (itemStack.getDurability() != (short) 0) {
-            map.put(damageKey, itemStack.getDurability());
+            map.put(damageKey, (int) itemStack.getDurability());
         }
         if (ItemStackUtil.VERSION < 13) {
             Optional.ofNullable(itemStack.getData())
                 .filter(materialData -> materialData.getData() != 0)
                 .ifPresent(materialData ->
-                    map.put(dataKey, materialData.getData()));
+                    map.put(dataKey, (int) materialData.getData()));
         }
         final String skullTextureKey = ItemStackUtil.SKULL_TEXTURE_KEYS[0];
         Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
