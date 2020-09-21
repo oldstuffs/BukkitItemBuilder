@@ -88,7 +88,7 @@ public class ItemStackUtil {
         final String skullTextureKey = ItemStackUtil.SKULL_TEXTURE_KEYS[0];
         Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
             if (itemMeta instanceof SkullMeta) {
-                Optional.ofNullable(SkullUtils.getSkinValue(itemStack)).ifPresent(s ->
+                Optional.ofNullable(SkullUtils.getSkinValue(itemMeta)).ifPresent(s ->
                     map.put(skullTextureKey, s));
             }
             if (itemMeta.hasDisplayName()) {
