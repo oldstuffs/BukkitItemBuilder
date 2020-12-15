@@ -63,6 +63,7 @@ jobs:
         run: |
           mvn versions:set -DnewVersion="${{ steps.bump-semver.outputs.new_version }}" -ntp -B
           mvn deploy -ntp -B
+
       - name: Create a Release
         uses: actions/create-release@v1.1.4
         env:
@@ -70,3 +71,4 @@ jobs:
         with:
           tag_name: ${{ steps.bump-semver.outputs.new_version }}
           release_name: ${{ steps.bump-semver.outputs.new_version }}
+          body: '[Changelog](https://github.com/portlek/BukkitItemBuilder/compare/${{ steps.version.outputs.release }}...${{ steps.bump-semver.outputs.new_version }})'
