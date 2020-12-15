@@ -33,20 +33,19 @@ import org.jetbrains.annotations.Nullable;
 
 public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuilder, LeatherArmorMeta> {
 
-    public LeatherArmorItemBuilder(@NotNull final ItemStack item, @NotNull final LeatherArmorMeta meta) {
-        super(item, meta);
-    }
+  public LeatherArmorItemBuilder(@NotNull final ItemStack item, @NotNull final LeatherArmorMeta meta) {
+    super(item, meta);
+  }
 
-    @NotNull
-    public LeatherArmorItemBuilder color(@Nullable final Color color) {
-        return this.update(meta ->
-            meta.setColor(color));
-    }
+  @NotNull
+  public LeatherArmorItemBuilder color(@Nullable final Color color) {
+    return this.update(meta ->
+      meta.setColor(color));
+  }
 
-    @NotNull
-    @Override
-    public LeatherArmorItemBuilder get() {
-        return this;
-    }
-
+  @NotNull
+  @Override
+  public LeatherArmorItemBuilder get() {
+    return this;
+  }
 }

@@ -29,26 +29,28 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-@UtilityClass
-public class ColorUtil {
+public final class ColorUtil {
 
-    @NotNull
-    public List<String> colored(@NotNull final String... array) {
-        return ColorUtil.colored(Arrays.asList(array));
-    }
+  private ColorUtil() {
+  }
 
-    @NotNull
-    public List<String> colored(@NotNull final Collection<String> list) {
-        return list.stream().map(ColorUtil::colored).collect(Collectors.toList());
-    }
+  @NotNull
+  public static List<String> colored(@NotNull final String... array) {
+    return ColorUtil.colored(Arrays.asList(array));
+  }
 
-    @NotNull
-    public String colored(@NotNull final String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
-    }
+  @NotNull
+  public static List<String> colored(@NotNull final Collection<String> list) {
+    return list.stream()
+      .map(ColorUtil::colored)
+      .collect(Collectors.toList());
+  }
 
+  @NotNull
+  public static String colored(@NotNull final String text) {
+    return ChatColor.translateAlternateColorCodes('&', text);
+  }
 }

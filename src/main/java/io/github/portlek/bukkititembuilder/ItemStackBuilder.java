@@ -36,83 +36,83 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> {
 
-    private ItemStackBuilder(@NotNull final ItemStack item) {
-        super(item,
-            Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't get!"));
-    }
+  private ItemStackBuilder(@NotNull final ItemStack item) {
+    super(item,
+      Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't get!"));
+  }
 
-    @NotNull
-    public static ItemStackBuilder from(@NotNull final XMaterial material) {
-        return ItemStackBuilder.from(
-            Optional.ofNullable(material.parseMaterial()).orElseThrow(() ->
-                new IllegalStateException("Material from the " + material.name() + " cannot be null!")));
-    }
+  @NotNull
+  public static ItemStackBuilder from(@NotNull final XMaterial material) {
+    return ItemStackBuilder.from(
+      Optional.ofNullable(material.parseMaterial()).orElseThrow(() ->
+        new IllegalStateException("Material from the " + material.name() + " cannot be null!")));
+  }
 
-    @NotNull
-    public static ItemStackBuilder from(@NotNull final Material material) {
-        return ItemStackBuilder.from(new ItemStack(material));
-    }
+  @NotNull
+  public static ItemStackBuilder from(@NotNull final Material material) {
+    return ItemStackBuilder.from(new ItemStack(material));
+  }
 
-    @NotNull
-    public static ItemStackBuilder from(@NotNull final ItemStack from) {
-        return new ItemStackBuilder(from);
-    }
+  @NotNull
+  public static ItemStackBuilder from(@NotNull final ItemStack from) {
+    return new ItemStackBuilder(from);
+  }
 
-    @NotNull
-    public static ItemStackBuilder from(@NotNull final String nbtjson) {
-        return ItemStackBuilder.from(NBTEditor.getItemFromTag(NBTEditor.getNBTCompound(nbtjson)));
-    }
+  @NotNull
+  public static ItemStackBuilder from(@NotNull final String nbtjson) {
+    return ItemStackBuilder.from(NBTEditor.getItemFromTag(NBTEditor.getNBTCompound(nbtjson)));
+  }
 
-    @Override
-    @NotNull
-    public ItemStackBuilder get() {
-        return this;
-    }
+  @NotNull
+  public BannerItemBuilder banner() {
+    return new BannerItemBuilder(this.itemStack(), this.validateMeta(BannerMeta.class));
+  }
 
-    /**
-     * @return {@link CrossbowItemBuilder}
-     * @throws UnsupportedOperationException if server version less than 1.14
-     */
-    @NotNull
-    public CrossbowItemBuilder crossbow() {
-        if (Builder.VERSION < 14) {
-            throw new UnsupportedOperationException("The method called #crosbow() can only use 1.14 and later!");
-        }
-        return new CrossbowItemBuilder(this.itemStack(), this.validateMeta(CrossbowMeta.class));
-    }
+  @NotNull
+  public BookItemBuilder book() {
+    return new BookItemBuilder(this.itemStack(), this.validateMeta(BookMeta.class));
+  }
 
-    @NotNull
-    public MapItemBuilder map() {
-        return new MapItemBuilder(this.itemStack(), this.validateMeta(MapMeta.class));
+  /**
+   * @return {@link CrossbowItemBuilder}
+   *
+   * @throws UnsupportedOperationException if server version less than 1.14
+   */
+  @NotNull
+  public CrossbowItemBuilder crossbow() {
+    if (Builder.VERSION < 14) {
+      throw new UnsupportedOperationException("The method called #crosbow() can only use 1.14 and later!");
     }
+    return new CrossbowItemBuilder(this.itemStack(), this.validateMeta(CrossbowMeta.class));
+  }
 
-    @NotNull
-    public SkullItemBuilder skull() {
-        return new SkullItemBuilder(this.itemStack(), this.validateMeta(SkullMeta.class));
+  @NotNull
+  public FireworkItemBuilder firework() {
+    return new FireworkItemBuilder(this.itemStack(), this.validateMeta(FireworkMeta.class));
+  }
+
+  @Override
+  @NotNull
+  public ItemStackBuilder get() {
+    return this;
+  }
+
+  @NotNull
+  public MapItemBuilder map() {
+    return new MapItemBuilder(this.itemStack(), this.validateMeta(MapMeta.class));
+  }
+
+  @NotNull
+  public SkullItemBuilder skull() {
+    return new SkullItemBuilder(this.itemStack(), this.validateMeta(SkullMeta.class));
+  }
+
+  @NotNull
+  private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
+    if (!meta.isAssignableFrom(this.meta().getClass())) {
+      throw new IllegalStateException(this.itemStack() + "'s meta is not a " + meta.getSimpleName() + '!');
     }
-
-    @NotNull
-    public BannerItemBuilder banner() {
-        return new BannerItemBuilder(this.itemStack(), this.validateMeta(BannerMeta.class));
-    }
-
-    @NotNull
-    public BookItemBuilder book() {
-        return new BookItemBuilder(this.itemStack(), this.validateMeta(BookMeta.class));
-    }
-
-    @NotNull
-    public FireworkItemBuilder firework() {
-        return new FireworkItemBuilder(this.itemStack(), this.validateMeta(FireworkMeta.class));
-    }
-
-    @NotNull
-    private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-        if (!meta.isAssignableFrom(this.meta().getClass())) {
-            throw new IllegalStateException(this.itemStack() + "'s meta is not a " + meta.getSimpleName() + '!');
-        }
-        //noinspection unchecked
-        return (T) this.meta();
-    }
-
+    //noinspection unchecked
+    return (T) this.meta();
+  }
 }

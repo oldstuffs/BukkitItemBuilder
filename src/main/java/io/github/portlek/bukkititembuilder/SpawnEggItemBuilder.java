@@ -32,20 +32,19 @@ import org.jetbrains.annotations.NotNull;
 
 public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
 
-    public SpawnEggItemBuilder(@NotNull final ItemStack itemstack, @NotNull final SpawnEggMeta meta) {
-        super(itemstack, meta);
-    }
+  public SpawnEggItemBuilder(@NotNull final ItemStack itemstack, @NotNull final SpawnEggMeta meta) {
+    super(itemstack, meta);
+  }
 
-    @NotNull
-    public SpawnEggItemBuilder type(@NotNull final EntityType type) {
-        return this.update(meta ->
-            meta.setSpawnedType(type));
-    }
+  @NotNull
+  @Override
+  public SpawnEggItemBuilder get() {
+    return this;
+  }
 
-    @NotNull
-    @Override
-    public SpawnEggItemBuilder get() {
-        return this;
-    }
-
+  @NotNull
+  public SpawnEggItemBuilder type(@NotNull final EntityType type) {
+    return this.update(meta ->
+      meta.setSpawnedType(type));
+  }
 }
