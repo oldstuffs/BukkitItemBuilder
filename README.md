@@ -1,7 +1,6 @@
 [![idea](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
-[![rultor](https://www.rultor.com/b/yegor256/rultor)](https://www.rultor.com/p/portlek/BukkitItemBuilder)
 
-[![Build Status](https://travis-ci.com/portlek/BukkitItemBuilder.svg?branch=master)](https://travis-ci.com/portlek/BukkitItemBuilder)
+![master](https://github.com/portlek/BukkitItemBuilder/workflows/build/badge.svg)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.portlek/BukkitItemBuilder?label=version)
 ## How to Use
 ```xml
@@ -11,6 +10,6 @@
   <version>${version}</version>
 </dependency>
 ```
-```gradle
+```groovy
 implementation("io.github.portlek:BukkitItemBuilder:${version}")
 ```

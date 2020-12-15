@@ -32,19 +32,18 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Buildable<X, T extends ItemMeta> {
 
-    @NotNull
-    ItemStack itemStack();
+  @NotNull
+  X get();
 
-    @NotNull
-    X itemStack(@NotNull ItemStack itemstack);
+  @NotNull
+  X itemStack(@NotNull ItemStack itemstack);
 
-    @NotNull
-    ItemMeta meta();
+  @NotNull
+  ItemStack itemStack();
 
-    @NotNull
-    X update(@NotNull Consumer<T> consumer);
+  @NotNull
+  ItemMeta meta();
 
-    @NotNull
-    X get();
-
+  @NotNull
+  X update(@NotNull Consumer<T> consumer);
 }
