@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,56 +32,109 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * a class that represents book item builders.
+ */
 public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
 
-  public BookItemBuilder(@NotNull final ItemStack item, @NotNull final BookMeta meta) {
-    super(item, meta);
+  /**
+   * ctor.
+   *
+   * @param itemMeta the item meta.
+   * @param itemStack the item stack.
+   */
+  BookItemBuilder(@NotNull final BookMeta itemMeta, @NotNull final ItemStack itemStack) {
+    super(itemMeta, itemStack);
   }
 
+  /**
+   * adds page to the book.
+   *
+   * @param list the list to add.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
   public BookItemBuilder addPages(@NotNull final String... list) {
-    return this.update(meta ->
-      meta.addPage(list));
-  }
-
-  @NotNull
-  public BookItemBuilder author(@Nullable final String author) {
-    return this.update(meta ->
-      meta.setAuthor(author));
-  }
-
-  @NotNull
-  public BookItemBuilder generation(@Nullable final BookMeta.Generation generation) {
-    return this.update(meta ->
-      meta.setGeneration(generation));
+    return this.update(meta -> meta.addPage(list));
   }
 
   @NotNull
   @Override
-  public BookItemBuilder get() {
+  public BookItemBuilder self() {
     return this;
   }
 
+  /**
+   * sets author of the book.
+   *
+   * @param author the author to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  public BookItemBuilder setPage(final int page, @NotNull final String text) {
-    return this.update(meta ->
-      meta.setPage(page, text));
+  public BookItemBuilder setAuthor(@Nullable final String author) {
+    return this.update(meta -> meta.setAuthor(author));
   }
 
+  /**
+   * sets generation of the book.
+   *
+   * @param generation the generation to set.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public BookItemBuilder setGeneration(@Nullable final BookMeta.Generation generation) {
+    return this.update(meta -> meta.setGeneration(generation));
+  }
+
+  /**
+   * sets page of the book.
+   *
+   * @param page the page to set.
+   * @param text the text to set.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public BookItemBuilder setPage(final int page, @NotNull final String text) {
+    return this.update(meta -> meta.setPage(page, text));
+  }
+
+  /**
+   * sets pages of the book.
+   *
+   * @param list the list to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
   public BookItemBuilder setPages(@NotNull final String... list) {
     return this.setPages(Arrays.asList(list));
   }
 
+  /**
+   * sets pages of the book.
+   *
+   * @param list the list to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
   public BookItemBuilder setPages(@NotNull final List<String> list) {
-    return this.update(meta ->
-      meta.setPages(list));
+    return this.update(meta -> meta.setPages(list));
   }
 
+  /**
+   * sets title of the book.
+   *
+   * @param title the book to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  public BookItemBuilder title(@Nullable final String title) {
-    return this.update(meta ->
-      meta.setTitle(title));
+  public BookItemBuilder setTitle(@Nullable final String title) {
+    return this.update(meta -> meta.setTitle(title));
   }
 }

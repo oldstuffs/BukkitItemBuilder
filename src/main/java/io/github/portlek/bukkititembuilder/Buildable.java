@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,20 +30,55 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * an interface to determine buildable objects.
+ *
+ * @param <X> type of the self class.
+ * @param <T> type of the item meta class.
+ */
 public interface Buildable<X, T extends ItemMeta> {
 
+  /**
+   * obtains the item meta.
+   *
+   * @return item meta.
+   */
   @NotNull
-  X get();
+  ItemMeta getItemMeta();
 
+  /**
+   * obtains the item stack.
+   *
+   * @return item stack.
+   */
   @NotNull
-  X itemStack(@NotNull ItemStack itemstack);
+  ItemStack getItemStack();
 
+  /**
+   * obtains the self instance for builder chain.
+   *
+   * @return self instance.
+   */
   @NotNull
-  ItemStack itemStack();
+  X self();
 
+  /**
+   * sets the item stack.
+   *
+   * @param itemStack the item stack to set.
+   *
+   * @return {@link #self()} for builder chain.
+   */
   @NotNull
-  ItemMeta meta();
+  X setItemStack(@NotNull ItemStack itemStack);
 
+  /**
+   * updates item meta of {@link #getItemStack()}.
+   *
+   * @param action the action to run before the setting.
+   *
+   * @return {@link #self()} for builder chain.
+   */
   @NotNull
-  X update(@NotNull Consumer<T> consumer);
+  X update(@NotNull Consumer<T> action);
 }

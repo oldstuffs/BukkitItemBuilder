@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +26,56 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.SkullUtils;
-import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * a class that represents skull item builders.
+ */
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {
 
-  public SkullItemBuilder(@NotNull final ItemStack itemstack, @NotNull final SkullMeta meta) {
-    super(itemstack, meta);
+  /**
+   * ctor.
+   *
+   * @param itemMeta the item meta.
+   * @param itemStack the item stack.
+   */
+  SkullItemBuilder(@NotNull final SkullMeta itemMeta, @NotNull final ItemStack itemStack) {
+    super(itemMeta, itemStack);
+  }
+
+  /**
+   * removes owner of the skull.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public SkullItemBuilder removeOwner() {
+    return this.update(meta -> {
+      if (Builder.VERSION < 13) {
+        meta.setOwner(null);
+      } else {
+        meta.setOwningPlayer(null);
+      }
+    });
   }
 
   @NotNull
   @Override
-  public SkullItemBuilder get() {
+  public SkullItemBuilder self() {
     return this;
   }
 
+  /**
+   * sets owner of the skull.
+   *
+   * @param texture the texture to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  public SkullItemBuilder owner(@NotNull final String texture) {
-    return this.update(meta ->
-      SkullUtils.applySkin(meta, texture));
-  }
-
-  @NotNull
-  public SkullItemBuilder removeOwner() {
-    return this.update(meta -> {
-      if (XMaterial.isNewVersion()) {
-        meta.setOwningPlayer(null);
-      } else {
-        meta.setOwner(null);
-      }
-    });
+  public SkullItemBuilder setOwner(@NotNull final String texture) {
+    return this.update(meta -> SkullUtils.applySkin(meta, texture));
   }
 }

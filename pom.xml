@@ -2,7 +2,7 @@
 <!--
   ~ MIT License
   ~
-  ~ Copyright (c) 2020 Hasan Demirtaş
+  ~ Copyright (c) 2021 Hasan Demirtaş
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@
     <version>2.5.3</version>
   </parent>
   <artifactId>BukkitItemBuilder</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>BukkitItemBuilder</name>
   <description>Useful item builder library for Bukkit plugins.</description>
   <url>https://github.com/portlek/BukkitItemBuilder</url>
@@ -42,6 +42,9 @@
     <connection>scm:git:git://github.com/portlek/BukkitItemBuilder.git</connection>
     <developerConnection>scm:git:ssh://github.com/portlek/BukkitItemBuilder.git</developerConnection>
   </scm>
+  <properties>
+    <java.version>11</java.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>io.github.portlek</groupId>
@@ -61,7 +64,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.4-R0.1-SNAPSHOT</version>
+      <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

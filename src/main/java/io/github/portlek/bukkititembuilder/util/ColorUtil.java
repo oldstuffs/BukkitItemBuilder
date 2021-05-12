@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,32 +25,54 @@
 
 package io.github.portlek.bukkititembuilder.util;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-public final class ColorUtil {
+/**
+ * a class that contains utility methods for coloring strings and lists.
+ */
+@UtilityClass
+public class ColorUtil {
 
-  private ColorUtil() {
+  /**
+   * colors the given texts.
+   *
+   * @param texts the texts to color.
+   *
+   * @return colored list.
+   */
+  @NotNull
+  public List<String> colored(@NotNull final String... texts) {
+    return ColorUtil.colored(List.of(texts));
   }
 
+  /**
+   * colors the given list.
+   *
+   * @param list the list to color.
+   *
+   * @return colored list.
+   */
   @NotNull
-  public static List<String> colored(@NotNull final String... array) {
-    return ColorUtil.colored(Arrays.asList(array));
-  }
-
-  @NotNull
-  public static List<String> colored(@NotNull final Collection<String> list) {
+  public List<String> colored(@NotNull final Collection<String> list) {
     return list.stream()
       .map(ColorUtil::colored)
       .collect(Collectors.toList());
   }
 
+  /**
+   * colors the given text.
+   *
+   * @param text the text to color.
+   *
+   * @return colored text.
+   */
   @NotNull
-  public static String colored(@NotNull final String text) {
+  public String colored(@NotNull final String text) {
     return ChatColor.translateAlternateColorCodes('&', text);
   }
 }

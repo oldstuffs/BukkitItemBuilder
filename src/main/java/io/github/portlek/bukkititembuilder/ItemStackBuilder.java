@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,93 +26,189 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.base.Preconditions;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import java.util.Objects;
-import java.util.Optional;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * a class that represents regular item stack builders.
+ */
 public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> {
 
-  private ItemStackBuilder(@NotNull final ItemStack item) {
-    super(item,
-      Objects.requireNonNull(item.getItemMeta(), "ItemMeta of " + item + " couldn't get!"));
+  /**
+   * ctor.
+   *
+   * @param itemStack the item stack.
+   */
+  private ItemStackBuilder(@NotNull final ItemStack itemStack) {
+    super(Objects.requireNonNull(itemStack.getItemMeta(), String.format("ItemMeta of %s couldn't get!", itemStack)),
+      itemStack);
   }
 
+  /**
+   * creates item stack builder from {@link XMaterial}.
+   *
+   * @param material the material to create.
+   *
+   * @return a newly created item stack builder instance.
+   */
   @NotNull
   public static ItemStackBuilder from(@NotNull final XMaterial material) {
-    return ItemStackBuilder.from(
-      Optional.ofNullable(material.parseMaterial()).orElseThrow(() ->
-        new IllegalStateException("Material from the " + material.name() + " cannot be null!")));
+    final var parsed = material.parseMaterial();
+    Preconditions.checkNotNull(parsed, "Material from the %s cannot be null!", material.name());
+    return ItemStackBuilder.from(parsed);
   }
 
+  /**
+   * creates item stack builder from {@link Material}.
+   *
+   * @param material the material to create.
+   *
+   * @return a newly created item stack builder instance.
+   */
   @NotNull
   public static ItemStackBuilder from(@NotNull final Material material) {
     return ItemStackBuilder.from(new ItemStack(material));
   }
 
+  /**
+   * creates item stack builder from {@link ItemStack}.
+   *
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created item stack builder instance.
+   */
   @NotNull
-  public static ItemStackBuilder from(@NotNull final ItemStack from) {
-    return new ItemStackBuilder(from);
-  }
-
-  @NotNull
-  public static ItemStackBuilder from(@NotNull final String nbtjson) {
-    return ItemStackBuilder.from(NBTEditor.getItemFromTag(NBTEditor.getNBTCompound(nbtjson)));
-  }
-
-  @NotNull
-  public BannerItemBuilder banner() {
-    return new BannerItemBuilder(this.itemStack(), this.validateMeta(BannerMeta.class));
-  }
-
-  @NotNull
-  public BookItemBuilder book() {
-    return new BookItemBuilder(this.itemStack(), this.validateMeta(BookMeta.class));
+  public static ItemStackBuilder from(@NotNull final ItemStack itemStack) {
+    return new ItemStackBuilder(itemStack);
   }
 
   /**
-   * @return {@link CrossbowItemBuilder}
+   * creates item stack builder from NBT Json string.
    *
-   * @throws UnsupportedOperationException if server version less than 1.14
+   * @param nbtJson the nbt json to create.
+   *
+   * @return a newly created item stack builder instance.
+   */
+  @NotNull
+  public static ItemStackBuilder from(@NotNull final String nbtJson) {
+    return ItemStackBuilder.from(NBTEditor.getItemFromTag(NBTEditor.getNBTCompound(nbtJson)));
+  }
+
+  /**
+   * creates a new {@link BannerItemBuilder} instance.
+   *
+   * @return a newly created {@link BannerItemBuilder} instance.
+   */
+  @NotNull
+  public BannerItemBuilder banner() {
+    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link BookItemBuilder} instance.
+   *
+   * @return a newly created {@link BookItemBuilder} instance.
+   */
+  @NotNull
+  public BookItemBuilder book() {
+    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link CrossbowItemBuilder} instance.
+   *
+   * @return a newly created {@link CrossbowItemBuilder} instance.
+   *
+   * @throws IllegalStateException if server version less than 1.14
    */
   @NotNull
   public CrossbowItemBuilder crossbow() {
-    if (Builder.VERSION < 14) {
-      throw new UnsupportedOperationException("The method called #crosbow() can only use 1.14 and later!");
-    }
-    return new CrossbowItemBuilder(this.itemStack(), this.validateMeta(CrossbowMeta.class));
+    Preconditions.checkState(Builder.VERSION >= 14, "The method called #crosbow() can only use 1.14 and later!");
+    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
   }
 
+  /**
+   * creates a new {@link FireworkItemBuilder} instance.
+   *
+   * @return a newly created {@link FireworkItemBuilder} instance.
+   */
   @NotNull
   public FireworkItemBuilder firework() {
-    return new FireworkItemBuilder(this.itemStack(), this.validateMeta(FireworkMeta.class));
+    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link LeatherArmorItemBuilder} instance.
+   *
+   * @return a newly created {@link LeatherArmorItemBuilder} instance.
+   */
+  @NotNull
+  public LeatherArmorItemBuilder leatherArmor() {
+    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link MapItemBuilder} instance.
+   *
+   * @return a newly created {@link MapItemBuilder} instance.
+   */
+  @NotNull
+  public MapItemBuilder map() {
+    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack());
   }
 
   @Override
   @NotNull
-  public ItemStackBuilder get() {
+  public ItemStackBuilder self() {
     return this;
   }
 
-  @NotNull
-  public MapItemBuilder map() {
-    return new MapItemBuilder(this.itemStack(), this.validateMeta(MapMeta.class));
-  }
-
+  /**
+   * creates a new {@link SkullItemBuilder} instance.
+   *
+   * @return a newly created {@link SkullItemBuilder} instance.
+   */
   @NotNull
   public SkullItemBuilder skull() {
-    return new SkullItemBuilder(this.itemStack(), this.validateMeta(SkullMeta.class));
+    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack());
   }
 
+  /**
+   * creates a new {@link SpawnEggItemBuilder} instance.
+   *
+   * @return a newly created {@link SpawnEggItemBuilder} instance.
+   */
+  @NotNull
+  public SpawnEggItemBuilder spawnEgg() {
+    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack());
+  }
+
+  /**
+   * validates the {@link #getItemStack()} if the given item meta class applicable.
+   *
+   * @param meta the meta to validate.
+   * @param <T> type of the item meta.
+   *
+   * @return validated item meta instance.
+   */
   @NotNull
   private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-    if (!meta.isAssignableFrom(this.meta().getClass())) {
-      throw new IllegalStateException(this.itemStack() + "'s meta is not a " + meta.getSimpleName() + '!');
-    }
+    Preconditions.checkArgument(meta.isAssignableFrom(this.getItemMeta().getClass()), "%s's meta is not a %s!",
+      this.getItemStack(), meta.getSimpleName());
     //noinspection unchecked
-    return (T) this.meta();
+    return (T) this.getItemMeta();
   }
 }

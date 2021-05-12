@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,56 +33,98 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * a class that represents banner item builders.
+ */
 public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMeta> {
 
-  public BannerItemBuilder(@NotNull final ItemStack item, @NotNull final BannerMeta meta) {
-    super(item, meta);
+  /**
+   * ctor.
+   *
+   * @param itemStack the item stack.
+   * @param meta the meta.
+   */
+  BannerItemBuilder(@NotNull final BannerMeta meta, @NotNull final ItemStack itemStack) {
+    super(meta, itemStack);
   }
 
+  /**
+   * adds patterns to the banner.
+   *
+   * @param patterns the patterns to add.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  @Deprecated
   public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
-    return this.update(meta ->
-      Arrays.stream(patterns).forEach(meta::addPattern));
+    return this.update(meta -> Arrays.stream(patterns).forEach(meta::addPattern));
   }
 
+  /**
+   * removes patterns from the banner.
+   *
+   * @param index the index to remove.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  @Deprecated
-  public BannerItemBuilder color(@NotNull final DyeColor color) {
-    return this.update(meta ->
-      meta.setBaseColor(color));
+  public BannerItemBuilder removePatterns(final int... index) {
+    return this.update(meta -> Arrays.stream(index).forEach(meta::removePattern));
   }
 
   @NotNull
   @Override
-  public BannerItemBuilder get() {
+  public BannerItemBuilder self() {
     return this;
   }
 
+  /**
+   * sets base color of the banner.
+   *
+   * @param color the color to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
   @Deprecated
-  public BannerItemBuilder removePatterns(final int... index) {
-    return this.update(meta ->
-      Arrays.stream(index).forEach(meta::removePattern));
+  public BannerItemBuilder setBaseColor(@NotNull final DyeColor color) {
+    return this.update(meta -> meta.setBaseColor(color));
   }
 
+  /**
+   * sets pattern of the banner.
+   *
+   * @param index the index to set.
+   * @param pattern the pattern to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  @Deprecated
   public BannerItemBuilder setPattern(final int index, @NotNull final Pattern pattern) {
-    return this.update(meta ->
-      meta.setPattern(index, pattern));
+    return this.update(meta -> meta.setPattern(index, pattern));
   }
 
+  /**
+   * sets pattern of the banner.
+   *
+   * @param patterns the patterns to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  @Deprecated
   public BannerItemBuilder setPatterns(@NotNull final Pattern... patterns) {
-    return this.setPatterns(Arrays.asList(patterns));
+    return this.setPatterns(List.of(patterns));
   }
 
+  /**
+   * sets pattern of the banner.
+   *
+   * @param patterns the patterns to set.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  @Deprecated
   public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
-    return this.update(meta ->
-      meta.setPatterns(patterns));
+    return this.update(meta -> meta.setPatterns(patterns));
   }
 }
