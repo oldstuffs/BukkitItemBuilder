@@ -22,45 +22,7 @@
  * SOFTWARE.
  *
  */
-
-package io.github.portlek.bukkititembuilder;
-
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SpawnEggMeta;
-import org.jetbrains.annotations.NotNull;
-
 /**
- * a class that represents spawn egg item builders.
+ * the package that contains utility classes of the library.
  */
-public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
-
-  /**
-   * ctor.
-   *
-   * @param itemMeta the item meta.
-   * @param itemStack the item stack.
-   */
-  SpawnEggItemBuilder(@NotNull final SpawnEggMeta itemMeta, @NotNull final ItemStack itemStack) {
-    super(itemMeta, itemStack);
-  }
-
-  @NotNull
-  @Override
-  public SpawnEggItemBuilder self() {
-    return this;
-  }
-
-  /**
-   * sets spawned type of the spawn egg.
-   *
-   * @param type the type ot set.
-   *
-   * @return {@code this} for builder chain.
-   */
-  @NotNull
-  @Deprecated
-  public SpawnEggItemBuilder setSpawnedType(@NotNull final EntityType type) {
-    return this.update(meta -> meta.setSpawnedType(type));
-  }
-}
+package io.github.portlek.bukkititembuilder.util;

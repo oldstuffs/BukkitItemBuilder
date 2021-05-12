@@ -3,6 +3,12 @@
     <JavaCodeStyleSettings>
       <option name="GENERATE_FINAL_LOCALS" value="true" />
       <option name="GENERATE_FINAL_PARAMETERS" value="true" />
+      <option name="REPLACE_INSTANCEOF_AND_CAST" value="true" />
+      <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+      <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+      <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+        <value />
+      </option>
       <option name="IMPORT_LAYOUT_TABLE">
         <value>
           <package name="" withSubpackages="true" static="true" />
@@ -19,6 +25,9 @@
       <option name="JD_PRESERVE_LINE_FEEDS" value="true" />
       <option name="JD_INDENT_ON_CONTINUATION" value="true" />
     </JavaCodeStyleSettings>
+    <Properties>
+      <option name="KEEP_BLANK_LINES" value="true" />
+    </Properties>
     <XML>
       <option name="XML_KEEP_BLANK_LINES" value="0" />
     </XML>
@@ -439,15 +448,6 @@
         </rules>
       </arrangement>
     </codeStyleSettings>
-    <codeStyleSettings language="Rust">
-      <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
-      <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-      <indentOptions>
-        <option name="INDENT_SIZE" value="2" />
-        <option name="CONTINUATION_INDENT_SIZE" value="2" />
-        <option name="TAB_SIZE" value="2" />
-      </indentOptions>
-    </codeStyleSettings>
     <codeStyleSettings language="XML">
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
@@ -564,6 +564,13 @@
           <section>
             <rule>
               <match>
+                <NAME>modules</NAME>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
                 <NAME>build</NAME>
               </match>
             </rule>
@@ -586,6 +593,20 @@
             <rule>
               <match>
                 <NAME>dependencies</NAME>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
+                <NAME>profiles</NAME>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
+                <NAME>dependencyManager</NAME>
               </match>
             </rule>
           </section>

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Hasan Demirtaş
+ * Copyright (c) 2021 Hasan Demirtaş
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,32 +32,60 @@ import org.bukkit.inventory.meta.CrossbowMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * a class that represents crossbow item builders.
+ */
 public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, CrossbowMeta> {
 
-  public CrossbowItemBuilder(@NotNull final ItemStack item, @NotNull final CrossbowMeta meta) {
-    super(item, meta);
+  /**
+   * ctor.
+   *
+   * @param itemMeta the item meta.
+   * @param itemStack the item stack.
+   */
+  CrossbowItemBuilder(@NotNull final CrossbowMeta itemMeta, @NotNull final ItemStack itemStack) {
+    super(itemMeta, itemStack);
   }
 
+  /**
+   * adds charged projectile to the crossbow.
+   *
+   * @param projectiles the projectileS to add.
+   *
+   * @return {@code this} for builder chain.
+   */
   @NotNull
-  public CrossbowItemBuilder chargedProjectile(@NotNull final ItemStack projectile) {
-    return this.update(meta ->
-      meta.addChargedProjectile(projectile));
-  }
-
-  @NotNull
-  public CrossbowItemBuilder chargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-    return this.update(meta ->
-      meta.setChargedProjectiles(projectiles));
-  }
-
-  @NotNull
-  public CrossbowItemBuilder chargedProjectiles(@Nullable final ItemStack... projectiles) {
-    return this.chargedProjectiles(Arrays.asList(projectiles));
+  public CrossbowItemBuilder addChargedProjectile(@NotNull final ItemStack... projectiles) {
+    return this.update(meta -> Arrays.stream(projectiles).forEach(meta::addChargedProjectile));
   }
 
   @NotNull
   @Override
-  public CrossbowItemBuilder get() {
+  public CrossbowItemBuilder self() {
     return this;
+  }
+
+  /**
+   * sets charged projectile of the item.
+   *
+   * @param projectiles the projectiles to set.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public CrossbowItemBuilder setChargedProjectiles(@Nullable final ItemStack... projectiles) {
+    return this.setChargedProjectiles(List.of(projectiles));
+  }
+
+  /**
+   * sets charged projectile of the item.
+   *
+   * @param projectiles the projectiles to set.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public CrossbowItemBuilder setChargedProjectiles(@Nullable final List<ItemStack> projectiles) {
+    return this.update(meta -> meta.setChargedProjectiles(projectiles));
   }
 }
