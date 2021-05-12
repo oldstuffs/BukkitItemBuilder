@@ -31,7 +31,7 @@ import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * a class that represents spawn egg item builders
+ * a class that represents spawn egg item builders.
  */
 public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
 

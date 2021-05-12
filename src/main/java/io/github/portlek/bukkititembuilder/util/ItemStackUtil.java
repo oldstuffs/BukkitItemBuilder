@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -48,53 +47,58 @@ import org.jetbrains.annotations.Nullable;
 /**
  * a class that contains utility methods for {@link ItemStack} to serialize and deserialize.
  */
-@UtilityClass
-public class ItemStackUtil {
+public final class ItemStackUtil {
 
   /**
    * the amount keys.
    */
-  private final String[] AMOUNT_KEYS = {"amount", "quantity", "miktar"};
+  private static final String[] AMOUNT_KEYS = {"amount", "quantity", "miktar"};
 
   /**
    * the damage key.
    */
-  private final String[] DAMAGE_KEYS = {"damage", "durability"};
+  private static final String[] DAMAGE_KEYS = {"damage", "durability"};
 
   /**
    * the data keys.
    */
-  private final String[] DATA_KEYS = {"data"};
+  private static final String[] DATA_KEYS = {"data"};
 
   /**
    * the display name keys.
    */
-  private final String[] DISPLAY_NAME_KEYS = {"name", "display", "display-name", "isim", "ad"};
+  private static final String[] DISPLAY_NAME_KEYS = {"name", "display", "display-name", "isim", "ad"};
 
   /**
    * the enchantment keys.
    */
-  private final String[] ENCHANTMENT_KEYS = {"enchants", "enchantments", "enchant", "enchantment", "büyü", "büyüler"};
+  private static final String[] ENCHANTMENT_KEYS = {"enchants", "enchantments", "enchant", "enchantment", "büyü", "büyüler"};
 
   /**
    * the flag keys.
    */
-  private final String[] FLAG_KEYS = {"flags", "flag"};
+  private static final String[] FLAG_KEYS = {"flags", "flag"};
 
   /**
    * the lore keys.
    */
-  private final String[] LORE_KEYS = {"lore", "açıklama", "aciklama"};
+  private static final String[] LORE_KEYS = {"lore", "açıklama", "aciklama"};
 
   /**
    * the material keys.
    */
-  private final String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
+  private static final String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
 
   /**
    * the skull texture keys.
    */
-  private final String[] SKULL_TEXTURE_KEYS = {"skull", "skull-texture", "texture", "skin"};
+  private static final String[] SKULL_TEXTURE_KEYS = {"skull", "skull-texture", "texture", "skin"};
+
+  /**
+   * ctor.
+   */
+  private ItemStackUtil() {
+  }
 
   /**
    * deserializes the given map into {@link ItemStack}.
@@ -104,7 +108,7 @@ public class ItemStackUtil {
    * @return deserialized item stack instance.
    */
   @NotNull
-  public Optional<ItemStack> deserialize(@NotNull final Map<String, Object> map) {
+  public static Optional<ItemStack> deserialize(@NotNull final Map<String, Object> map) {
     final var materialStringOptional =
       ItemStackUtil.getOrDefault(map, String.class, ItemStackUtil.MATERIAL_KEYS);
     if (materialStringOptional.isEmpty()) {
@@ -184,7 +188,7 @@ public class ItemStackUtil {
    * @return serialized map.
    */
   @NotNull
-  public Map<String, Object> serialize(@NotNull final ItemStack itemStack) {
+  public static Map<String, Object> serialize(@NotNull final ItemStack itemStack) {
     final var map = new HashMap<String, Object>();
     final var materialKey = ItemStackUtil.MATERIAL_KEYS[0];
     final var amountKey = ItemStackUtil.AMOUNT_KEYS[0];
@@ -246,8 +250,8 @@ public class ItemStackUtil {
    * @return value.
    */
   @NotNull
-  private <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                       @NotNull final String... keys) {
+  private static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
+                                              @NotNull final String... keys) {
     return ItemStackUtil.getOrDefault(map, tClass, new ArrayDeque<>(List.of(keys)));
   }
 
@@ -262,8 +266,8 @@ public class ItemStackUtil {
    * @return value.
    */
   @NotNull
-  private <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                       @NotNull final Deque<String> keys) {
+  private static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
+                                              @NotNull final Deque<String> keys) {
     final var key = keys.poll();
     if (key == null) {
       return Optional.empty();

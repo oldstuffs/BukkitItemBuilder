@@ -28,15 +28,19 @@ package io.github.portlek.bukkititembuilder.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * a class that contains utility methods for coloring strings and lists.
  */
-@UtilityClass
-public class ColorUtil {
+public final class ColorUtil {
+
+  /**
+   * ctor.
+   */
+  private ColorUtil() {
+  }
 
   /**
    * colors the given texts.
@@ -46,7 +50,7 @@ public class ColorUtil {
    * @return colored list.
    */
   @NotNull
-  public List<String> colored(@NotNull final String... texts) {
+  public static List<String> colored(@NotNull final String... texts) {
     return ColorUtil.colored(List.of(texts));
   }
 
@@ -58,7 +62,7 @@ public class ColorUtil {
    * @return colored list.
    */
   @NotNull
-  public List<String> colored(@NotNull final Collection<String> list) {
+  public static List<String> colored(@NotNull final Collection<String> list) {
     return list.stream()
       .map(ColorUtil::colored)
       .collect(Collectors.toList());
@@ -72,7 +76,7 @@ public class ColorUtil {
    * @return colored text.
    */
   @NotNull
-  public String colored(@NotNull final String text) {
+  public static String colored(@NotNull final String text) {
     return ChatColor.translateAlternateColorCodes('&', text);
   }
 }

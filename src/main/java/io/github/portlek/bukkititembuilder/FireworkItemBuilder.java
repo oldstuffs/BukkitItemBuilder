@@ -46,7 +46,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   }
 
   /**
-   * adds effect to the firework
+   * adds effect to the firework.
    *
    * @param effect the effect to add.
    *
@@ -58,7 +58,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   }
 
   /**
-   * adds effect to the firework
+   * adds effect to the firework.
    *
    * @param effects the effects to add.
    *
@@ -70,7 +70,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   }
 
   /**
-   * adds effect to the firework
+   * adds effect to the firework.
    *
    * @param effects the effects to add.
    *
