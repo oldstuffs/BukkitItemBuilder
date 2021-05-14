@@ -65,7 +65,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   /**
    * the bukkit version.
    */
-  public static final int VERSION = new BukkitVersion().minor();
+  public static final int VERSION = new BukkitVersion().getMinor();
 
   /**
    * the meta.
