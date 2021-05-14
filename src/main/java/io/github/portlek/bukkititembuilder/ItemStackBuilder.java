@@ -26,7 +26,6 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.google.common.base.Preconditions;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import java.util.Objects;
 import org.bukkit.Material;
@@ -67,7 +66,10 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   @NotNull
   public static ItemStackBuilder from(@NotNull final XMaterial material) {
     final var parsed = material.parseMaterial();
-    Preconditions.checkNotNull(parsed, "Material from the %s cannot be null!", material.name());
+    if (parsed == null) {
+      throw new IllegalStateException(String.format("Material from the %s cannot be null!",
+        material.name()));
+    }
     return ItemStackBuilder.from(parsed);
   }
 
@@ -136,7 +138,9 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
    */
   @NotNull
   public CrossbowItemBuilder crossbow() {
-    Preconditions.checkState(Builder.VERSION >= 14, "The method called #crosbow() can only use 1.14 and later!");
+    if (Builder.VERSION < 14) {
+      throw new IllegalStateException("The method called #crosbow() can only use 1.14 and later!");
+    }
     return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
   }
 
@@ -206,8 +210,10 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
    */
   @NotNull
   private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-    Preconditions.checkArgument(meta.isAssignableFrom(this.getItemMeta().getClass()), "%s's meta is not a %s!",
-      this.getItemStack(), meta.getSimpleName());
+    if (!meta.isAssignableFrom(this.getItemMeta().getClass())) {
+      throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
+        this.getItemStack(), meta.getSimpleName()));
+    }
     //noinspection unchecked
     return (T) this.getItemMeta();
   }
