@@ -87,11 +87,13 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   /**
    * creates a new firework item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
    * @return a newly created firework item builder instance.
    */
   @NotNull
-  public static FireworkItemBuilder from(@NotNull final FireworkMeta itemMeta,
-                                         @NotNull final ItemStack itemStack) {
+  public static FireworkItemBuilder from(@NotNull final FireworkMeta itemMeta, @NotNull final ItemStack itemStack) {
     return new FireworkItemBuilder(itemMeta, itemStack);
   }
 

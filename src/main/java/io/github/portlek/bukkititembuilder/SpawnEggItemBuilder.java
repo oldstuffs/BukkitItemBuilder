@@ -65,6 +65,9 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   /**
    * creates a new spawn egg item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
    * @return a newly created spawn egg item builder instance.
    */
   @NotNull

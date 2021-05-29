@@ -64,6 +64,9 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   /**
    * creates a new skull item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
    * @return a newly created skull item builder instance.
    */
   @NotNull

@@ -66,6 +66,8 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   /**
    * creates a new leather armor item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
    * @return a newly created leather armor item builder instance.
    */
   @NotNull

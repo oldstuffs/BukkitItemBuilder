@@ -91,6 +91,9 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   /**
    * creates a new map item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
    * @return a newly created map item builder instance.
    */
   @NotNull

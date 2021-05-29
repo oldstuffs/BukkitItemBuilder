@@ -86,6 +86,9 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   /**
    * creates a new potion item builder instance.
    *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
    * @return a newly created potion item builder instance.
    */
   @NotNull
