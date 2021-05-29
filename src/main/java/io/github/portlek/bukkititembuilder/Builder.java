@@ -25,22 +25,27 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Multimap;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import io.github.portlek.bukkitversion.BukkitVersion;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -49,6 +54,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,6 +74,16 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   public static final int VERSION = new BukkitVersion().getMinor();
 
   /**
+   * the item stack deserializer.
+   */
+  private static final ItemStackDeserializer ITEM_STACK_DESERIALIZER = new ItemStackDeserializer();
+
+  /**
+   * the simple item stack deserializer.
+   */
+  private static final SimpleItemStackDeserializer SIMPLE_ITEM_STACK_DESERIALIZER = new SimpleItemStackDeserializer();
+
+  /**
    * the meta.
    */
   @NotNull
@@ -78,8 +94,41 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * the item stack.
    */
   @NotNull
-  @Getter
   private ItemStack itemStack;
+
+  /**
+   * creates a new item meta deserializer.
+   *
+   * @param builder the builder to create.
+   * @param <X> type of the builder class.
+   *
+   * @return a newly created item meta deserializer.
+   */
+  @NotNull
+  public static <X extends Builder<X, ?>> Builder.ItemMetaDeserializer<X> getItemMetaDeserializer(
+    @NotNull final X builder) {
+    return new ItemMetaDeserializer<>(builder);
+  }
+
+  /**
+   * obtains the item stack deserializer.
+   *
+   * @return item stack deserializer.
+   */
+  @NotNull
+  public static Builder.ItemStackDeserializer getItemStackDeserializer() {
+    return Builder.ITEM_STACK_DESERIALIZER;
+  }
+
+  /**
+   * obtains the simple item stack deserializer.
+   *
+   * @return simple item stack deserializer.
+   */
+  @NotNull
+  public static Builder.SimpleItemStackDeserializer getSimpleItemStackDeserializer() {
+    return Builder.SIMPLE_ITEM_STACK_DESERIALIZER;
+  }
 
   /**
    * adds attribute modifier to the item.
@@ -90,12 +139,11 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return {@code this} for builder chain.
    */
   @NotNull
-  public final X addAttributeModifier(@NotNull final Attribute attribute,
-                                      @NotNull final AttributeModifier modifier) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+  public final X addAttributeModifier(@NotNull final Attribute attribute, @NotNull final AttributeModifier modifier) {
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.addAttributeModifier(attribute, modifier);
     }
-    return this.update(itemMeta -> itemMeta.addAttributeModifier(attribute, modifier));
+    return this.getSelf();
   }
 
   /**
@@ -107,10 +155,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addAttributeModifier(@NotNull final Multimap<Attribute, AttributeModifier> map) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.setAttributeModifiers(map);
     }
-    return this.update(itemMeta -> itemMeta.setAttributeModifiers(map));
+    return this.getSelf();
   }
 
   /**
@@ -123,9 +171,9 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addCustomData(@NotNull final Object value, @NotNull final Object... keys) {
-    final var itemNBTTag = NBTEditor.getNBTCompound(this.itemStack);
-    itemNBTTag.set(value, "tag", keys);
-    return this.setItemStack(NBTEditor.getItemFromTag(itemNBTTag));
+    final var compound = NBTEditor.getNBTCompound(this.itemStack);
+    compound.set(value, "tag", keys);
+    return this.setItemStack(NBTEditor.getItemFromTag(compound));
   }
 
   /**
@@ -156,7 +204,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
       XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
         this.addEnchantments(xEnchantment, level.get()));
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -171,7 +219,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   public final X addEnchantments(@NotNull final XEnchantment enchantment, final int level) {
     return Optional.ofNullable(enchantment.parseEnchantment())
       .map(value -> this.addEnchantments(value, level))
-      .orElse(this.self());
+      .orElse(this.getSelf());
   }
 
   /**
@@ -184,9 +232,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addEnchantments(@NotNull final Enchantment enchantment, final int level) {
-    return this.addEnchantments(new HashMap<>() {{
-      this.put(enchantment, level);
-    }});
+    return this.addEnchantments(Map.of(enchantment, level));
   }
 
   /**
@@ -199,7 +245,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X addEnchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
     this.itemStack.addUnsafeEnchantments(enchantments);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -211,7 +257,23 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addFlag(@NotNull final ItemFlag... flags) {
-    return this.update(itemMeta -> itemMeta.addItemFlags(flags));
+    this.itemMeta.addItemFlags(flags);
+    return this.getSelf();
+  }
+
+  /**
+   * adds item flag to the item.
+   *
+   * @param flags the flags to add.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public final X addFlags(@NotNull final Collection<String> flags) {
+    flags.stream()
+      .map(ItemFlag::valueOf)
+      .forEach(this::addFlag);
+    return this.getSelf();
   }
 
   /**
@@ -262,7 +324,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
         this.addGlowEffect(this.itemStack.getType() != material
           ? Enchantment.ARROW_INFINITE
           : Enchantment.LUCK))
-      .orElse(this.self());
+      .orElse(this.getSelf());
   }
 
   /**
@@ -312,12 +374,27 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addLore(@NotNull final List<String> lore, final boolean colored) {
-    return this.update(itemMeta -> {
-      final var join = Optional.ofNullable(itemMeta.getLore())
-        .orElse(new ArrayList<>());
-      join.addAll(colored ? ColorUtil.colored(lore) : lore);
-      itemMeta.setLore(join);
-    });
+    final var join = Optional.ofNullable(this.itemMeta.getLore())
+      .orElse(new ArrayList<>());
+    join.addAll(colored ? ColorUtil.colored(lore) : lore);
+    this.itemMeta.setLore(join);
+    return this.getSelf();
+  }
+
+  /**
+   * adds unsafe enchantment to the item.
+   *
+   * @param enchantments the enchantments to add.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public final X addSerializedEnchantments(@NotNull final Map<String, Integer> enchantments) {
+    enchantments.forEach((enchantmentString, level) ->
+      XEnchantment.matchXEnchantment(String.valueOf(enchantmentString))
+        .flatMap(enchant -> Optional.ofNullable(enchant.parseEnchantment()))
+        .ifPresent(enchantment -> this.addEnchantments(enchantment, level)));
+    return this.getSelf();
   }
 
   /**
@@ -331,10 +408,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X removeAttributeModifier(@NotNull final Attribute attribute) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.removeAttributeModifier(attribute);
     }
-    return this.update(itemMeta -> itemMeta.removeAttributeModifier(attribute));
+    return this.getSelf();
   }
 
   /**
@@ -348,10 +425,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X removeAttributeModifier(@NotNull final EquipmentSlot slot) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.removeAttributeModifier(slot);
     }
-    return this.update(itemMeta -> itemMeta.removeAttributeModifier(slot));
+    return this.getSelf();
   }
 
   /**
@@ -367,10 +444,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X removeAttributeModifier(@NotNull final Attribute attribute,
                                          @NotNull final AttributeModifier modifier) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.removeAttributeModifier(attribute, modifier);
     }
-    return this.update(itemMeta -> itemMeta.removeAttributeModifier(attribute, modifier));
+    return this.getSelf();
   }
 
   /**
@@ -382,7 +459,8 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X removeFlag(@NotNull final ItemFlag... flags) {
-    return this.update(itemMeta -> itemMeta.removeItemFlags(flags));
+    this.itemMeta.removeItemFlags(flags);
+    return this.getSelf();
   }
 
   /**
@@ -395,7 +473,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setAmount(final int amount) {
     this.itemStack.setAmount(amount);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -409,10 +487,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setCustomModelData(@Nullable final Integer data) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.setCustomModelData(data);
     }
-    return this.update(itemMeta -> itemMeta.setCustomModelData(data));
+    return this.getSelf();
   }
 
   /**
@@ -437,7 +515,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setData(@NotNull final MaterialData data) {
     this.itemStack.setData(data);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -450,7 +528,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setDurability(final short durability) {
     this.itemStack.setDurability(durability);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -464,22 +542,17 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @Override
   public final X setItemStack(@NotNull final ItemStack itemStack) {
     this.itemStack = itemStack;
-    return this.self();
+    return this.getSelf();
   }
 
-  /**
-   * updates the item meta.
-   *
-   * @param action the consumer to update.
-   *
-   * @return {@code this} for builder chain.
-   */
-  @Override
   @NotNull
-  public final X update(@NotNull final Consumer<T> action) {
-    action.accept(this.itemMeta);
-    this.itemStack.setItemMeta(this.itemMeta);
-    return this.self();
+  @Override
+  public final ItemStack getItemStack(final boolean update) {
+    if (update &&
+      !Objects.equals(this.itemStack.getItemMeta(), this.itemMeta)) {
+      this.itemStack.setItemMeta(this.itemMeta);
+    }
+    return this.itemStack;
   }
 
   /**
@@ -493,10 +566,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setLocalizedName(@Nullable final String name) {
-    if (Builder.VERSION < 12) {
-      return this.self();
+    if (Builder.VERSION >= 12) {
+      this.itemMeta.setLocalizedName(name);
     }
-    return this.update(meta -> meta.setLocalizedName(name));
+    return this.getSelf();
   }
 
   /**
@@ -546,7 +619,8 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setLore(@NotNull final List<String> lore, final boolean colored) {
-    return this.update(itemMeta -> itemMeta.setLore(colored ? ColorUtil.colored(lore) : lore));
+    this.itemMeta.setLore(colored ? ColorUtil.colored(lore) : lore);
+    return this.getSelf();
   }
 
   /**
@@ -559,7 +633,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setMaterial(@NotNull final Material material) {
     this.itemStack.setType(material);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -584,7 +658,8 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setName(@NotNull final String name, final boolean colored) {
-    return this.update(itemMeta -> itemMeta.setDisplayName(colored ? ColorUtil.colored(name) : name));
+    this.itemMeta.setDisplayName(colored ? ColorUtil.colored(name) : name);
+    return this.getSelf();
   }
 
   /**
@@ -597,7 +672,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setType(@NotNull final Material material) {
     this.itemStack.setType(material);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -612,14 +687,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setUnbreakable(final boolean unbreakable) {
     if (Builder.VERSION < 11) {
-      return this.setItemStack(NBTEditor.set(
-        this.itemStack,
-        unbreakable
-          ? (byte) 1
-          : (byte) 0,
-        "Unbreakable"));
+      return this.setItemStack(NBTEditor.set(this.itemStack, unbreakable ? (byte) 1 : (byte) 0, "Unbreakable"));
     }
-    return this.update(itemMeta -> itemMeta.setUnbreakable(unbreakable));
+    this.itemMeta.setUnbreakable(unbreakable);
+    return this.getSelf();
   }
 
   /**
@@ -633,9 +704,109 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setVersion(final int version) {
-    if (Builder.VERSION < 14) {
-      return this.self();
+    if (Builder.VERSION >= 14) {
+      this.itemMeta.setVersion(version);
     }
-    return this.update(itemMeta -> itemMeta.setVersion(version));
+    return this.getSelf();
+  }
+
+  /**
+   * a class that represents default deserializer of {@link ItemMeta}.
+   *
+   * @param <B> type of the builder class.
+   */
+  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+  public static final class ItemMetaDeserializer<B extends Builder<?, ?>> implements
+    Function<@NotNull Map<String, Object>, @NotNull B> {
+
+    /**
+     * the builder.
+     */
+    @NotNull
+    private final B builder;
+
+    @NotNull
+    @Override
+    public B apply(@NotNull final Map<String, Object> map) {
+      final var itemStack = this.builder.getItemStack(false);
+      final var itemMeta = itemStack.getItemMeta();
+      if (itemMeta == null) {
+        return this.builder;
+      }
+      if (itemMeta instanceof SkullMeta) {
+        KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS).ifPresent(s ->
+          SkullUtils.applySkin(itemMeta, s));
+      }
+      KeyUtil.getOrDefault(map, String.class, KeyUtil.DISPLAY_NAME_KEYS)
+        .map(ColorUtil::colored)
+        .ifPresent(this.builder::setName);
+      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.LORE_KEYS)
+        .map(list -> (Collection<String>) list)
+        .map(ColorUtil::colored)
+        .ifPresent(this.builder::setLore);
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.ENCHANTMENT_KEYS)
+        .map(enchantments -> (Map<String, Integer>) enchantments)
+        .ifPresent(this.builder::addSerializedEnchantments);
+      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.FLAG_KEYS)
+        .map(flags -> (Collection<String>) flags)
+        .ifPresent(this.builder::addFlags);
+      itemStack.setItemMeta(itemMeta);
+      return this.builder;
+    }
+  }
+
+  /**
+   * a class that represents deserializers of {@link ItemStack}.
+   */
+  public static final class ItemStackDeserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStack>> {
+
+    @NotNull
+    @Override
+    public Optional<ItemStack> apply(@NotNull final Map<String, Object> map) {
+      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
+        .flatMap(ItemStackUtil::parseMaterial);
+      if (materialOptional.isEmpty()) {
+        return Optional.empty();
+      }
+      final var material = materialOptional.get();
+      final int amount = KeyUtil.getOrDefault(map, Number.class, KeyUtil.AMOUNT_KEYS)
+        .map(Number::intValue)
+        .orElse(1);
+      final ItemStack itemStack;
+      if (Builder.VERSION < 13) {
+        itemStack = new ItemStack(material, amount);
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS)
+          .map(Number::shortValue)
+          .ifPresent(itemStack::setDurability);
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DATA_KEYS)
+          .map(Number::byteValue)
+          .map(material::getNewData)
+          .ifPresent(itemStack::setData);
+      } else {
+        itemStack = new ItemStack(material, amount);
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS).ifPresent(integer ->
+          itemStack.setDurability(integer.shortValue()));
+      }
+      return Optional.of(itemStack);
+    }
+  }
+
+  /**
+   * a class that represents simple deserializers of {@link ItemStack}.
+   */
+  public static final class SimpleItemStackDeserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
+        .flatMap(ItemStackUtil::parseMaterial);
+      if (materialOptional.isEmpty()) {
+        return Optional.empty();
+      }
+      return Optional.of(ItemStackBuilder.from(materialOptional.get()));
+    }
   }
 }

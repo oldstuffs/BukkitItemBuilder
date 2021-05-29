@@ -25,8 +25,15 @@
 
 package io.github.portlek.bukkititembuilder;
 
-import java.util.Arrays;
+import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +41,20 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents crossbow item builders.
+ * <p>
+ * serialization
+ * <pre>
+ * projectiles: (main section)
+ *   0: (item section)
+ *     material: DIAMOND
+ * </pre>
  */
 public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, CrossbowMeta> {
+
+  /**
+   * the deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -48,6 +67,42 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
   }
 
   /**
+   * creates a new crossbow item builder instance.
+   *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created crossbow item builder instance.
+   */
+  @NotNull
+  public static CrossbowItemBuilder from(@NotNull final CrossbowMeta itemMeta, @NotNull final ItemStack itemStack) {
+    return new CrossbowItemBuilder(itemMeta, itemStack);
+  }
+
+  /**
+   * creates crossbow item builder from serialized map.
+   *
+   * @param map the map to create.
+   *
+   * @return a newly created crossbow item builder instance.
+   */
+  @NotNull
+  public static CrossbowItemBuilder from(@NotNull final Map<String, Object> map) {
+    return CrossbowItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return CrossbowItemBuilder.DESERIALIZER;
+  }
+
+  /**
    * adds charged projectile to the crossbow.
    *
    * @param projectiles the projectileS to add.
@@ -56,13 +111,33 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    */
   @NotNull
   public CrossbowItemBuilder addChargedProjectile(@NotNull final ItemStack... projectiles) {
-    return this.update(meta -> Arrays.stream(projectiles).forEach(meta::addChargedProjectile));
+    final var itemMeta = this.getItemMeta();
+    for (final var projectile : projectiles) {
+      itemMeta.addChargedProjectile(projectile);
+    }
+    return this.getSelf();
   }
 
   @NotNull
   @Override
-  public CrossbowItemBuilder self() {
+  public CrossbowItemBuilder getSelf() {
     return this;
+  }
+
+  @NotNull
+  @Override
+  public Map<String, Object> serialize() {
+    final var map = super.serialize();
+    final var projectiles = new HashMap<String, Object>();
+    map.put(KeyUtil.PROJECTILES_KEY[0], projectiles);
+    final var chargedProjectiles = this.getItemMeta().getChargedProjectiles();
+    IntStream.range(0, chargedProjectiles.size()).forEach(index -> {
+      final var projectile = chargedProjectiles.get(index);
+      final var section = new HashMap<>();
+      projectiles.put(String.valueOf(index), section);
+      section.putAll(ItemStackUtil.serialize(projectile));
+    });
+    return map;
   }
 
   /**
@@ -86,6 +161,35 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    */
   @NotNull
   public CrossbowItemBuilder setChargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-    return this.update(meta -> meta.setChargedProjectiles(projectiles));
+    this.getItemMeta().setChargedProjectiles(projectiles);
+    return this.getSelf();
+  }
+
+  /**
+   * a class that represents deserializer of {@link CrossbowMeta}.
+   */
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<CrossbowItemBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<CrossbowItemBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+      if (itemStack.isEmpty()) {
+        return Optional.empty();
+      }
+      final var builder = ItemStackBuilder.from(itemStack.get()).asCrossbow();
+      final var collect = KeyUtil.getOrDefault(map, Map.class, KeyUtil.PROJECTILES_KEY)
+        .map(m -> (Map<String, Map<String, Object>>) m)
+        .orElse(new HashMap<>())
+        .values()
+        .stream()
+        .map(ItemStackUtil::deserialize)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+      builder.setChargedProjectiles(collect);
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+    }
   }
 }

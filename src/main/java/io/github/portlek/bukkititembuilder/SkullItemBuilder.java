@@ -26,14 +26,28 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.SkullUtils;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * a class that represents skull item builders.
+ * <p>
+ * serialization:
+ * <pre>
+ * texture: string (texture can be username, textures.minecraft.net url or base64) (for 8 and newer versions)
+ * </pre>
  */
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {
+
+  /**
+   * the deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -46,25 +60,68 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   }
 
   /**
+   * creates a new skull item builder instance.
+   *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created skull item builder instance.
+   */
+  @NotNull
+  public static SkullItemBuilder from(@NotNull final SkullMeta itemMeta, @NotNull final ItemStack itemStack) {
+    return new SkullItemBuilder(itemMeta, itemStack);
+  }
+
+  /**
+   * creates skull item builder from serialized map.
+   *
+   * @param map the map to create.
+   *
+   * @return a newly created skull item builder instance.
+   */
+  @NotNull
+  public static SkullItemBuilder from(@NotNull final Map<String, Object> map) {
+    return SkullItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return SkullItemBuilder.DESERIALIZER;
+  }
+
+  @NotNull
+  @Override
+  public SkullItemBuilder getSelf() {
+    return this;
+  }
+
+  @NotNull
+  @Override
+  public Map<String, Object> serialize() {
+    final var map = super.serialize();
+    map.put(KeyUtil.SKULL_TEXTURE_KEYS[0], SkullUtils.getSkinValue(this.getItemMeta()));
+    return map;
+  }
+
+  /**
    * removes owner of the skull.
    *
    * @return {@code this} for builder chain.
    */
   @NotNull
   public SkullItemBuilder removeOwner() {
-    return this.update(meta -> {
-      if (Builder.VERSION < 13) {
-        meta.setOwner(null);
-      } else {
-        meta.setOwningPlayer(null);
-      }
-    });
-  }
-
-  @NotNull
-  @Override
-  public SkullItemBuilder self() {
-    return this;
+    if (Builder.VERSION < 13) {
+      this.getItemMeta().setOwner(null);
+    } else {
+      this.getItemMeta().setOwningPlayer(null);
+    }
+    return this.getSelf();
   }
 
   /**
@@ -76,6 +133,27 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
    */
   @NotNull
   public SkullItemBuilder setOwner(@NotNull final String texture) {
-    return this.update(meta -> SkullUtils.applySkin(meta, texture));
+    SkullUtils.applySkin(this.getItemMeta(), texture);
+    return this.getSelf();
+  }
+
+  /**
+   * a class that represents deserializer of {@link SkullMeta}.
+   */
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<SkullItemBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<SkullItemBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+      if (itemStack.isEmpty()) {
+        return Optional.empty();
+      }
+      final var builder = ItemStackBuilder.from(itemStack.get()).asSkull();
+      KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS)
+        .ifPresent(builder::setOwner);
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+    }
   }
 }

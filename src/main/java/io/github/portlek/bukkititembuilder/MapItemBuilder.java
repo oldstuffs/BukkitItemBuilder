@@ -25,6 +25,13 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import com.cryptomorin.xseries.XItemStack;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -34,8 +41,40 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents leather armor item builders.
+ * serialization:
+ * <pre>
+ * map: (main section)
+ *   scaling: boolean (map is scaling or not) (for 8 and newer versions)
+ *
+ *   location: string (location name) (for 11 and newer versions)
+ *
+ *   color: 'red, green, blue' (for 11 and newer versions)
+ *
+ *   map-id: integer (map's id) (for 13 and newer versions)
+ *
+ *   view: (view section)
+ *     scale: string (map's scale) (for 14 and newer versions)
+ *
+ *     world: string (map's world) (for 14 and newer versions)
+ *
+ *     locked: boolean (map is locked or not) (for 14 and newer versions)
+ *
+ *     tracking-position: boolean (is tracking position) (for 14 and newer versions)
+ *
+ *     unlimited-tracking: boolean (is unlimited tracking) (for 14 and newer versions)
+ *
+ *     center: (center section)
+ *       x: integer (map center's x value) (for 14 and newer versions)
+ *
+ *       z: integer (map center's z value) (for 14 and newer versions)
+ * </pre>
  */
 public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
+
+  /**
+   * the deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -47,10 +86,89 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     super(itemMeta, itemStack);
   }
 
+  /**
+   * creates a new map item builder instance.
+   *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created map item builder instance.
+   */
+  @NotNull
+  public static MapItemBuilder from(@NotNull final MapMeta itemMeta, @NotNull final ItemStack itemStack) {
+    return new MapItemBuilder(itemMeta, itemStack);
+  }
+
+  /**
+   * creates map item builder from serialized map.
+   *
+   * @param map the map to create.
+   *
+   * @return a newly created map item builder instance.
+   */
+  @NotNull
+  public static MapItemBuilder from(@NotNull final Map<String, Object> map) {
+    return MapItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return MapItemBuilder.DESERIALIZER;
+  }
+
   @NotNull
   @Override
-  public MapItemBuilder self() {
+  public MapItemBuilder getSelf() {
     return this;
+  }
+
+  @NotNull
+  @Override
+  public Map<String, Object> serialize() {
+    final var serialized = super.serialize();
+    final var map = new HashMap<String, Object>();
+    final var itemMeta = this.getItemMeta();
+    serialized.put(KeyUtil.MAP_KEYS[0], map);
+    map.put(KeyUtil.SCALING_KEYS[0], itemMeta.isScaling());
+    if (Builder.VERSION >= 11) {
+      if (itemMeta.hasLocationName()) {
+        map.put("location", itemMeta.getLocationName());
+      }
+      final var color = itemMeta.getColor();
+      if (itemMeta.hasColor() && color != null) {
+        map.put("color", String.format("%d, %d, %d",
+          color.getRed(), color.getGreen(), color.getBlue()));
+      }
+    }
+    if (Builder.VERSION >= 13) {
+      map.put(KeyUtil.MAP_ID_KEYS[0], itemMeta.getMapId());
+    }
+    if (Builder.VERSION >= 14) {
+      final var mapView = itemMeta.getMapView();
+      if (itemMeta.hasMapView() && mapView != null) {
+        final var view = new HashMap<>();
+        map.put(KeyUtil.VIEW_KEYS[0], view);
+        view.put(KeyUtil.SCALE_KEYS[0], mapView.getScale().toString());
+        final var world = mapView.getWorld();
+        if (world != null) {
+          view.put(KeyUtil.WORLD_KEYS[0], world.getName());
+        }
+        view.put(KeyUtil.LOCKED_KEYS[0], mapView.isLocked());
+        view.put(KeyUtil.TRACKING_POSITION_KEYS[0], mapView.isTrackingPosition());
+        view.put(KeyUtil.UNLIMITED_TRACKING_KEYS[0], mapView.isUnlimitedTracking());
+        final var center = new HashMap<>();
+        view.put(KeyUtil.CENTER_KEYS[0], center);
+        center.put(KeyUtil.X_KEYS[0], mapView.getCenterX());
+        center.put(KeyUtil.Z_KEYS[0], mapView.getCenterZ());
+      }
+    }
+    return serialized;
   }
 
   /**
@@ -62,7 +180,10 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
    */
   @NotNull
   public MapItemBuilder setColor(@Nullable final Color color) {
-    return this.update(meta -> meta.setColor(color));
+    if (Builder.VERSION >= 11) {
+      this.getItemMeta().setColor(color);
+    }
+    return this.getSelf();
   }
 
   /**
@@ -74,7 +195,10 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
    */
   @NotNull
   public MapItemBuilder setLocationName(@Nullable final String name) {
-    return this.update(meta -> meta.setLocationName(name));
+    if (Builder.VERSION >= 11) {
+      this.getItemMeta().setLocationName(name);
+    }
+    return this.getSelf();
   }
 
   /**
@@ -87,7 +211,10 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   @NotNull
   @Deprecated
   public MapItemBuilder setMapId(final int id) {
-    return this.update(meta -> meta.setMapId(id));
+    if (Builder.VERSION >= 13) {
+      this.getItemMeta().setMapId(id);
+    }
+    return this.getSelf();
   }
 
   /**
@@ -99,7 +226,10 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
    */
   @NotNull
   public MapItemBuilder setMapView(@NotNull final MapView mapView) {
-    return this.update(meta -> meta.setMapView(mapView));
+    if (Builder.VERSION >= 14) {
+      this.getItemMeta().setMapView(mapView);
+    }
+    return this.getSelf();
   }
 
   /**
@@ -111,6 +241,80 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
    */
   @NotNull
   public MapItemBuilder setScaling(final boolean scaling) {
-    return this.update(meta -> meta.setScaling(scaling));
+    this.getItemMeta().setScaling(scaling);
+    return this.getSelf();
+  }
+
+  /**
+   * a class that represents deserializer of {@link MapMeta}.
+   */
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<MapItemBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<MapItemBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+      if (itemStack.isEmpty()) {
+        return Optional.empty();
+      }
+      final var builder = ItemStackBuilder.from(itemStack.get()).asMap();
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.MAP_KEYS)
+        .map(m -> (Map<String, Object>) m)
+        .ifPresent(mapSection -> {
+          final var scaling = KeyUtil.getOrDefault(mapSection, Boolean.class, KeyUtil.SCALING_KEYS)
+            .orElse(false);
+          builder.setScaling(scaling);
+          if (Builder.VERSION >= 11) {
+            KeyUtil.getOrDefault(mapSection, String.class, KeyUtil.LOCATION_KEYS)
+              .ifPresent(builder::setLocationName);
+            KeyUtil.getOrDefault(mapSection, String.class, KeyUtil.COLOR_KEYS)
+              .ifPresent(s -> builder.setColor(XItemStack.parseColor(s)));
+          }
+          if (Builder.VERSION >= 13) {
+            KeyUtil.getOrDefault(mapSection, Number.class, KeyUtil.MAP_ID_KEYS)
+              .map(Number::intValue)
+              .ifPresent(builder::setMapId);
+          }
+          if (Builder.VERSION >= 14) {
+            KeyUtil.getOrDefault(mapSection, Map.class, KeyUtil.VIEW_KEYS)
+              .map(m -> (Map<String, Object>) m)
+              .ifPresent(view -> KeyUtil.getOrDefault(view, String.class, KeyUtil.WORLD_KEYS)
+                .flatMap(worldName -> Optional.ofNullable(Bukkit.getWorld(worldName)))
+                .ifPresent(world -> {
+                  final var scaleOptional = KeyUtil.getOrDefault(view, String.class, KeyUtil.SCALE_KEYS);
+                  final var locked = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.LOCKED_KEYS)
+                    .orElse(false);
+                  final var trackingPosition = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.TRACKING_POSITION_KEYS)
+                    .orElse(false);
+                  final var unlimitedTracking = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.UNLIMITED_TRACKING_KEYS)
+                    .orElse(false);
+                  final var mapView = Bukkit.createMap(world);
+                  mapView.setWorld(world);
+                  MapView.Scale scale;
+                  try {
+                    scale = scaleOptional.map(MapView.Scale::valueOf).orElse(MapView.Scale.NORMAL);
+                  } catch (final Exception e) {
+                    scale = MapView.Scale.NORMAL;
+                  }
+                  mapView.setScale(scale);
+                  mapView.setLocked(locked);
+                  mapView.setTrackingPosition(trackingPosition);
+                  mapView.setUnlimitedTracking(unlimitedTracking);
+                  final var center = KeyUtil.getOrDefault(view, Map.class, KeyUtil.CENTER_KEYS)
+                    .map(m -> (Map<String, Object>) m)
+                    .orElse(new HashMap<>());
+                  final var x = KeyUtil.getOrDefault(center, Number.class, KeyUtil.X_KEYS)
+                    .orElse(0);
+                  final var z = KeyUtil.getOrDefault(center, Number.class, KeyUtil.Z_KEYS)
+                    .orElse(0);
+                  mapView.setCenterX(x.intValue());
+                  mapView.setCenterZ(z.intValue());
+                  builder.setMapView(mapView);
+                }));
+          }
+        });
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+    }
   }
 }

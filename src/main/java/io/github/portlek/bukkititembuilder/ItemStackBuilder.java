@@ -27,24 +27,46 @@ package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.CrossbowMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * a class that represents regular item stack builders.
+ * <p>
+ * serialization:
+ * <pre>
+ * material: string (item's type) (for 8 and newer versions)
+ *
+ * amount: integer (item's amount) (for 8 and newer versions)
+ *
+ * damage: integer (item's damage. known as durability) (for 8 and newer versions)
+ *
+ * data: integer (item's data) (for 12 and older versions)
+ *
+ * name: string (item's name) (for 8 and newer versions)
+ *
+ * lore: string list (item's name) (for 8 and newer versions)
+ *   - 'test lore'
+ *
+ * enchants: (enchantment section) (for 8 and newer versions)
+ *   DAMAGE_ALL: integer (enchantment's level)
+ *
+ * flags: (string list) (for 8 and newer versions)
+ *   - 'HIDE_ENCHANTS'
+ * </pre>
  */
 public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> {
+
+  /**
+   * the item stack deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -110,111 +132,46 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   }
 
   /**
-   * creates a new {@link BannerItemBuilder} instance.
+   * creates item stack builder from serialized map.
    *
-   * @return a newly created {@link BannerItemBuilder} instance.
+   * @param map the map to create.
+   *
+   * @return a newly created item stack builder instance.
    */
   @NotNull
-  public BannerItemBuilder banner() {
-    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack());
+  public static ItemStackBuilder from(@NotNull final Map<String, Object> map) {
+    return ItemStackBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
   }
 
   /**
-   * creates a new {@link BookItemBuilder} instance.
+   * obtains the deserializer.
    *
-   * @return a newly created {@link BookItemBuilder} instance.
+   * @return deserializer.
    */
   @NotNull
-  public BookItemBuilder book() {
-    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link CrossbowItemBuilder} instance.
-   *
-   * @return a newly created {@link CrossbowItemBuilder} instance.
-   *
-   * @throws IllegalStateException if server version less than 1.14
-   */
-  @NotNull
-  public CrossbowItemBuilder crossbow() {
-    if (Builder.VERSION < 14) {
-      throw new IllegalStateException("The method called #crosbow() can only use 1.14 and later!");
-    }
-    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link FireworkItemBuilder} instance.
-   *
-   * @return a newly created {@link FireworkItemBuilder} instance.
-   */
-  @NotNull
-  public FireworkItemBuilder firework() {
-    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link LeatherArmorItemBuilder} instance.
-   *
-   * @return a newly created {@link LeatherArmorItemBuilder} instance.
-   */
-  @NotNull
-  public LeatherArmorItemBuilder leatherArmor() {
-    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link MapItemBuilder} instance.
-   *
-   * @return a newly created {@link MapItemBuilder} instance.
-   */
-  @NotNull
-  public MapItemBuilder map() {
-    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack());
+  public static Deserializer getDeserializer() {
+    return ItemStackBuilder.DESERIALIZER;
   }
 
   @Override
   @NotNull
-  public ItemStackBuilder self() {
+  public ItemStackBuilder getSelf() {
     return this;
   }
 
   /**
-   * creates a new {@link SkullItemBuilder} instance.
-   *
-   * @return a newly created {@link SkullItemBuilder} instance.
+   * a class that represents deserializer of {@link ItemMeta}.
    */
-  @NotNull
-  public SkullItemBuilder skull() {
-    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack());
-  }
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
 
-  /**
-   * creates a new {@link SpawnEggItemBuilder} instance.
-   *
-   * @return a newly created {@link SpawnEggItemBuilder} instance.
-   */
-  @NotNull
-  public SpawnEggItemBuilder spawnEgg() {
-    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack());
-  }
-
-  /**
-   * validates the {@link #getItemStack()} if the given item meta class applicable.
-   *
-   * @param meta the meta to validate.
-   * @param <T> type of the item meta.
-   *
-   * @return validated item meta instance.
-   */
-  @NotNull
-  private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-    if (!meta.isAssignableFrom(this.getItemMeta().getClass())) {
-      throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
-        this.getItemStack(), meta.getSimpleName()));
+    @NotNull
+    @Override
+    public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
+      return Builder.getItemStackDeserializer().apply(map)
+        .map(itemStack ->
+          Builder.getItemMetaDeserializer(ItemStackBuilder.from(itemStack)).apply(map));
     }
-    //noinspection unchecked
-    return (T) this.getItemMeta();
   }
 }
