@@ -43,30 +43,30 @@ import org.jetbrains.annotations.Nullable;
  * a class that represents leather armor item builders.
  * serialization:
  * <pre>
- *   map: (main section)
- *     scaling: boolean (map is scaling or not) (for 8 and newer versions)
+ * map: (main section)
+ *   scaling: boolean (map is scaling or not) (for 8 and newer versions)
  *
- *     location: string (location name) (for 11 and newer versions)
+ *   location: string (location name) (for 11 and newer versions)
  *
- *     color: 'red, green, blue' (for 11 and newer versions)
+ *   color: 'red, green, blue' (for 11 and newer versions)
  *
- *     map-id: integer (map's id) (for 13 and newer versions)
+ *   map-id: integer (map's id) (for 13 and newer versions)
  *
- *     view: (view section)
- *       scale: string (map's scale) (for 14 and newer versions)
+ *   view: (view section)
+ *     scale: string (map's scale) (for 14 and newer versions)
  *
- *       world: string (map's world) (for 14 and newer versions)
+ *     world: string (map's world) (for 14 and newer versions)
  *
- *       locked: boolean (map is locked or not) (for 14 and newer versions)
+ *     locked: boolean (map is locked or not) (for 14 and newer versions)
  *
- *       tracking-position: boolean (is tracking position) (for 14 and newer versions)
+ *     tracking-position: boolean (is tracking position) (for 14 and newer versions)
  *
- *       unlimited-tracking: boolean (is unlimited tracking) (for 14 and newer versions)
+ *     unlimited-tracking: boolean (is unlimited tracking) (for 14 and newer versions)
  *
- *       center: (center section)
- *         x: integer (map center's x value) (for 14 and newer versions)
+ *     center: (center section)
+ *       x: integer (map center's x value) (for 14 and newer versions)
  *
- *         z: integer (map center's z value) (for 14 and newer versions)
+ *       z: integer (map center's z value) (for 14 and newer versions)
  * </pre>
  */
 public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {

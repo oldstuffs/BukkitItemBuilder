@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * serialization:
  * <pre>
- *  texture: string (texture can be username, textures.minecraft.net url or base64) (for 8 and newer versions)
+ * texture: string (texture can be username, textures.minecraft.net url or base64) (for 8 and newer versions)
  * </pre>
  */
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {

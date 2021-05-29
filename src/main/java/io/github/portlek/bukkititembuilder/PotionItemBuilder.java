@@ -52,16 +52,16 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * serialization:
  * <pre>
- *  color: integer (as rgb) (for 11 and newer versions)
+ * color: integer (as rgb) (for 11 and newer versions)
  *
- *  custom-effects: (string list) (for 9 and newer versions)
- *    - 'effect type name as string, effect duration as integer, effect amplifier as integer'
+ * custom-effects: (string list) (for 9 and newer versions)
+ *   - 'effect type name as string, effect duration as integer, effect amplifier as integer'
  *
- *  base-effect: 'potion type name as string, potion has extended as boolean, potion is upgraded as boolean' (for 9 and newer versions)
+ * base-effect: 'potion type name as string, potion has extended as boolean, potion is upgraded as boolean' (for 9 and newer versions)
  *
- *  level: integer (potion level) (for 8 and older versions)
+ * level: integer (potion level) (for 8 and older versions)
  *
- *  base-effect: 'potion type name as string, potion has extended as boolean, potion is splash as boolean' (for 8 and older versions)
+ * base-effect: 'potion type name as string, potion has extended as boolean, potion is splash as boolean' (for 8 and older versions)
  * </pre>
  */
 public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMeta> {

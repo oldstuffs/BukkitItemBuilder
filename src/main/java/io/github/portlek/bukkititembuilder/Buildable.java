@@ -55,9 +55,19 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   String[] BASE_EFFECT_KEYS = {"base-effect", "temel-efekt"};
 
   /**
+   * the base keys.
+   */
+  String[] BASE_KEYS = {"base"};
+
+  /**
    * the center keys.
    */
   String[] CENTER_KEYS = {"center", "merkez"};
+
+  /**
+   * the colors keys.
+   */
+  String[] COLORS_KEYS = {"colors"};
 
   /**
    * the color keys.
@@ -95,9 +105,24 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   String[] ENCHANTMENT_KEYS = {"enchants", "enchantments", "enchant", "enchantment", "büyü", "büyüler"};
 
   /**
+   * the fade keys.
+   */
+  String[] FADE_KEYS = {"fade"};
+
+  /**
+   * the firework keys.
+   */
+  String[] FIREWORK_KEYS = {"firework"};
+
+  /**
    * the flag keys.
    */
   String[] FLAG_KEYS = {"flags", "flag"};
+
+  /**
+   * the flicker keys.
+   */
+  String[] FLICKER_KEYS = {"flicker"};
 
   /**
    * the level keys.
@@ -135,6 +160,11 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
 
   /**
+   * the power keys.
+   */
+  String[] POWER_KEYS = {"power"};
+
+  /**
    * the scale keys.
    */
   String[] SCALE_KEYS = {"scale", "olcek"};
@@ -153,6 +183,16 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    * the tracking position keys.
    */
   String[] TRACKING_POSITION_KEYS = {"tracking-position"};
+
+  /**
+   * the trail keys.
+   */
+  String[] TRAIL_KEYS = {"trail"};
+
+  /**
+   * the type keys.
+   */
+  String[] TYPE_KEYS = {"type"};
 
   /**
    * the unlimited tracking keys.

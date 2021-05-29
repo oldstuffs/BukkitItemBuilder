@@ -60,28 +60,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * an abstract builder class to simplify creation of different item meta builders.
- * <p>
- * serialization:
- * <pre>
- *  material: string (item's type) (for 8 and newer versions)
- *
- *  amount: integer (item's amount) (for 8 and newer versions)
- *
- *  damage: integer (item's damage. known as durability) (for 8 and newer versions)
- *
- *  data: integer (item's data) (for 12 and older versions)
- *
- *  name: string (item's name) (for 8 and newer versions)
- *
- *  lore: string list (item's name) (for 8 and newer versions)
- *    - 'test lore'
- *
- *  enchants: (enchantment section) (for 8 and newer versions)
- *    DAMAGE_ALL: integer (enchantment's level)
- *
- *  flags: (string list) (for 8 and newer versions)
- *    - 'HIDE_ENCHANTS'
- * </pre>
  *
  * @param <X> type of the self class.
  * @param <T> type of the item meta class.

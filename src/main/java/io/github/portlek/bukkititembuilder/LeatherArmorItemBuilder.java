@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * serialization:
  * <pre>
- *   color: 'red, green, blue' (leather's color) (for 8 and newer versions)
+ * color: 'red, green, blue' (leather's color) (for 8 and newer versions)
  * </pre>
  */
 public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuilder, LeatherArmorMeta> {

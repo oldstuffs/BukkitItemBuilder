@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * serialization:
  * <pre>
- *  creature: string (entity type) (for 11 and newer versions)
+ * creature: string (entity type) (for 11 and newer versions)
  * </pre>
  */
 public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, SpawnEggMeta> {
