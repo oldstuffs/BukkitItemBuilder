@@ -287,6 +287,9 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     return (T) this.getItemMeta();
   }
 
+  /**
+   * a class that represents deserializer of {@link ItemMeta}.
+   */
   public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
 
