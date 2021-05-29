@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
@@ -74,9 +73,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   /**
    * the deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<MapItemBuilder>> deserializer =
-    new Deserializer();
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -112,6 +109,16 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   public static MapItemBuilder from(@NotNull final Map<String, Object> map) {
     return MapItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return MapItemBuilder.DESERIALIZER;
   }
 
   @NotNull
@@ -240,7 +247,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   /**
    * a class that represents deserializer of {@link MapMeta}.
    */
-  private static final class Deserializer implements
+  public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<MapItemBuilder>> {
 
     @NotNull

@@ -36,7 +36,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import lombok.Getter;
 import org.bukkit.FireworkEffect;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -70,9 +69,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   /**
    * the deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<FireworkItemBuilder>> deserializer =
-    new Deserializer();
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -108,6 +105,16 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   public static FireworkItemBuilder from(@NotNull final Map<String, Object> map) {
     return FireworkItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return FireworkItemBuilder.DESERIALIZER;
   }
 
   /**
@@ -227,7 +234,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   /**
    * a class that represents deserializer of {@link FireworkMeta}.
    */
-  private static final class Deserializer implements
+  public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<FireworkItemBuilder>> {
 
     @NotNull

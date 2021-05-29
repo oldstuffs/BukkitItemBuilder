@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -76,11 +75,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   /**
    * the item stack deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> deserializer = map ->
-    Builder.getDefaultItemStackDeserializer().apply(map)
-      .map(itemStack ->
-        Builder.getDefaultItemMetaDeserializer(ItemStackBuilder.from(itemStack)).apply(map));
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -156,6 +151,16 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   public static ItemStackBuilder from(@NotNull final Map<String, Object> map) {
     return ItemStackBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return ItemStackBuilder.DESERIALIZER;
   }
 
   @Override
@@ -280,5 +285,17 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     }
     //noinspection unchecked
     return (T) this.getItemMeta();
+  }
+
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
+      return Builder.getDefaultItemStackDeserializer().apply(map)
+        .map(itemStack ->
+          Builder.getDefaultItemMetaDeserializer(ItemStackBuilder.from(itemStack)).apply(map));
+    }
   }
 }

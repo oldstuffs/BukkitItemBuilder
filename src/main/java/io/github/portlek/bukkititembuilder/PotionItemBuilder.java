@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -69,9 +68,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   /**
    * the deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<PotionItemBuilder>> deserializer =
-    new Deserializer();
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -107,6 +104,16 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   public static PotionItemBuilder from(@NotNull final Map<String, Object> map) {
     return PotionItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return PotionItemBuilder.DESERIALIZER;
   }
 
   /**
@@ -329,7 +336,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   /**
    * a class that represents deserializer of {@link PotionMeta}.
    */
-  private static final class Deserializer implements
+  public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<PotionItemBuilder>> {
 
     @NotNull

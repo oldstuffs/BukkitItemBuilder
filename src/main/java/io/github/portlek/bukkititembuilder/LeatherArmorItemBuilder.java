@@ -29,7 +29,6 @@ import com.cryptomorin.xseries.XItemStack;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -49,9 +48,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   /**
    * the deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<LeatherArmorItemBuilder>> deserializer =
-    new Deserializer();
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -88,6 +85,16 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   public static LeatherArmorItemBuilder from(@NotNull final Map<String, Object> map) {
     return LeatherArmorItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return LeatherArmorItemBuilder.DESERIALIZER;
   }
 
   @NotNull
@@ -134,7 +141,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   /**
    * a class that represents deserializer of {@link LeatherArmorMeta}.
    */
-  private static final class Deserializer implements
+  public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<LeatherArmorItemBuilder>> {
 
     @NotNull

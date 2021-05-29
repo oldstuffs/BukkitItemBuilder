@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import lombok.Getter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
@@ -48,9 +47,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   /**
    * the deserializer.
    */
-  @Getter
-  private static final Function<@NotNull Map<String, Object>, @NotNull Optional<SpawnEggItemBuilder>> deserializer =
-    new Deserializer();
+  private static final Deserializer DESERIALIZER = new Deserializer();
 
   /**
    * ctor.
@@ -86,6 +83,16 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   public static SpawnEggItemBuilder from(@NotNull final Map<String, Object> map) {
     return SpawnEggItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return SpawnEggItemBuilder.DESERIALIZER;
   }
 
   @NotNull
@@ -138,7 +145,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   /**
    * a class that represents deserializer of {@link SpawnEggMeta}.
    */
-  private static final class Deserializer implements
+  public static final class Deserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<SpawnEggItemBuilder>> {
 
     @NotNull
