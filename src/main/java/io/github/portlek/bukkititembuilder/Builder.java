@@ -121,7 +121,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return a newly created item meta deserializer.
    */
   @NotNull
-  static <X extends Builder<?, ?>> DefaultItemMetaDeserializer<X> getDefaultItemMetaDeserializer(
+  static <X extends Builder<X, ?>> DefaultItemMetaDeserializer<X> getDefaultItemMetaDeserializer(
     @NotNull final X builder) {
     return new DefaultItemMetaDeserializer<>(builder);
   }
