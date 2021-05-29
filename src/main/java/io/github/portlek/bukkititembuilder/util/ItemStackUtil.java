@@ -199,7 +199,9 @@ public final class ItemStackUtil {
     final var enchantmentKey = ItemStackUtil.ENCHANTMENT_KEYS[0];
     final var flagKey = ItemStackUtil.FLAG_KEYS[0];
     map.put(materialKey, itemStack.getType().toString());
-    map.put(amountKey, itemStack.getAmount());
+    if (itemStack.getAmount() != 1) {
+      map.put(amountKey, itemStack.getAmount());
+    }
     if ((int) itemStack.getDurability() != 0) {
       map.put(damageKey, (int) itemStack.getDurability());
     }
