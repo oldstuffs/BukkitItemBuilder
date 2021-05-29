@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XItemStack;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -133,8 +134,8 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     final var serialized = super.serialize();
     final var map = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
-    serialized.put(Buildable.MAP_KEYS[0], map);
-    map.put(Buildable.SCALING_KEYS[0], itemMeta.isScaling());
+    serialized.put(KeyUtil.MAP_KEYS[0], map);
+    map.put(KeyUtil.SCALING_KEYS[0], itemMeta.isScaling());
     if (Builder.VERSION >= 11) {
       if (itemMeta.hasLocationName()) {
         map.put("location", itemMeta.getLocationName());
@@ -146,25 +147,25 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
       }
     }
     if (Builder.VERSION >= 13) {
-      map.put(Buildable.MAP_ID_KEYS[0], itemMeta.getMapId());
+      map.put(KeyUtil.MAP_ID_KEYS[0], itemMeta.getMapId());
     }
     if (Builder.VERSION >= 14) {
       final var mapView = itemMeta.getMapView();
       if (itemMeta.hasMapView() && mapView != null) {
         final var view = new HashMap<>();
-        map.put("view", view);
-        view.put("scale", mapView.getScale().toString());
+        map.put(KeyUtil.VIEW_KEYS[0], view);
+        view.put(KeyUtil.SCALE_KEYS[0], mapView.getScale().toString());
         final var world = mapView.getWorld();
         if (world != null) {
-          view.put("world", world.getName());
+          view.put(KeyUtil.WORLD_KEYS[0], world.getName());
         }
-        view.put("locked", mapView.isLocked());
-        view.put("tracking-position", mapView.isTrackingPosition());
-        view.put("unlimited-tracking", mapView.isUnlimitedTracking());
+        view.put(KeyUtil.LOCKED_KEYS[0], mapView.isLocked());
+        view.put(KeyUtil.TRACKING_POSITION_KEYS[0], mapView.isTrackingPosition());
+        view.put(KeyUtil.UNLIMITED_TRACKING_KEYS[0], mapView.isUnlimitedTracking());
         final var center = new HashMap<>();
-        view.put("center", center);
-        center.put("x", mapView.getCenterX());
-        center.put("z", mapView.getCenterZ());
+        view.put(KeyUtil.CENTER_KEYS[0], center);
+        center.put(KeyUtil.X_KEYS[0], mapView.getCenterX());
+        center.put(KeyUtil.Z_KEYS[0], mapView.getCenterZ());
       }
     }
     return serialized;
@@ -253,40 +254,40 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     @NotNull
     @Override
     public Optional<MapItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toMap();
-      Buildable.getOrDefault(map, Map.class, Buildable.MAP_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asMap();
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.MAP_KEYS)
         .map(m -> (Map<String, Object>) m)
         .ifPresent(mapSection -> {
-          final var scaling = Buildable.getOrDefault(mapSection, Boolean.class, Buildable.SCALING_KEYS)
+          final var scaling = KeyUtil.getOrDefault(mapSection, Boolean.class, KeyUtil.SCALING_KEYS)
             .orElse(false);
           builder.setScaling(scaling);
           if (Builder.VERSION >= 11) {
-            Buildable.getOrDefault(mapSection, String.class, Buildable.LOCATION_KEYS)
+            KeyUtil.getOrDefault(mapSection, String.class, KeyUtil.LOCATION_KEYS)
               .ifPresent(builder::setLocationName);
-            Buildable.getOrDefault(mapSection, String.class, Buildable.COLOR_KEYS)
+            KeyUtil.getOrDefault(mapSection, String.class, KeyUtil.COLOR_KEYS)
               .ifPresent(s -> builder.setColor(XItemStack.parseColor(s)));
           }
           if (Builder.VERSION >= 13) {
-            Buildable.getOrDefault(mapSection, Number.class, Buildable.MAP_ID_KEYS)
+            KeyUtil.getOrDefault(mapSection, Number.class, KeyUtil.MAP_ID_KEYS)
               .map(Number::intValue)
               .ifPresent(builder::setMapId);
           }
           if (Builder.VERSION >= 14) {
-            Buildable.getOrDefault(mapSection, Map.class, Buildable.VIEW_KEYS)
+            KeyUtil.getOrDefault(mapSection, Map.class, KeyUtil.VIEW_KEYS)
               .map(m -> (Map<String, Object>) m)
-              .ifPresent(view -> Buildable.getOrDefault(view, String.class, Buildable.WORLD_KEYS)
+              .ifPresent(view -> KeyUtil.getOrDefault(view, String.class, KeyUtil.WORLD_KEYS)
                 .flatMap(worldName -> Optional.ofNullable(Bukkit.getWorld(worldName)))
                 .ifPresent(world -> {
-                  final var scaleOptional = Buildable.getOrDefault(view, String.class, Buildable.SCALE_KEYS);
-                  final var locked = Buildable.getOrDefault(view, Boolean.class, Buildable.LOCKED_KEYS)
+                  final var scaleOptional = KeyUtil.getOrDefault(view, String.class, KeyUtil.SCALE_KEYS);
+                  final var locked = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.LOCKED_KEYS)
                     .orElse(false);
-                  final var trackingPosition = Buildable.getOrDefault(view, Boolean.class, Buildable.TRACKING_POSITION_KEYS)
+                  final var trackingPosition = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.TRACKING_POSITION_KEYS)
                     .orElse(false);
-                  final var unlimitedTracking = Buildable.getOrDefault(view, Boolean.class, Buildable.UNLIMITED_TRACKING_KEYS)
+                  final var unlimitedTracking = KeyUtil.getOrDefault(view, Boolean.class, KeyUtil.UNLIMITED_TRACKING_KEYS)
                     .orElse(false);
                   final var mapView = Bukkit.createMap(world);
                   mapView.setWorld(world);
@@ -300,12 +301,12 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
                   mapView.setLocked(locked);
                   mapView.setTrackingPosition(trackingPosition);
                   mapView.setUnlimitedTracking(unlimitedTracking);
-                  final var center = Buildable.getOrDefault(view, Map.class, Buildable.CENTER_KEYS)
+                  final var center = KeyUtil.getOrDefault(view, Map.class, KeyUtil.CENTER_KEYS)
                     .map(m -> (Map<String, Object>) m)
                     .orElse(new HashMap<>());
-                  final var x = Buildable.getOrDefault(center, Number.class, Buildable.X_KEYS)
+                  final var x = KeyUtil.getOrDefault(center, Number.class, KeyUtil.X_KEYS)
                     .orElse(0);
-                  final var z = Buildable.getOrDefault(center, Number.class, Buildable.Z_KEYS)
+                  final var z = KeyUtil.getOrDefault(center, Number.class, KeyUtil.Z_KEYS)
                     .orElse(0);
                   mapView.setCenterX(x.intValue());
                   mapView.setCenterZ(z.intValue());
@@ -313,7 +314,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
                 }));
           }
         });
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

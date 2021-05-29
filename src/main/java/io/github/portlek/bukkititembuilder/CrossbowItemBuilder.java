@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
   public Map<String, Object> serialize() {
     final var map = super.serialize();
     final var projectiles = new HashMap<String, Object>();
-    map.put(Buildable.PROJECTILES_KEY[0], projectiles);
+    map.put(KeyUtil.PROJECTILES_KEY[0], projectiles);
     final var chargedProjectiles = this.getItemMeta().getChargedProjectiles();
     IntStream.range(0, chargedProjectiles.size()).forEach(index -> {
       final var projectile = chargedProjectiles.get(index);
@@ -173,19 +174,22 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
     @NotNull
     @Override
     public Optional<CrossbowItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toCrossbow();
-      builder.setChargedProjectiles(Buildable.getOrDefault(map, Map.class, Buildable.PROJECTILES_KEY)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asCrossbow();
+      final var collect = KeyUtil.getOrDefault(map, Map.class, KeyUtil.PROJECTILES_KEY)
         .map(m -> (Map<String, Map<String, Object>>) m)
         .orElse(new HashMap<>())
         .values()
         .stream()
         .map(ItemStackUtil::deserialize)
-        .collect(Collectors.toList()));
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+      builder.setChargedProjectiles(collect);
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

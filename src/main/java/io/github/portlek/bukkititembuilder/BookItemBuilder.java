@@ -25,6 +25,7 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,16 +132,16 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
     final var map = super.serialize();
     final var book = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
-    map.put(Buildable.BOOKS_KEYS[0], book);
-    book.put(Buildable.TITLE_KEYS[0], itemMeta.getTitle());
-    book.put(Buildable.AUTHOR_KEYS[0], itemMeta.getAuthor());
+    map.put(KeyUtil.BOOKS_KEYS[0], book);
+    book.put(KeyUtil.TITLE_KEYS[0], itemMeta.getTitle());
+    book.put(KeyUtil.AUTHOR_KEYS[0], itemMeta.getAuthor());
     if (Builder.VERSION >= 10) {
       final var generation = itemMeta.getGeneration();
       if (generation != null) {
-        book.put(Buildable.GENERATION_KEYS[0], generation.toString());
+        book.put(KeyUtil.GENERATION_KEYS[0], generation.toString());
       }
     }
-    book.put(Buildable.PAGES_KEYS[0], itemMeta.getPages());
+    book.put(KeyUtil.PAGES_KEYS[0], itemMeta.getPages());
     return map;
   }
 
@@ -233,26 +234,26 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
     @NotNull
     @Override
     public Optional<BookItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toBook();
-      Buildable.getOrDefault(map, Map.class, Buildable.BOOKS_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asBook();
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.BOOKS_KEYS)
         .map(m -> (Map<String, Object>) m)
         .ifPresent(book -> {
-          final var title = Buildable.getOrDefault(book, String.class, Buildable.TITLE_KEYS)
+          final var title = KeyUtil.getOrDefault(book, String.class, KeyUtil.TITLE_KEYS)
             .orElse(null);
-          final var author = Buildable.getOrDefault(book, String.class, Buildable.AUTHOR_KEYS)
+          final var author = KeyUtil.getOrDefault(book, String.class, KeyUtil.AUTHOR_KEYS)
             .orElse(null);
-          final var pages = Buildable.getOrDefault(book, List.class, Buildable.PAGES_KEYS)
+          final var pages = KeyUtil.getOrDefault(book, List.class, KeyUtil.PAGES_KEYS)
             .map(collection -> (List<String>) collection)
             .orElse(Collections.emptyList());
           builder.setTitle(title);
           builder.setAuthor(author);
           builder.setPages(pages);
           if (Builder.VERSION >= 10) {
-            Buildable.getOrDefault(book, String.class, Buildable.GENERATION_KEYS).ifPresent(generationString -> {
+            KeyUtil.getOrDefault(book, String.class, KeyUtil.GENERATION_KEYS).ifPresent(generationString -> {
               BookMeta.Generation generation;
               try {
                 generation = BookMeta.Generation.valueOf(generationString);
@@ -263,7 +264,7 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
             });
           }
         });
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

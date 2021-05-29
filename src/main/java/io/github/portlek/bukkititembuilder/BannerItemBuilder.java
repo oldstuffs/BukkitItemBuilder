@@ -25,6 +25,7 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   public Map<String, Object> serialize() {
     final var map = super.serialize();
     final var patterns = new HashMap<String, Object>();
-    map.put(Buildable.PATTERNS_KEYS[0], patterns);
+    map.put(KeyUtil.PATTERNS_KEYS[0], patterns);
     this.getItemMeta().getPatterns()
       .forEach(pattern -> patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
     return map;
@@ -200,12 +201,12 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
     @NotNull
     @Override
     public Optional<BannerItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toBanner();
-      Buildable.getOrDefault(map, Map.class, Buildable.PATTERNS_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asBanner();
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.PATTERNS_KEYS)
         .map(m -> (Map<String, Object>) m)
         .ifPresent(patterns -> patterns.forEach((key, value) -> {
           var type = PatternType.getByIdentifier(key);
@@ -224,7 +225,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
           }
           builder.addPatterns(new Pattern(color, type));
         }));
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

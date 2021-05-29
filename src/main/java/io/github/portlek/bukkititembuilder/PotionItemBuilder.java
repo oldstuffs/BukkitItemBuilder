@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XPotion;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -175,8 +176,8 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     final var itemStack = this.getItemStack(false);
     final var itemMeta = this.getItemMeta();
     if (Builder.VERSION >= 9) {
-      final var customEffectKey = Buildable.CUSTOM_EFFECTS_KEYS[0];
-      final var baseEffectKey = Buildable.BASE_EFFECT_KEYS[0];
+      final var customEffectKey = KeyUtil.CUSTOM_EFFECTS_KEYS[0];
+      final var baseEffectKey = KeyUtil.BASE_EFFECT_KEYS[0];
       final var customEffects = itemMeta.getCustomEffects();
       final var effects = customEffects.stream()
         .map(effect ->
@@ -187,15 +188,15 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
       map.put(baseEffectKey, String.format("%s, %s, %s",
         potionData.getType().name(), potionData.isExtended(), potionData.isUpgraded()));
       if (Builder.VERSION >= 11) {
-        final var colorKey = Buildable.COLOR_KEYS[0];
+        final var colorKey = KeyUtil.COLOR_KEYS[0];
         final var color = itemMeta.getColor();
         if (itemMeta.hasColor() && color != null) {
           map.put(colorKey, color.asRGB());
         }
       }
     } else if (itemStack.getDurability() != 0) {
-      final var baseEffectKey = Buildable.BASE_EFFECT_KEYS[0];
-      final var levelKey = Buildable.LEVEL_KEYS[0];
+      final var baseEffectKey = KeyUtil.BASE_EFFECT_KEYS[0];
+      final var levelKey = KeyUtil.LEVEL_KEYS[0];
       final var potion = Potion.fromItemStack(itemStack);
       map.put(levelKey, potion.getLevel());
       map.put(baseEffectKey, String.format("%s, %s, %s",
@@ -342,22 +343,22 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     @NotNull
     @Override
     public Optional<PotionItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toPotion();
-      final var level = Buildable.getOrDefault(map, Integer.class, Buildable.LEVEL_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asPotion();
+      final var level = KeyUtil.getOrDefault(map, Integer.class, KeyUtil.LEVEL_KEYS)
         .orElse(1);
-      final var baseEffect = Buildable.getOrDefault(map, String.class, Buildable.BASE_EFFECT_KEYS);
-      final var color = Buildable.getOrDefault(map, Integer.class, Buildable.COLOR_KEYS);
-      final var customEffects = Buildable.getOrDefault(map, Collection.class, Buildable.CUSTOM_EFFECTS_KEYS)
+      final var baseEffect = KeyUtil.getOrDefault(map, String.class, KeyUtil.BASE_EFFECT_KEYS);
+      final var color = KeyUtil.getOrDefault(map, Integer.class, KeyUtil.COLOR_KEYS);
+      final var customEffects = KeyUtil.getOrDefault(map, Collection.class, KeyUtil.CUSTOM_EFFECTS_KEYS)
         .map(collection -> (Collection<String>) collection)
         .orElse(Collections.emptyList());
       color.ifPresent(builder::setColor);
       builder.addCustomEffects(customEffects, true);
       baseEffect.ifPresent(s -> builder.setBasePotionData(s, level));
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

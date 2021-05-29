@@ -25,15 +25,22 @@
 
 package io.github.portlek.bukkititembuilder;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,256 +52,101 @@ import org.jetbrains.annotations.NotNull;
 public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
 
   /**
-   * the patterns keys.
-   */
-  String[] PATTERNS_KEYS = {"patterns"};
-  /**
-   * the amount keys.
-   */
-  String[] AMOUNT_KEYS = {"amount", "quantity", "miktar"};
-
-  /**
-   * the author keys.
-   */
-  String[] AUTHOR_KEYS = {"author"};
-
-  /**
-   * the base effect keys.
-   */
-  String[] BASE_EFFECT_KEYS = {"base-effect", "temel-efekt"};
-
-  /**
-   * the base keys.
-   */
-  String[] BASE_KEYS = {"base"};
-
-  /**
-   * the book keys.
-   */
-  String[] BOOKS_KEYS = {"book"};
-
-  /**
-   * the center keys.
-   */
-  String[] CENTER_KEYS = {"center", "merkez"};
-
-  /**
-   * the colors keys.
-   */
-  String[] COLORS_KEYS = {"colors"};
-
-  /**
-   * the color keys.
-   */
-  String[] COLOR_KEYS = {"color", "renk"};
-
-  /**
-   * the creature keys.
-   */
-  String[] CREATURE_KEYS = {"creature", "yaratik"};
-
-  /**
-   * the custom effects keys.
-   */
-  String[] CUSTOM_EFFECTS_KEYS = {"custom-effects", "ozel-efektler"};
-
-  /**
-   * the damage key.
-   */
-  String[] DAMAGE_KEYS = {"damage", "durability"};
-
-  /**
-   * the data keys.
-   */
-  String[] DATA_KEYS = {"data"};
-
-  /**
-   * the display name keys.
-   */
-  String[] DISPLAY_NAME_KEYS = {"name", "display", "display-name", "isim", "ad"};
-
-  /**
-   * the enchantment keys.
-   */
-  String[] ENCHANTMENT_KEYS = {"enchants", "enchantments", "enchant", "enchantment", "büyü", "büyüler"};
-
-  /**
-   * the fade keys.
-   */
-  String[] FADE_KEYS = {"fade"};
-
-  /**
-   * the firework keys.
-   */
-  String[] FIREWORK_KEYS = {"firework"};
-
-  /**
-   * the flag keys.
-   */
-  String[] FLAG_KEYS = {"flags", "flag"};
-
-  /**
-   * the flicker keys.
-   */
-  String[] FLICKER_KEYS = {"flicker"};
-
-  /**
-   * the generation keys.
-   */
-  String[] GENERATION_KEYS = {"generation"};
-
-  /**
-   * the level keys.
-   */
-  String[] LEVEL_KEYS = {"level", "seviye"};
-
-  /**
-   * the location keys.
-   */
-  String[] LOCATION_KEYS = {"location", "lokasyon"};
-
-  /**
-   * the locked keys.
-   */
-  String[] LOCKED_KEYS = {"locked", "kitli"};
-
-  /**
-   * the lore keys.
-   */
-  String[] LORE_KEYS = {"lore", "açıklama", "aciklama"};
-
-  /**
-   * the map id keys.
-   */
-  String[] MAP_ID_KEYS = {"map-id"};
-
-  /**
-   * the map keys.
-   */
-  String[] MAP_KEYS = {"map"};
-
-  /**
-   * the material keys.
-   */
-  String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
-
-  /**
-   * the pages keys.
-   */
-  String[] PAGES_KEYS = {"pages"};
-
-  /**
-   * the power keys.
-   */
-  String[] POWER_KEYS = {"power"};
-
-  /**
-   * the projectiles key.
-   */
-  String[] PROJECTILES_KEY = {"projectiles"};
-
-  /**
-   * the scale keys.
-   */
-  String[] SCALE_KEYS = {"scale", "olcek"};
-
-  /**
-   * the scaling keys.
-   */
-  String[] SCALING_KEYS = {"scaling", "olcekleme"};
-
-  /**
-   * the skull texture keys.
-   */
-  String[] SKULL_TEXTURE_KEYS = {"skull", "skull-texture", "texture", "skin"};
-
-  /**
-   * the title keys.
-   */
-  String[] TITLE_KEYS = {"title"};
-
-  /**
-   * the tracking position keys.
-   */
-  String[] TRACKING_POSITION_KEYS = {"tracking-position"};
-
-  /**
-   * the trail keys.
-   */
-  String[] TRAIL_KEYS = {"trail"};
-
-  /**
-   * the type keys.
-   */
-  String[] TYPE_KEYS = {"type"};
-
-  /**
-   * the unlimited tracking keys.
-   */
-  String[] UNLIMITED_TRACKING_KEYS = {"unlimited-tracking"};
-
-  /**
-   * the view keys.
-   */
-  String[] VIEW_KEYS = {"view"};
-
-  /**
-   * the world keys.
-   */
-  String[] WORLD_KEYS = {"world"};
-
-  /**
-   * the x keys.
-   */
-  String[] X_KEYS = {"x"};
-
-  /**
-   * the z keys.
-   */
-  String[] Z_KEYS = {"z"};
-
-  /**
-   * gets value at the given keys from the map.
+   * creates a new {@link BannerItemBuilder} instance.
    *
-   * @param map the map to get.
-   * @param tClass the t class to get.
-   * @param keys the keys to get.
-   * @param <T> type of the getting value.
-   *
-   * @return value.
+   * @return a newly created {@link BannerItemBuilder} instance.
    */
   @NotNull
-  static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                      @NotNull final String... keys) {
-    return Buildable.getOrDefault(map, tClass, new ArrayDeque<>(List.of(keys)));
+  default BannerItemBuilder asBanner() {
+    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack());
   }
 
   /**
-   * gets value at the given keys from the map.
+   * creates a new {@link BookItemBuilder} instance.
    *
-   * @param map the map to get.
-   * @param tClass the t class to get.
-   * @param keys the keys to get.
-   * @param <T> type of the getting value.
-   *
-   * @return value.
+   * @return a newly created {@link BookItemBuilder} instance.
    */
   @NotNull
-  static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                      @NotNull final Deque<String> keys) {
-    final var key = keys.poll();
-    if (key == null) {
-      return Optional.empty();
+  default BookItemBuilder asBook() {
+    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link CrossbowItemBuilder} instance.
+   *
+   * @return a newly created {@link CrossbowItemBuilder} instance.
+   *
+   * @throws IllegalStateException if server version less than 1.14
+   */
+  @NotNull
+  default CrossbowItemBuilder asCrossbow() {
+    if (Builder.VERSION < 14) {
+      throw new IllegalStateException("This method is for only 14 and newer versions!");
     }
-    if (!map.containsKey(key)) {
-      return Buildable.getOrDefault(map, tClass, keys);
+    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link FireworkItemBuilder} instance.
+   *
+   * @return a newly created {@link FireworkItemBuilder} instance.
+   */
+  @NotNull
+  default FireworkItemBuilder asFirework() {
+    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link LeatherArmorItemBuilder} instance.
+   *
+   * @return a newly created {@link LeatherArmorItemBuilder} instance.
+   */
+  @NotNull
+  default LeatherArmorItemBuilder asLeatherArmor() {
+    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link MapItemBuilder} instance.
+   *
+   * @return a newly created {@link MapItemBuilder} instance.
+   */
+  @NotNull
+  default MapItemBuilder asMap() {
+    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link PotionItemBuilder} instance.
+   *
+   * @return a newly created {@link PotionItemBuilder} instance.
+   */
+  @NotNull
+  default PotionItemBuilder asPotion() {
+    return new PotionItemBuilder(this.validateMeta(PotionMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link SkullItemBuilder} instance.
+   *
+   * @return a newly created {@link SkullItemBuilder} instance.
+   */
+  @NotNull
+  default SkullItemBuilder asSkull() {
+    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack());
+  }
+
+  /**
+   * creates a new {@link SpawnEggItemBuilder} instance.
+   *
+   * @return a newly created {@link SpawnEggItemBuilder} instance.
+   */
+  @NotNull
+  default SpawnEggItemBuilder asSpawnEgg() {
+    if (Builder.VERSION < 11) {
+      throw new IllegalStateException("This method is for only 11 and newer versions!");
     }
-    final var object = map.get(key);
-    if (tClass.isAssignableFrom(object.getClass())) {
-      // noinspection unchecked
-      return Optional.of((T) object);
-    }
-    return Buildable.getOrDefault(map, tClass, keys);
+    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack());
   }
 
   /**
@@ -349,6 +201,99 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   X getSelf();
 
   /**
+   * checks if the {@link BannerMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link BannerMeta} class is assignable from the item meta's class.
+   */
+  default boolean isBanner() {
+    return this.isMeta(BannerMeta.class);
+  }
+
+  /**
+   * checks if the {@link BookMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link BookMeta} class is assignable from the item meta's class.
+   */
+  default boolean isBook() {
+    return this.isMeta(BookMeta.class);
+  }
+
+  /**
+   * checks if the {@link CrossbowMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link CrossbowMeta} class is assignable from the item meta's class.
+   */
+  default boolean isCrossbow() {
+    return Builder.VERSION >= 14 && this.isMeta(CrossbowMeta.class);
+  }
+
+  /**
+   * checks if the {@link FireworkMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link FireworkMeta} class is assignable from the item meta's class.
+   */
+  default boolean isFirework() {
+    return this.isMeta(FireworkMeta.class);
+  }
+
+  /**
+   * checks if the {@link LeatherArmorMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link LeatherArmorMeta} class is assignable from the item meta's class.
+   */
+  default boolean isLeatherArmor() {
+    return this.isMeta(LeatherArmorMeta.class);
+  }
+
+  /**
+   * checks if the {@link MapMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link MapMeta} class is assignable from the item meta's class.
+   */
+  default boolean isMap() {
+    return this.isMeta(MapMeta.class);
+  }
+
+  /**
+   * checks if the given meta class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @param meta the meta to check.
+   * @param <I> type of the item meta.
+   *
+   * @return {@code true} if the given meta is assignable from the item meta's class.
+   */
+  default <I extends ItemMeta> boolean isMeta(@NotNull final Class<I> meta) {
+    return meta.isAssignableFrom(this.getItemMeta().getClass());
+  }
+
+  /**
+   * checks if the {@link PotionMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link PotionMeta} class is assignable from the item meta's class.
+   */
+  default boolean isPotion() {
+    return this.isMeta(PotionMeta.class);
+  }
+
+  /**
+   * checks if the {@link SkullMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link SkullMeta} class is assignable from the item meta's class.
+   */
+  default boolean isSkull() {
+    return this.isMeta(SkullMeta.class);
+  }
+
+  /**
+   * checks if the {@link SpawnEggMeta} class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @return {@code true} if the {@link SpawnEggMeta} class is assignable from the item meta's class.
+   */
+  default boolean isSpawnEgg() {
+    return Builder.VERSION >= 11 && this.isMeta(SpawnEggMeta.class);
+  }
+
+  /**
    * serializes the {@link #getItemStack()} into a map.
    *
    * @return serialized map.
@@ -356,14 +301,14 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   @NotNull
   default Map<String, Object> serialize() {
     final var map = new HashMap<String, Object>();
-    final var materialKey = Buildable.MATERIAL_KEYS[0];
-    final var amountKey = Buildable.AMOUNT_KEYS[0];
-    final var damageKey = Buildable.DAMAGE_KEYS[0];
-    final var dataKey = Buildable.DATA_KEYS[0];
-    final var displayNameKey = Buildable.DISPLAY_NAME_KEYS[0];
-    final var loreKey = Buildable.LORE_KEYS[0];
-    final var enchantmentKey = Buildable.ENCHANTMENT_KEYS[0];
-    final var flagKey = Buildable.FLAG_KEYS[0];
+    final var materialKey = KeyUtil.MATERIAL_KEYS[0];
+    final var amountKey = KeyUtil.AMOUNT_KEYS[0];
+    final var damageKey = KeyUtil.DAMAGE_KEYS[0];
+    final var dataKey = KeyUtil.DATA_KEYS[0];
+    final var displayNameKey = KeyUtil.DISPLAY_NAME_KEYS[0];
+    final var loreKey = KeyUtil.LORE_KEYS[0];
+    final var enchantmentKey = KeyUtil.ENCHANTMENT_KEYS[0];
+    final var flagKey = KeyUtil.FLAG_KEYS[0];
     final var itemStack = this.getItemStack();
     map.put(materialKey, itemStack.getType().toString());
     if (itemStack.getAmount() != 1) {
@@ -402,5 +347,25 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
       map.put(enchantmentKey, enchantments);
     }
     return map;
+  }
+
+  /**
+   * validates the {@link #getItemStack()} if the given item meta class applicable.
+   *
+   * @param meta the meta to validate.
+   * @param <I> type of the item meta.
+   *
+   * @return validated item meta instance.
+   *
+   * @throws IllegalArgumentException if the given meta is no assignable from the {@link #getItemMeta()} class.
+   */
+  @NotNull
+  default <I extends ItemMeta> I validateMeta(@NotNull final Class<I> meta) {
+    if (!this.isMeta(meta)) {
+      throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
+        this.getItemStack(), meta.getSimpleName()));
+    }
+    //noinspection unchecked
+    return (I) this.getItemMeta();
   }
 }

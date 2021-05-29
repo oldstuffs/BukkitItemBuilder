@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XItemStack;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -108,7 +109,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   public Map<String, Object> serialize() {
     final var map = super.serialize();
     final var color = this.getItemMeta().getColor();
-    map.put(Buildable.COLOR_KEYS[0], String.format("%d, %d, %d",
+    map.put(KeyUtil.COLOR_KEYS[0], String.format("%d, %d, %d",
       color.getRed(), color.getGreen(), color.getBlue()));
     return map;
   }
@@ -147,14 +148,14 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
     @NotNull
     @Override
     public Optional<LeatherArmorItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toLeatherArmor();
-      Buildable.getOrDefault(map, String.class, Buildable.SKULL_TEXTURE_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asLeatherArmor();
+      KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS)
         .ifPresent(builder::setColor);
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

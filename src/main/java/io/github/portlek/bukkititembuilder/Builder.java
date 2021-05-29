@@ -32,6 +32,7 @@ import com.google.common.collect.Multimap;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import io.github.portlek.bukkitversion.BukkitVersion;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,10 +74,14 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   public static final int VERSION = new BukkitVersion().getMinor();
 
   /**
-   * the default item stack deserializer.
+   * the item stack deserializer.
    */
-  private static final DefaultItemStackDeserializer DEFAULT_ITEM_STACK_DESERIALIZER =
-    new DefaultItemStackDeserializer();
+  private static final ItemStackDeserializer ITEM_STACK_DESERIALIZER = new ItemStackDeserializer();
+
+  /**
+   * the simple item stack deserializer.
+   */
+  private static final SimpleItemStackDeserializer SIMPLE_ITEM_STACK_DESERIALIZER = new SimpleItemStackDeserializer();
 
   /**
    * the meta.
@@ -92,16 +97,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   private ItemStack itemStack;
 
   /**
-   * obtains the default item stack deserializer.
-   *
-   * @return default item stack deserializer.
-   */
-  @NotNull
-  public static DefaultItemStackDeserializer getDefaultItemStackDeserializer() {
-    return Builder.DEFAULT_ITEM_STACK_DESERIALIZER;
-  }
-
-  /**
    * creates a new item meta deserializer.
    *
    * @param builder the builder to create.
@@ -110,9 +105,29 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return a newly created item meta deserializer.
    */
   @NotNull
-  static <X extends Builder<X, ?>> DefaultItemMetaDeserializer<X> getDefaultItemMetaDeserializer(
+  public static <X extends Builder<X, ?>> Builder.ItemMetaDeserializer<X> getItemMetaDeserializer(
     @NotNull final X builder) {
-    return new DefaultItemMetaDeserializer<>(builder);
+    return new ItemMetaDeserializer<>(builder);
+  }
+
+  /**
+   * obtains the item stack deserializer.
+   *
+   * @return item stack deserializer.
+   */
+  @NotNull
+  public static Builder.ItemStackDeserializer getItemStackDeserializer() {
+    return Builder.ITEM_STACK_DESERIALIZER;
+  }
+
+  /**
+   * obtains the simple item stack deserializer.
+   *
+   * @return simple item stack deserializer.
+   */
+  @NotNull
+  public static Builder.SimpleItemStackDeserializer getSimpleItemStackDeserializer() {
+    return Builder.SIMPLE_ITEM_STACK_DESERIALIZER;
   }
 
   /**
@@ -701,7 +716,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @param <B> type of the builder class.
    */
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-  public static final class DefaultItemMetaDeserializer<B extends Builder<?, ?>> implements
+  public static final class ItemMetaDeserializer<B extends Builder<?, ?>> implements
     Function<@NotNull Map<String, Object>, @NotNull B> {
 
     /**
@@ -719,20 +734,20 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
         return this.builder;
       }
       if (itemMeta instanceof SkullMeta) {
-        Buildable.getOrDefault(map, String.class, Buildable.SKULL_TEXTURE_KEYS).ifPresent(s ->
+        KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS).ifPresent(s ->
           SkullUtils.applySkin(itemMeta, s));
       }
-      Buildable.getOrDefault(map, String.class, Buildable.DISPLAY_NAME_KEYS)
+      KeyUtil.getOrDefault(map, String.class, KeyUtil.DISPLAY_NAME_KEYS)
         .map(ColorUtil::colored)
         .ifPresent(this.builder::setName);
-      Buildable.getOrDefault(map, Collection.class, Buildable.LORE_KEYS)
+      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.LORE_KEYS)
         .map(list -> (Collection<String>) list)
         .map(ColorUtil::colored)
         .ifPresent(this.builder::setLore);
-      Buildable.getOrDefault(map, Map.class, Buildable.ENCHANTMENT_KEYS)
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.ENCHANTMENT_KEYS)
         .map(enchantments -> (Map<String, Integer>) enchantments)
         .ifPresent(this.builder::addSerializedEnchantments);
-      Buildable.getOrDefault(map, Collection.class, Buildable.FLAG_KEYS)
+      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.FLAG_KEYS)
         .map(flags -> (Collection<String>) flags)
         .ifPresent(this.builder::addFlags);
       itemStack.setItemMeta(itemMeta);
@@ -741,39 +756,57 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   }
 
   /**
-   * a class that represents default deserializers of {@link ItemStack}.
+   * a class that represents deserializers of {@link ItemStack}.
    */
-  public static final class DefaultItemStackDeserializer implements
+  public static final class ItemStackDeserializer implements
     Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStack>> {
 
     @NotNull
     @Override
     public Optional<ItemStack> apply(@NotNull final Map<String, Object> map) {
-      final var materialOptional = Buildable.getOrDefault(map, String.class, Buildable.MATERIAL_KEYS)
+      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
         .flatMap(ItemStackUtil::parseMaterial);
       if (materialOptional.isEmpty()) {
         return Optional.empty();
       }
       final var material = materialOptional.get();
-      final int amount = Buildable.getOrDefault(map, Number.class, Buildable.AMOUNT_KEYS)
+      final int amount = KeyUtil.getOrDefault(map, Number.class, KeyUtil.AMOUNT_KEYS)
         .map(Number::intValue)
         .orElse(1);
       final ItemStack itemStack;
       if (Builder.VERSION < 13) {
         itemStack = new ItemStack(material, amount);
-        Buildable.getOrDefault(map, Number.class, Buildable.DAMAGE_KEYS)
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS)
           .map(Number::shortValue)
           .ifPresent(itemStack::setDurability);
-        Buildable.getOrDefault(map, Number.class, Buildable.DATA_KEYS)
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DATA_KEYS)
           .map(Number::byteValue)
           .map(material::getNewData)
           .ifPresent(itemStack::setData);
       } else {
         itemStack = new ItemStack(material, amount);
-        Buildable.getOrDefault(map, Number.class, Buildable.DAMAGE_KEYS).ifPresent(integer ->
+        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS).ifPresent(integer ->
           itemStack.setDurability(integer.shortValue()));
       }
       return Optional.of(itemStack);
+    }
+  }
+
+  /**
+   * a class that represents simple deserializers of {@link ItemStack}.
+   */
+  public static final class SimpleItemStackDeserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
+        .flatMap(ItemStackUtil::parseMaterial);
+      if (materialOptional.isEmpty()) {
+        return Optional.empty();
+      }
+      return Optional.of(ItemStackBuilder.from(materialOptional.get()));
     }
   }
 }

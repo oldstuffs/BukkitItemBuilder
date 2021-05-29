@@ -33,16 +33,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.CrossbowMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -170,136 +161,6 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   }
 
   /**
-   * checks if the given meta class is assignable from {@link #getItemMeta()}'s class.
-   *
-   * @param meta the meta to check.
-   * @param <T> type of the item meta.
-   *
-   * @return {@code true} if the given meta is assignable from the item meta's class.
-   */
-  public <T extends ItemMeta> boolean isMeta(@NotNull final Class<T> meta) {
-    return meta.isAssignableFrom(this.getItemMeta().getClass());
-  }
-
-  /**
-   * creates a new {@link BannerItemBuilder} instance.
-   *
-   * @return a newly created {@link BannerItemBuilder} instance.
-   */
-  @NotNull
-  public BannerItemBuilder toBanner() {
-    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link BookItemBuilder} instance.
-   *
-   * @return a newly created {@link BookItemBuilder} instance.
-   */
-  @NotNull
-  public BookItemBuilder toBook() {
-    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link CrossbowItemBuilder} instance.
-   *
-   * @return a newly created {@link CrossbowItemBuilder} instance.
-   *
-   * @throws IllegalStateException if server version less than 1.14
-   */
-  @NotNull
-  public CrossbowItemBuilder toCrossbow() {
-    if (Builder.VERSION < 14) {
-      throw new IllegalStateException("The method called #toCrosbow() can only use 1.14 and later!");
-    }
-    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link FireworkItemBuilder} instance.
-   *
-   * @return a newly created {@link FireworkItemBuilder} instance.
-   */
-  @NotNull
-  public FireworkItemBuilder toFirework() {
-    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link LeatherArmorItemBuilder} instance.
-   *
-   * @return a newly created {@link LeatherArmorItemBuilder} instance.
-   */
-  @NotNull
-  public LeatherArmorItemBuilder toLeatherArmor() {
-    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link MapItemBuilder} instance.
-   *
-   * @return a newly created {@link MapItemBuilder} instance.
-   */
-  @NotNull
-  public MapItemBuilder toMap() {
-    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link PotionItemBuilder} instance.
-   *
-   * @return a newly created {@link PotionItemBuilder} instance.
-   */
-  @NotNull
-  public PotionItemBuilder toPotion() {
-    return new PotionItemBuilder(this.validateMeta(PotionMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link SkullItemBuilder} instance.
-   *
-   * @return a newly created {@link SkullItemBuilder} instance.
-   */
-  @NotNull
-  public SkullItemBuilder toSkull() {
-    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack());
-  }
-
-  /**
-   * creates a new {@link SpawnEggItemBuilder} instance.
-   *
-   * @return a newly created {@link SpawnEggItemBuilder} instance.
-   */
-  @NotNull
-  public SpawnEggItemBuilder toSpawnEgg() {
-    if (Builder.VERSION < 11) {
-      throw new IllegalStateException("The method called #toSpawnEgg() can only use 1.11 and later!");
-    }
-    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack());
-  }
-
-  /**
-   * validates the {@link #getItemStack()} if the given item meta class applicable.
-   *
-   * @param meta the meta to validate.
-   * @param <T> type of the item meta.
-   *
-   * @return validated item meta instance.
-   *
-   * @throws IllegalArgumentException if the given meta is no assignable from the {@link #getItemMeta()} class.
-   */
-  @NotNull
-  private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-    if (!this.isMeta(meta)) {
-      throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
-        this.getItemStack(), meta.getSimpleName()));
-    }
-    //noinspection unchecked
-    return (T) this.getItemMeta();
-  }
-
-  /**
    * a class that represents deserializer of {@link ItemMeta}.
    */
   public static final class Deserializer implements
@@ -308,9 +169,9 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
     @NotNull
     @Override
     public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
-      return Builder.getDefaultItemStackDeserializer().apply(map)
+      return Builder.getItemStackDeserializer().apply(map)
         .map(itemStack ->
-          Builder.getDefaultItemMetaDeserializer(ItemStackBuilder.from(itemStack)).apply(map));
+          Builder.getItemMetaDeserializer(ItemStackBuilder.from(itemStack)).apply(map));
     }
   }
 }

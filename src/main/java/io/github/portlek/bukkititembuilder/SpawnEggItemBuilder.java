@@ -25,6 +25,7 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -105,7 +106,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   @Override
   public Map<String, Object> serialize() {
     final var map = super.serialize();
-    map.put(Buildable.CREATURE_KEYS[0], this.getItemMeta().getSpawnedType().getName());
+    map.put(KeyUtil.CREATURE_KEYS[0], this.getItemMeta().getSpawnedType().getName());
     return map;
   }
 
@@ -151,14 +152,14 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
     @NotNull
     @Override
     public Optional<SpawnEggItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toSpawnEgg();
-      Buildable.getOrDefault(map, String.class, Buildable.CREATURE_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asSpawnEgg();
+      KeyUtil.getOrDefault(map, String.class, KeyUtil.CREATURE_KEYS)
         .ifPresent(builder::setSpawnedType);
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }

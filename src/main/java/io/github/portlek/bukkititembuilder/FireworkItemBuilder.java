@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XItemStack;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -179,28 +180,28 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
     final var map = super.serialize();
     final var itemMeta = this.getItemMeta();
     final var firework = new HashMap<>();
-    map.put(this.FIREWORK_KEYS[0], firework);
-    map.put(this.POWER_KEYS[0], itemMeta.getPower());
+    map.put(KeyUtil.FIREWORK_KEYS[0], firework);
+    map.put(KeyUtil.POWER_KEYS[0], itemMeta.getPower());
     final var effects = itemMeta.getEffects();
     IntStream.range(0, effects.size()).forEach(index -> {
       final var effect = effects.get(index);
       final var section = new HashMap<>();
       firework.put(index, section);
-      section.put(this.TYPE_KEYS[0], effect.getType().name());
-      section.put(this.FLICKER_KEYS[0], effect.hasFlicker());
-      section.put(this.TRAIL_KEYS[0], effect.hasTrail());
+      section.put(KeyUtil.TYPE_KEYS[0], effect.getType().name());
+      section.put(KeyUtil.FLICKER_KEYS[0], effect.hasFlicker());
+      section.put(KeyUtil.TRAIL_KEYS[0], effect.hasTrail());
       final var fwBaseColors = effect.getColors();
       final var fwFadeColors = effect.getFadeColors();
       final var colors = new HashMap<>();
-      section.put(this.COLORS_KEYS[0], colors);
+      section.put(KeyUtil.COLORS_KEYS[0], colors);
       final var baseColors = fwBaseColors.stream()
         .map(color -> String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwBaseColors.size())));
       final var fadeColors = fwFadeColors.stream()
         .map(color -> String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwFadeColors.size())));
-      colors.put(this.BASE_KEYS[0], baseColors);
-      colors.put(this.FADE_KEYS[0], fadeColors);
+      colors.put(KeyUtil.BASE_KEYS[0], baseColors);
+      colors.put(KeyUtil.FADE_KEYS[0], fadeColors);
     });
     return map;
   }
@@ -240,25 +241,25 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
     @NotNull
     @Override
     public Optional<FireworkItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      final var itemStack = Builder.getItemStackDeserializer().apply(map);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
-      final var builder = ItemStackBuilder.from(itemStack.get()).toFirework();
-      final var power = Buildable.getOrDefault(map, Number.class, Buildable.POWER_KEYS)
+      final var builder = ItemStackBuilder.from(itemStack.get()).asFirework();
+      final var power = KeyUtil.getOrDefault(map, Number.class, KeyUtil.POWER_KEYS)
         .orElse(1);
       builder.setPower(power.intValue());
-      Buildable.getOrDefault(map, Map.class, Buildable.FIREWORK_KEYS)
+      KeyUtil.getOrDefault(map, Map.class, KeyUtil.FIREWORK_KEYS)
         .map(m -> (Map<String, Object>) m)
         .ifPresent(firework -> {
           final var fireworkBuilder = FireworkEffect.builder();
           firework.forEach((key, value) -> {
             final var fw = (Map<String, Object>) value;
-            final var flicker = Buildable.getOrDefault(fw, Boolean.class, Buildable.FLICKER_KEYS)
+            final var flicker = KeyUtil.getOrDefault(fw, Boolean.class, KeyUtil.FLICKER_KEYS)
               .orElse(false);
-            final var trail = Buildable.getOrDefault(fw, Boolean.class, Buildable.TRAIL_KEYS)
+            final var trail = KeyUtil.getOrDefault(fw, Boolean.class, KeyUtil.TRAIL_KEYS)
               .orElse(false);
-            final var type = Buildable.getOrDefault(fw, String.class, Buildable.TYPE_KEYS)
+            final var type = KeyUtil.getOrDefault(fw, String.class, KeyUtil.TYPE_KEYS)
               .map(s -> s.toUpperCase(Locale.ROOT));
             FireworkEffect.Type effectType;
             try {
@@ -269,16 +270,16 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
             fireworkBuilder.flicker(flicker)
               .trail(trail)
               .with(effectType);
-            Buildable.getOrDefault(fw, Map.class, Buildable.COLORS_KEYS)
+            KeyUtil.getOrDefault(fw, Map.class, KeyUtil.COLORS_KEYS)
               .map(m -> (Map<String, Object>) m)
               .ifPresent(colorSection -> {
-                final var baseColors = Buildable.getOrDefault(colorSection, Collection.class, Buildable.BASE_KEYS)
+                final var baseColors = KeyUtil.getOrDefault(colorSection, Collection.class, KeyUtil.BASE_KEYS)
                   .map(collection -> (Collection<String>) collection)
                   .map(strings -> strings.stream()
                     .map(XItemStack::parseColor)
                     .collect(Collectors.toSet()))
                   .orElse(Collections.emptySet());
-                final var fadeColors = Buildable.getOrDefault(colorSection, Collection.class, Buildable.BASE_KEYS)
+                final var fadeColors = KeyUtil.getOrDefault(colorSection, Collection.class, KeyUtil.BASE_KEYS)
                   .map(collection -> (Collection<String>) collection)
                   .map(strings -> strings.stream()
                     .map(XItemStack::parseColor)
@@ -290,7 +291,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
             builder.addEffect(fireworkBuilder.build());
           });
         });
-      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
     }
   }
 }
