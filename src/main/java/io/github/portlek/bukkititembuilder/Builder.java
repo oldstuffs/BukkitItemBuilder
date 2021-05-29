@@ -75,8 +75,8 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   /**
    * the default item stack deserializer.
    */
-  @Getter(AccessLevel.PROTECTED)
-  private static final DefaultItemStackDeserializer defaultItemStackDeserializer = new DefaultItemStackDeserializer();
+  private static final DefaultItemStackDeserializer DEFAULT_ITEM_STACK_DESERIALIZER =
+    new DefaultItemStackDeserializer();
 
   /**
    * the meta.
@@ -92,8 +92,19 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   private ItemStack itemStack;
 
   /**
+   * obtains the default item stack deserializer.
+   *
+   * @return default item stack deserializer.
+   */
+  @NotNull
+  public static DefaultItemStackDeserializer getDefaultItemStackDeserializer() {
+    return Builder.DEFAULT_ITEM_STACK_DESERIALIZER;
+  }
+
+  /**
    * creates a new item meta deserializer.
    *
+   * @param builder the builder to create.
    * @param <X> type of the builder class.
    *
    * @return a newly created item meta deserializer.

@@ -197,7 +197,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   /**
    * the unlimited tracking keys.
    */
-  String[] UNLIMITED_TRACKING__KEYS = {"unlimited-tracking"};
+  String[] UNLIMITED_TRACKING_KEYS = {"unlimited-tracking"};
 
   /**
    * the view keys.
@@ -304,7 +304,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    * @return item stack.
    */
   @NotNull
-  ItemStack getItemStack(final boolean update);
+  ItemStack getItemStack(boolean update);
 
   /**
    * obtains the self instance for builder chain.

@@ -279,7 +279,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
                     .orElse(false);
                   final var trackingPosition = Buildable.getOrDefault(view, Boolean.class, Buildable.TRACKING_POSITION_KEYS)
                     .orElse(false);
-                  final var unlimitedTracking = Buildable.getOrDefault(view, Boolean.class, Buildable.UNLIMITED_TRACKING__KEYS)
+                  final var unlimitedTracking = Buildable.getOrDefault(view, Boolean.class, Buildable.UNLIMITED_TRACKING_KEYS)
                     .orElse(false);
                   final var mapView = Bukkit.createMap(world);
                   mapView.setWorld(world);
