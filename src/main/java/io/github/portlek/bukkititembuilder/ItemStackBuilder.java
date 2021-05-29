@@ -138,7 +138,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
 
   @Override
   @NotNull
-  public ItemStackBuilder self() {
+  public ItemStackBuilder getSelf() {
     return this;
   }
 

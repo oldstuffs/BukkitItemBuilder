@@ -248,7 +248,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    *
    * @param itemStack the item stack to set.
    *
-   * @return {@link #self()} for builder chain.
+   * @return {@link #getSelf()} for builder chain.
    */
   @NotNull
   X setItemStack(@NotNull ItemStack itemStack);
@@ -272,7 +272,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    * @return self instance.
    */
   @NotNull
-  X self();
+  X getSelf();
 
   /**
    * serializes the {@link #getItemStack()} into a map.

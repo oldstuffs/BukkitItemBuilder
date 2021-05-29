@@ -58,7 +58,13 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @NotNull
   public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
     Arrays.stream(patterns).forEach(this.getItemMeta()::addPattern);
-    return this.self();
+    return this.getSelf();
+  }
+
+  @NotNull
+  @Override
+  public BannerItemBuilder getSelf() {
+    return this;
   }
 
   /**
@@ -71,13 +77,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @NotNull
   public BannerItemBuilder removePatterns(final int... index) {
     Arrays.stream(index).forEach(this.getItemMeta()::removePattern);
-    return this.self();
-  }
-
-  @NotNull
-  @Override
-  public BannerItemBuilder self() {
-    return this;
+    return this.getSelf();
   }
 
   /**
@@ -91,7 +91,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @Deprecated
   public BannerItemBuilder setBaseColor(@NotNull final DyeColor color) {
     this.getItemMeta().setBaseColor(color);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -105,7 +105,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @NotNull
   public BannerItemBuilder setPattern(final int index, @NotNull final Pattern pattern) {
     this.getItemMeta().setPattern(index, pattern);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -130,6 +130,6 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @NotNull
   public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
     this.getItemMeta().setPatterns(patterns);
-    return this.self();
+    return this.getSelf();
   }
 }

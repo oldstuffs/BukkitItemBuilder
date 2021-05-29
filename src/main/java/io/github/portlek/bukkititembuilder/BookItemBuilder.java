@@ -61,7 +61,7 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
 
   @NotNull
   @Override
-  public BookItemBuilder self() {
+  public BookItemBuilder getSelf() {
     return this;
   }
 

@@ -84,24 +84,9 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
       new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
   }
 
-  /**
-   * removes owner of the skull.
-   *
-   * @return {@code this} for builder chain.
-   */
-  @NotNull
-  public SkullItemBuilder removeOwner() {
-    if (Builder.VERSION < 13) {
-      this.getItemMeta().setOwner(null);
-    } else {
-      this.getItemMeta().setOwningPlayer(null);
-    }
-    return this.self();
-  }
-
   @NotNull
   @Override
-  public SkullItemBuilder self() {
+  public SkullItemBuilder getSelf() {
     return this;
   }
 
@@ -114,6 +99,21 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   }
 
   /**
+   * removes owner of the skull.
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public SkullItemBuilder removeOwner() {
+    if (Builder.VERSION < 13) {
+      this.getItemMeta().setOwner(null);
+    } else {
+      this.getItemMeta().setOwningPlayer(null);
+    }
+    return this.getSelf();
+  }
+
+  /**
    * sets owner of the skull.
    *
    * @param texture the texture to set.
@@ -123,7 +123,7 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   @NotNull
   public SkullItemBuilder setOwner(@NotNull final String texture) {
     SkullUtils.applySkin(this.getItemMeta(), texture);
-    return this.self();
+    return this.getSelf();
   }
 
   /**

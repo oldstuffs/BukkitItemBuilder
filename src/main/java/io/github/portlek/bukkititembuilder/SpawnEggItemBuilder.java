@@ -87,7 +87,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
 
   @NotNull
   @Override
-  public SpawnEggItemBuilder self() {
+  public SpawnEggItemBuilder getSelf() {
     return this;
   }
 
@@ -110,7 +110,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   @Deprecated
   public SpawnEggItemBuilder setSpawnedType(@NotNull final EntityType type) {
     this.getItemMeta().setSpawnedType(type);
-    return this.self();
+    return this.getSelf();
   }
 
   /**

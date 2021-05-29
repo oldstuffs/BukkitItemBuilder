@@ -113,7 +113,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
 
   @NotNull
   @Override
-  public MapItemBuilder self() {
+  public MapItemBuilder getSelf() {
     return this;
   }
 
@@ -172,7 +172,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     if (Builder.VERSION >= 11) {
       this.getItemMeta().setColor(color);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -187,7 +187,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     if (Builder.VERSION >= 11) {
       this.getItemMeta().setLocationName(name);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -203,7 +203,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     if (Builder.VERSION >= 13) {
       this.getItemMeta().setMapId(id);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -218,7 +218,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
     if (Builder.VERSION >= 14) {
       this.getItemMeta().setMapView(mapView);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -231,7 +231,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   @NotNull
   public MapItemBuilder setScaling(final boolean scaling) {
     this.getItemMeta().setScaling(scaling);
-    return this.self();
+    return this.getSelf();
   }
 
   /**

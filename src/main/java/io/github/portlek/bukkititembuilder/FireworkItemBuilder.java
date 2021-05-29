@@ -91,6 +91,12 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
     return this.update(FireworkMeta::clearEffects);
   }
 
+  @NotNull
+  @Override
+  public FireworkItemBuilder getSelf() {
+    return this;
+  }
+
   /**
    * removes effect from the firework.
    *
@@ -101,12 +107,6 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   @NotNull
   public FireworkItemBuilder removeEffect(final int effectId) {
     return this.update(meta -> meta.removeEffect(effectId));
-  }
-
-  @NotNull
-  @Override
-  public FireworkItemBuilder self() {
-    return this;
   }
 
   /**

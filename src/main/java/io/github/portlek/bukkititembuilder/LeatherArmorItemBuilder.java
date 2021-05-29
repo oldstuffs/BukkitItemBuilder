@@ -89,7 +89,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
 
   @NotNull
   @Override
-  public LeatherArmorItemBuilder self() {
+  public LeatherArmorItemBuilder getSelf() {
     return this;
   }
 
@@ -113,7 +113,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   @NotNull
   public LeatherArmorItemBuilder setColor(@Nullable final Color color) {
     this.getItemMeta().setColor(color);
-    return this.self();
+    return this.getSelf();
   }
 
   /**

@@ -140,7 +140,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.addAttributeModifier(attribute, modifier);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -155,7 +155,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.setAttributeModifiers(map);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -201,7 +201,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
       XEnchantment.matchXEnchantment(enchantment).ifPresent(xEnchantment ->
         this.addEnchantments(xEnchantment, level.get()));
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -216,7 +216,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   public final X addEnchantments(@NotNull final XEnchantment enchantment, final int level) {
     return Optional.ofNullable(enchantment.parseEnchantment())
       .map(value -> this.addEnchantments(value, level))
-      .orElse(this.self());
+      .orElse(this.getSelf());
   }
 
   /**
@@ -242,7 +242,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X addEnchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
     this.itemStack.addUnsafeEnchantments(enchantments);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -255,7 +255,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X addFlag(@NotNull final ItemFlag... flags) {
     this.itemMeta.addItemFlags(flags);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -270,7 +270,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     flags.stream()
       .map(ItemFlag::valueOf)
       .forEach(this::addFlag);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -321,7 +321,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
         this.addGlowEffect(this.itemStack.getType() != material
           ? Enchantment.ARROW_INFINITE
           : Enchantment.LUCK))
-      .orElse(this.self());
+      .orElse(this.getSelf());
   }
 
   /**
@@ -375,7 +375,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
       .orElse(new ArrayList<>());
     join.addAll(colored ? ColorUtil.colored(lore) : lore);
     this.itemMeta.setLore(join);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -391,7 +391,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
       XEnchantment.matchXEnchantment(String.valueOf(enchantmentString))
         .flatMap(enchant -> Optional.ofNullable(enchant.parseEnchantment()))
         .ifPresent(enchantment -> this.addEnchantments(enchantment, level)));
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -408,7 +408,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.removeAttributeModifier(attribute);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -425,7 +425,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.removeAttributeModifier(slot);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -444,7 +444,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.removeAttributeModifier(attribute, modifier);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -457,7 +457,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X removeFlag(@NotNull final ItemFlag... flags) {
     this.itemMeta.removeItemFlags(flags);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -470,7 +470,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setAmount(final int amount) {
     this.itemStack.setAmount(amount);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -487,7 +487,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.setCustomModelData(data);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -512,7 +512,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setData(@NotNull final MaterialData data) {
     this.itemStack.setData(data);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -525,7 +525,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setDurability(final short durability) {
     this.itemStack.setDurability(durability);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -539,7 +539,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @Override
   public final X setItemStack(@NotNull final ItemStack itemStack) {
     this.itemStack = itemStack;
-    return this.self();
+    return this.getSelf();
   }
 
   @NotNull
@@ -566,7 +566,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 12) {
       this.itemMeta.setLocalizedName(name);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -617,7 +617,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setLore(@NotNull final List<String> lore, final boolean colored) {
     this.itemMeta.setLore(colored ? ColorUtil.colored(lore) : lore);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -630,7 +630,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setMaterial(@NotNull final Material material) {
     this.itemStack.setType(material);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -656,7 +656,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setName(@NotNull final String name, final boolean colored) {
     this.itemMeta.setDisplayName(colored ? ColorUtil.colored(name) : name);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -669,7 +669,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   public final X setType(@NotNull final Material material) {
     this.itemStack.setType(material);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -687,7 +687,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
       return this.setItemStack(NBTEditor.set(this.itemStack, unbreakable ? (byte) 1 : (byte) 0, "Unbreakable"));
     }
     this.itemMeta.setUnbreakable(unbreakable);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -704,7 +704,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     if (Builder.VERSION >= 14) {
       this.itemMeta.setVersion(version);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**

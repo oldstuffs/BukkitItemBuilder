@@ -61,7 +61,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
 
   @NotNull
   @Override
-  public CrossbowItemBuilder self() {
+  public CrossbowItemBuilder getSelf() {
     return this;
   }
 

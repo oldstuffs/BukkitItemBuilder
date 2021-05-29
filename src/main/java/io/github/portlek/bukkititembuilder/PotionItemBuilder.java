@@ -119,7 +119,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     if (Builder.VERSION >= 9) {
       this.getItemMeta().addCustomEffect(effect, overwrite);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -138,7 +138,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
         .filter(Objects::nonNull)
         .forEach(effect -> this.addCustomEffect(effect, overwrite));
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -149,25 +149,12 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   @NotNull
   public PotionItemBuilder clearCustomEffects() {
     this.getItemMeta().clearCustomEffects();
-    return this.self();
-  }
-
-  /**
-   * Removes a custom potion effect from this potion.
-   *
-   * @param type the potion effect type to remove
-   *
-   * @return {@code this} for builder chain.
-   */
-  @NotNull
-  public PotionItemBuilder removeCustomEffect(@NotNull final PotionEffectType type) {
-    this.getItemMeta().removeCustomEffect(type);
-    return this.self();
+    return this.getSelf();
   }
 
   @NotNull
   @Override
-  public PotionItemBuilder self() {
+  public PotionItemBuilder getSelf() {
     return this;
   }
 
@@ -208,6 +195,19 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   }
 
   /**
+   * Removes a custom potion effect from this potion.
+   *
+   * @param type the potion effect type to remove
+   *
+   * @return {@code this} for builder chain.
+   */
+  @NotNull
+  public PotionItemBuilder removeCustomEffect(@NotNull final PotionEffectType type) {
+    this.getItemMeta().removeCustomEffect(type);
+    return this.getSelf();
+  }
+
+  /**
    * sets the underlying potion data.
    *
    * @param data the data to set the base potion state to.
@@ -219,7 +219,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     if (Builder.VERSION >= 9) {
       this.getItemMeta().setBasePotionData(data);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -232,10 +232,10 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   @NotNull
   public PotionItemBuilder setBasePotionData(@NotNull final String data) {
     if (Builder.VERSION < 9) {
-      return this.self();
+      return this.getSelf();
     }
     if (data.isEmpty()) {
-      return this.self();
+      return this.getSelf();
     }
     final var split = data.split(",");
     PotionType type;
@@ -264,7 +264,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
       return this.setBasePotionData(data);
     }
     if (data.isEmpty()) {
-      return this.self();
+      return this.getSelf();
     }
     final var split = data.split(",");
     PotionType type;
@@ -290,7 +290,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     if (Builder.VERSION >= 11) {
       this.getItemMeta().setColor(color);
     }
-    return this.self();
+    return this.getSelf();
   }
 
   /**
@@ -320,7 +320,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   @NotNull
   public PotionItemBuilder setMainEffect(@NotNull final PotionEffectType type) {
     this.getItemMeta().setMainEffect(type);
-    return this.self();
+    return this.getSelf();
   }
 
   /**
