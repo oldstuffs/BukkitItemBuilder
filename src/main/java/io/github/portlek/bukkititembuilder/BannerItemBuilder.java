@@ -57,7 +57,8 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    */
   @NotNull
   public BannerItemBuilder addPatterns(@NotNull final Pattern... patterns) {
-    return this.update(meta -> Arrays.stream(patterns).forEach(meta::addPattern));
+    Arrays.stream(patterns).forEach(this.getItemMeta()::addPattern);
+    return this.self();
   }
 
   /**
@@ -69,7 +70,8 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    */
   @NotNull
   public BannerItemBuilder removePatterns(final int... index) {
-    return this.update(meta -> Arrays.stream(index).forEach(meta::removePattern));
+    Arrays.stream(index).forEach(this.getItemMeta()::removePattern);
+    return this.self();
   }
 
   @NotNull
@@ -88,7 +90,8 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @NotNull
   @Deprecated
   public BannerItemBuilder setBaseColor(@NotNull final DyeColor color) {
-    return this.update(meta -> meta.setBaseColor(color));
+    this.getItemMeta().setBaseColor(color);
+    return this.self();
   }
 
   /**
@@ -101,7 +104,8 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    */
   @NotNull
   public BannerItemBuilder setPattern(final int index, @NotNull final Pattern pattern) {
-    return this.update(meta -> meta.setPattern(index, pattern));
+    this.getItemMeta().setPattern(index, pattern);
+    return this.self();
   }
 
   /**
@@ -125,6 +129,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    */
   @NotNull
   public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
-    return this.update(meta -> meta.setPatterns(patterns));
+    this.getItemMeta().setPatterns(patterns);
+    return this.self();
   }
 }
