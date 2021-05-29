@@ -56,7 +56,8 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    */
   @NotNull
   public CrossbowItemBuilder addChargedProjectile(@NotNull final ItemStack... projectiles) {
-    return this.update(meta -> Arrays.stream(projectiles).forEach(meta::addChargedProjectile));
+    Arrays.stream(projectiles).forEach(this.getItemMeta()::addChargedProjectile);
+    return this.getSelf();
   }
 
   @NotNull
@@ -86,6 +87,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    */
   @NotNull
   public CrossbowItemBuilder setChargedProjectiles(@Nullable final List<ItemStack> projectiles) {
-    return this.update(meta -> meta.setChargedProjectiles(projectiles));
+    this.getItemMeta().setChargedProjectiles(projectiles);
+    return this.getSelf();
   }
 }

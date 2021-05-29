@@ -56,7 +56,8 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder addPages(@NotNull final String... list) {
-    return this.update(meta -> meta.addPage(list));
+    this.getItemMeta().addPage(list);
+    return this.getSelf();
   }
 
   @NotNull
@@ -74,7 +75,8 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder setAuthor(@Nullable final String author) {
-    return this.update(meta -> meta.setAuthor(author));
+    this.getItemMeta().setAuthor(author);
+    return this.getSelf();
   }
 
   /**
@@ -86,7 +88,8 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder setGeneration(@Nullable final BookMeta.Generation generation) {
-    return this.update(meta -> meta.setGeneration(generation));
+    this.getItemMeta().setGeneration(generation);
+    return this.getSelf();
   }
 
   /**
@@ -99,7 +102,8 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder setPage(final int page, @NotNull final String text) {
-    return this.update(meta -> meta.setPage(page, text));
+    this.getItemMeta().setPage(page, text);
+    return this.getSelf();
   }
 
   /**
@@ -123,7 +127,8 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder setPages(@NotNull final List<String> list) {
-    return this.update(meta -> meta.setPages(list));
+    this.getItemMeta().setPages(list);
+    return this.getSelf();
   }
 
   /**
@@ -135,6 +140,7 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    */
   @NotNull
   public BookItemBuilder setTitle(@Nullable final String title) {
-    return this.update(meta -> meta.setTitle(title));
+    this.getItemMeta().setTitle(title);
+    return this.getSelf();
   }
 }
