@@ -44,11 +44,6 @@ import org.jetbrains.annotations.NotNull;
 public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta> {
 
   /**
-   * the deserializer.
-   */
-  private static final Deserializer DESERIALIZER = new Deserializer();
-
-  /**
    * ctor.
    *
    * @param itemMeta the item meta.
@@ -56,32 +51,6 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
    */
   SkullItemBuilder(@NotNull final SkullMeta itemMeta, @NotNull final ItemStack itemStack) {
     super(itemMeta, itemStack);
-  }
-
-  /**
-   * creates a new skull item builder instance.
-   *
-   * @param itemMeta the item meta to create.
-   * @param itemStack the item stack to create.
-   *
-   * @return a newly created skull item builder instance.
-   */
-  @NotNull
-  public static SkullItemBuilder from(@NotNull final SkullMeta itemMeta, @NotNull final ItemStack itemStack) {
-    return new SkullItemBuilder(itemMeta, itemStack);
-  }
-
-  /**
-   * creates skull item builder from serialized map.
-   *
-   * @param map the map to create.
-   *
-   * @return a newly created skull item builder instance.
-   */
-  @NotNull
-  public static SkullItemBuilder from(@NotNull final Map<String, Object> map) {
-    return SkullItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
   }
 
   /**
@@ -134,6 +103,37 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   public SkullItemBuilder setOwner(@NotNull final String texture) {
     SkullUtils.applySkin(this.getItemMeta(), texture);
     return this.getSelf();
+  }
+
+  /**
+   * the deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
+
+  /**
+   * creates a new skull item builder instance.
+   *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created skull item builder instance.
+   */
+  @NotNull
+  public static SkullItemBuilder from(@NotNull final SkullMeta itemMeta, @NotNull final ItemStack itemStack) {
+    return new SkullItemBuilder(itemMeta, itemStack);
+  }
+
+  /**
+   * creates skull item builder from serialized map.
+   *
+   * @param map the map to create.
+   *
+   * @return a newly created skull item builder instance.
+   */
+  @NotNull
+  public static SkullItemBuilder from(@NotNull final Map<String, Object> map) {
+    return SkullItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
   }
 
   /**

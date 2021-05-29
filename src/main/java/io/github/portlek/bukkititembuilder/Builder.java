@@ -31,7 +31,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Multimap;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
-import io.github.portlek.bukkititembuilder.util.MaterialUtil;
+import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkitversion.BukkitVersion;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,8 +124,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return {@code this} for builder chain.
    */
   @NotNull
-  public final X addAttributeModifier(@NotNull final Attribute attribute,
-                                      @NotNull final AttributeModifier modifier) {
+  public final X addAttributeModifier(@NotNull final Attribute attribute, @NotNull final AttributeModifier modifier) {
     if (Builder.VERSION >= 14) {
       this.itemMeta.addAttributeModifier(attribute, modifier);
     }
@@ -751,7 +750,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     @Override
     public Optional<ItemStack> apply(@NotNull final Map<String, Object> map) {
       final var materialOptional = Buildable.getOrDefault(map, String.class, Buildable.MATERIAL_KEYS)
-        .flatMap(MaterialUtil::parseMaterial);
+        .flatMap(ItemStackUtil::parseMaterial);
       if (materialOptional.isEmpty()) {
         return Optional.empty();
       }

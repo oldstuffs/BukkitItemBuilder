@@ -45,9 +45,18 @@ import org.jetbrains.annotations.NotNull;
 public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
 
   /**
+   * the patterns keys.
+   */
+  String[] PATTERNS_KEYS = {"patterns"};
+  /**
    * the amount keys.
    */
   String[] AMOUNT_KEYS = {"amount", "quantity", "miktar"};
+
+  /**
+   * the author keys.
+   */
+  String[] AUTHOR_KEYS = {"author"};
 
   /**
    * the base effect keys.
@@ -58,6 +67,11 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    * the base keys.
    */
   String[] BASE_KEYS = {"base"};
+
+  /**
+   * the book keys.
+   */
+  String[] BOOKS_KEYS = {"book"};
 
   /**
    * the center keys.
@@ -125,6 +139,11 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   String[] FLICKER_KEYS = {"flicker"};
 
   /**
+   * the generation keys.
+   */
+  String[] GENERATION_KEYS = {"generation"};
+
+  /**
    * the level keys.
    */
   String[] LEVEL_KEYS = {"level", "seviye"};
@@ -160,9 +179,19 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
 
   /**
+   * the pages keys.
+   */
+  String[] PAGES_KEYS = {"pages"};
+
+  /**
    * the power keys.
    */
   String[] POWER_KEYS = {"power"};
+
+  /**
+   * the projectiles key.
+   */
+  String[] PROJECTILES_KEY = {"projectiles"};
 
   /**
    * the scale keys.
@@ -178,6 +207,11 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    * the skull texture keys.
    */
   String[] SKULL_TEXTURE_KEYS = {"skull", "skull-texture", "texture", "skin"};
+
+  /**
+   * the title keys.
+   */
+  String[] TITLE_KEYS = {"title"};
 
   /**
    * the tracking position keys.

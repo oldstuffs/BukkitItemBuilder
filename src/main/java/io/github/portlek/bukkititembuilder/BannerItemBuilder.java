@@ -26,9 +26,15 @@
 package io.github.portlek.bukkititembuilder;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +45,11 @@ import org.jetbrains.annotations.NotNull;
 public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMeta> {
 
   /**
+   * the deserializer.
+   */
+  private static final Deserializer DESERIALIZER = new Deserializer();
+
+  /**
    * ctor.
    *
    * @param itemStack the item stack.
@@ -46,6 +57,42 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    */
   BannerItemBuilder(@NotNull final BannerMeta meta, @NotNull final ItemStack itemStack) {
     super(meta, itemStack);
+  }
+
+  /**
+   * creates a new banner item builder instance.
+   *
+   * @param itemMeta the item meta to create.
+   * @param itemStack the item stack to create.
+   *
+   * @return a newly created banner item builder instance.
+   */
+  @NotNull
+  public static BannerItemBuilder from(@NotNull final BannerMeta itemMeta, @NotNull final ItemStack itemStack) {
+    return new BannerItemBuilder(itemMeta, itemStack);
+  }
+
+  /**
+   * creates banner item builder from serialized map.
+   *
+   * @param map the map to create.
+   *
+   * @return a newly created banner item builder instance.
+   */
+  @NotNull
+  public static BannerItemBuilder from(@NotNull final Map<String, Object> map) {
+    return BannerItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  }
+
+  /**
+   * obtains the deserializer.
+   *
+   * @return deserializer.
+   */
+  @NotNull
+  public static Deserializer getDeserializer() {
+    return BannerItemBuilder.DESERIALIZER;
   }
 
   /**
@@ -65,6 +112,17 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   @Override
   public BannerItemBuilder getSelf() {
     return this;
+  }
+
+  @NotNull
+  @Override
+  public Map<String, Object> serialize() {
+    final var map = super.serialize();
+    final var patterns = new HashMap<String, Object>();
+    map.put(Buildable.PATTERNS_KEYS[0], patterns);
+    this.getItemMeta().getPatterns()
+      .forEach(pattern -> patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
+    return map;
   }
 
   /**
@@ -131,5 +189,42 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   public BannerItemBuilder setPatterns(@NotNull final List<Pattern> patterns) {
     this.getItemMeta().setPatterns(patterns);
     return this.getSelf();
+  }
+
+  /**
+   * a class that represents deserializer of {@link BannerMeta}.
+   */
+  public static final class Deserializer implements
+    Function<@NotNull Map<String, Object>, @NotNull Optional<BannerItemBuilder>> {
+
+    @NotNull
+    @Override
+    public Optional<BannerItemBuilder> apply(@NotNull final Map<String, Object> map) {
+      final var itemStack = Builder.getDefaultItemStackDeserializer().apply(map);
+      if (itemStack.isEmpty()) {
+        return Optional.empty();
+      }
+      final var builder = ItemStackBuilder.from(itemStack.get()).toBanner();
+      Buildable.getOrDefault(map, Map.class, Buildable.PATTERNS_KEYS)
+        .map(m -> (Map<String, Object>) m)
+        .ifPresent(patterns -> patterns.forEach((key, value) -> {
+          var type = PatternType.getByIdentifier(key);
+          if (type == null) {
+            try {
+              type = PatternType.valueOf(key.toUpperCase(Locale.ENGLISH));
+            } catch (final Exception e) {
+              type = PatternType.BASE;
+            }
+          }
+          DyeColor color;
+          try {
+            color = DyeColor.valueOf(String.valueOf(value).toUpperCase(Locale.ENGLISH));
+          } catch (final Exception e) {
+            color = DyeColor.WHITE;
+          }
+          builder.addPatterns(new Pattern(color, type));
+        }));
+      return Optional.of(Builder.getDefaultItemMetaDeserializer(builder).apply(map));
+    }
   }
 }

@@ -170,6 +170,18 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   }
 
   /**
+   * checks if the given meta class is assignable from {@link #getItemMeta()}'s class.
+   *
+   * @param meta the meta to check.
+   * @param <T> type of the item meta.
+   *
+   * @return {@code true} if the given meta is assignable from the item meta's class.
+   */
+  public <T extends ItemMeta> boolean isMeta(@NotNull final Class<T> meta) {
+    return meta.isAssignableFrom(this.getItemMeta().getClass());
+  }
+
+  /**
    * creates a new {@link BannerItemBuilder} instance.
    *
    * @return a newly created {@link BannerItemBuilder} instance.
@@ -279,7 +291,7 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
    */
   @NotNull
   private <T extends ItemMeta> T validateMeta(@NotNull final Class<T> meta) {
-    if (!meta.isAssignableFrom(this.getItemMeta().getClass())) {
+    if (!this.isMeta(meta)) {
       throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
         this.getItemStack(), meta.getSimpleName()));
     }

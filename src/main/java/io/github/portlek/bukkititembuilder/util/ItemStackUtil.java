@@ -27,19 +27,35 @@ package io.github.portlek.bukkititembuilder.util;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.portlek.bukkititembuilder.Builder;
+import io.github.portlek.bukkititembuilder.ItemStackBuilder;
+import java.util.Map;
 import java.util.Optional;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * a class that contains utility methods for {@link Material}.
+ * a class that contains utility methods for {@link ItemStack}.
  */
-public final class MaterialUtil {
+public final class ItemStackUtil {
 
   /**
    * ctor.
    */
-  private MaterialUtil() {
+  private ItemStackUtil() {
+  }
+
+  /**
+   * deserializes the given map into item stack.
+   *
+   * @param map the map to serialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static ItemStack deserialize(@NotNull final Map<String, Object> map) {
+    final var builder = ItemStackBuilder.from(map);
+    return builder.getItemStack();
   }
 
   /**
@@ -63,5 +79,18 @@ public final class MaterialUtil {
       return Optional.empty();
     }
     return material;
+  }
+
+  /**
+   * serializes the given item stack into map.
+   *
+   * @param itemStack the item stack to serialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static Map<String, Object> serialize(@NotNull final ItemStack itemStack) {
+    final var builder = ItemStackBuilder.from(itemStack);
+    return builder.serialize();
   }
 }
