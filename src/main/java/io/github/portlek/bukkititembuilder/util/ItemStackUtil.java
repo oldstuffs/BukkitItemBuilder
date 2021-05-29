@@ -165,10 +165,11 @@ public final class ItemStackUtil {
         .map(mp -> (Map<String, Integer>) mp)
         .ifPresent(mp ->
           mp.forEach((key, value) ->
-            XEnchantment.matchXEnchantment(String.valueOf(key)).flatMap(xEnchantment ->
-              Optional.ofNullable(xEnchantment.parseEnchantment())
-            ).ifPresent(enchantment ->
-              itemMeta.addEnchant(enchantment, value, true))));
+            XEnchantment.matchXEnchantment(String.valueOf(key))
+              .flatMap(enchant ->
+                Optional.ofNullable(enchant.parseEnchantment()))
+              .ifPresent(enchantment ->
+                itemMeta.addEnchant(enchantment, value, true))));
       ItemStackUtil.getOrDefault(map, Collection.class, ItemStackUtil.FLAG_KEYS)
         .map(flags -> (Collection<String>) flags)
         .ifPresent(flags ->
