@@ -256,7 +256,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   /**
    * obtains the item stack.
    * <p>
-   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta updates
+   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta, updates
    * it.
    *
    * @param update the update to obtain.

@@ -683,13 +683,11 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setUnbreakable(final boolean unbreakable) {
-    if (Builder.VERSION >= 11) {
-      this.itemMeta.setUnbreakable(unbreakable);
-      return this.self();
+    if (Builder.VERSION < 11) {
+      return this.setItemStack(NBTEditor.set(this.itemStack, unbreakable ? (byte) 1 : (byte) 0, "Unbreakable"));
     }
-    final var value = unbreakable ? (byte) 1 : (byte) 0;
-    final var nbtEdited = NBTEditor.set(this.itemStack, value, "Unbreakable");
-    return this.setItemStack(nbtEdited);
+    this.itemMeta.setUnbreakable(unbreakable);
+    return this.self();
   }
 
   /**
