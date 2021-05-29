@@ -76,7 +76,7 @@ import org.jetbrains.annotations.Nullable;
  *  lore: string list (item's name) (for 8 and newer versions)
  *    - 'test lore'
  *
- *  enchants: (section) (for 8 and newer versions)
+ *  enchants: (enchantment section) (for 8 and newer versions)
  *    DAMAGE_ALL: integer (enchantment's level)
  *
  *  flags: (string list) (for 8 and newer versions)
