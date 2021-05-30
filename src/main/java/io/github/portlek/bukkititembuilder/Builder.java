@@ -244,7 +244,8 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X addEnchantments(@NotNull final Map<Enchantment, Integer> enchantments) {
-    this.itemStack.addUnsafeEnchantments(enchantments);
+    enchantments.forEach((enchantment, level) ->
+      this.itemMeta.addEnchant(enchantment, level, true));
     return this.getSelf();
   }
 
