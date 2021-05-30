@@ -102,7 +102,8 @@ public final class ItemStackUtil {
           return SpawnEggItemBuilder.getDeserializer().apply(map)
             .map(Buildable::getItemStack);
         }
-        return Optional.of(builder.getItemStack());
+        return ItemStackBuilder.getDeserializer().apply(map)
+          .map(Buildable::getItemStack);
       });
   }
 

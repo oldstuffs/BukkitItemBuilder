@@ -116,7 +116,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return item stack deserializer.
    */
   @NotNull
-  public static Builder.ItemStackDeserializer getItemStackDeserializer() {
+  public static ItemStackDeserializer getItemStackDeserializer() {
     return Builder.ITEM_STACK_DESERIALIZER;
   }
 
@@ -126,7 +126,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * @return simple item stack deserializer.
    */
   @NotNull
-  public static Builder.SimpleItemStackDeserializer getSimpleItemStackDeserializer() {
+  public static SimpleItemStackDeserializer getSimpleItemStackDeserializer() {
     return Builder.SIMPLE_ITEM_STACK_DESERIALIZER;
   }
 
