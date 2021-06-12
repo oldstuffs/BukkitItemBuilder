@@ -25,12 +25,13 @@
 
 package io.github.portlek.bukkititembuilder.util;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import io.github.portlek.transformer.TransformedData;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that contains utility methods for getting elements from key of {@link Map}.
@@ -38,214 +39,214 @@ import org.jetbrains.annotations.NotNull;
 public final class KeyUtil {
 
   /**
-   * the amount keys.
+   * the amount key.
    */
-  public static final String[] AMOUNT_KEYS = {"amount", "quantity", "miktar"};
+  public static final String AMOUNT_KEY = "amount";
 
   /**
-   * the author keys.
+   * the author key.
    */
-  public static final String[] AUTHOR_KEYS = {"author"};
+  public static final String AUTHOR_KEY = "author";
 
   /**
-   * the base effect keys.
+   * the base effect key.
    */
-  public static final String[] BASE_EFFECT_KEYS = {"base-effect", "temel-efekt"};
+  public static final String BASE_EFFECT_KEY = "base-effect";
 
   /**
-   * the base keys.
+   * the base key.
    */
-  public static final String[] BASE_KEYS = {"base"};
+  public static final String BASE_KEY = "base";
 
   /**
-   * the book keys.
+   * the book key.
    */
-  public static final String[] BOOKS_KEYS = {"book"};
+  public static final String BOOKS_KEY = "book";
 
   /**
-   * the center keys.
+   * the center key.
    */
-  public static final String[] CENTER_KEYS = {"center", "merkez"};
+  public static final String CENTER_KEY = "center";
 
   /**
-   * the colors keys.
+   * the colors key.
    */
-  public static final String[] COLORS_KEYS = {"colors"};
+  public static final String COLORS_KEY = "colors";
 
   /**
-   * the color keys.
+   * the color key.
    */
-  public static final String[] COLOR_KEYS = {"color", "renk"};
+  public static final String COLOR_KEY = "color";
 
   /**
-   * the creature keys.
+   * the creature key.
    */
-  public static final String[] CREATURE_KEYS = {"creature", "yaratik"};
+  public static final String CREATURE_KEY = "creature";
 
   /**
-   * the custom effects keys.
+   * the custom effects key.
    */
-  public static final String[] CUSTOM_EFFECTS_KEYS = {"custom-effects", "ozel-efektler"};
+  public static final String CUSTOM_EFFECTS_KEY = "custom-effects";
 
   /**
    * the damage key.
    */
-  public static final String[] DAMAGE_KEYS = {"damage", "durability"};
+  public static final String DAMAGE_KEY = "damage";
 
   /**
-   * the data keys.
+   * the data key.
    */
-  public static final String[] DATA_KEYS = {"data"};
+  public static final String DATA_KEY = "data";
 
   /**
-   * the display name keys.
+   * the display name key.
    */
-  public static final String[] DISPLAY_NAME_KEYS = {"name", "display", "display-name", "isim", "ad"};
+  public static final String DISPLAY_NAME_KEY = "name";
 
   /**
-   * the enchantment keys.
+   * the enchantment key.
    */
-  public static final String[] ENCHANTMENT_KEYS = {"enchants", "enchantments", "enchant", "enchantment", "büyü", "büyüler"};
+  public static final String ENCHANTMENT_KEY = "enchants";
 
   /**
-   * the fade keys.
+   * the fade key.
    */
-  public static final String[] FADE_KEYS = {"fade"};
+  public static final String FADE_KEY = "fade";
 
   /**
-   * the firework keys.
+   * the firework key.
    */
-  public static final String[] FIREWORK_KEYS = {"firework"};
+  public static final String FIREWORK_KEY = "firework";
 
   /**
-   * the flag keys.
+   * the flag key.
    */
-  public static final String[] FLAG_KEYS = {"flags", "flag"};
+  public static final String FLAG_KEY = "flags";
 
   /**
-   * the flicker keys.
+   * the flicker key.
    */
-  public static final String[] FLICKER_KEYS = {"flicker"};
+  public static final String FLICKER_KEY = "flicker";
 
   /**
-   * the generation keys.
+   * the generation key.
    */
-  public static final String[] GENERATION_KEYS = {"generation"};
+  public static final String GENERATION_KEY = "generation";
 
   /**
-   * the level keys.
+   * the level key.
    */
-  public static final String[] LEVEL_KEYS = {"level", "seviye"};
+  public static final String LEVEL_KEY = "level";
 
   /**
-   * the location keys.
+   * the location key.
    */
-  public static final String[] LOCATION_KEYS = {"location", "lokasyon"};
+  public static final String LOCATION_KEY = "location";
 
   /**
-   * the locked keys.
+   * the locked key.
    */
-  public static final String[] LOCKED_KEYS = {"locked", "kitli"};
+  public static final String LOCKED_KEY = "locked";
 
   /**
-   * the lore keys.
+   * the lore key.
    */
-  public static final String[] LORE_KEYS = {"lore", "açıklama", "aciklama"};
+  public static final String LORE_KEY = "lore";
 
   /**
-   * the map id keys.
+   * the map id key.
    */
-  public static final String[] MAP_ID_KEYS = {"map-id"};
+  public static final String MAP_ID_KEY = "map-id";
 
   /**
-   * the map keys.
+   * the map key.
    */
-  public static final String[] MAP_KEYS = {"map"};
+  public static final String MAP_KEY = "map";
 
   /**
-   * the material keys.
+   * the material key.
    */
-  public static final String[] MATERIAL_KEYS = {"material", "mat", "esya", "eşya", "id"};
+  public static final String MATERIAL_KEY = "material";
 
   /**
-   * the pages keys.
+   * the pages key.
    */
-  public static final String[] PAGES_KEYS = {"pages"};
+  public static final String PAGES_KEY = "pages";
 
   /**
-   * the patterns keys.
+   * the patterns key.
    */
-  public static final String[] PATTERNS_KEYS = {"patterns"};
+  public static final String PATTERNS_KEY = "patterns";
 
   /**
-   * the power keys.
+   * the power key.
    */
-  public static final String[] POWER_KEYS = {"power"};
+  public static final String POWER_KEY = "power";
 
   /**
-   * the projectiles key.
+   * the projectiles ke.
    */
-  public static final String[] PROJECTILES_KEY = {"projectiles"};
+  public static final String PROJECTILES_KEY = "projectiles";
 
   /**
-   * the scale keys.
+   * the scale key.
    */
-  public static final String[] SCALE_KEYS = {"scale", "olcek"};
+  public static final String SCALE_KEY = "scale";
 
   /**
-   * the scaling keys.
+   * the scaling key.
    */
-  public static final String[] SCALING_KEYS = {"scaling", "olcekleme"};
+  public static final String SCALING_KEY = "scaling";
 
   /**
-   * the skull texture keys.
+   * the skull texture key.
    */
-  public static final String[] SKULL_TEXTURE_KEYS = {"skull", "skull-texture", "texture", "skin"};
+  public static final String SKULL_TEXTURE_KEY = "skull";
 
   /**
-   * the title keys.
+   * the title key.
    */
-  public static final String[] TITLE_KEYS = {"title"};
+  public static final String TITLE_KEY = "title";
 
   /**
-   * the tracking position keys.
+   * the tracking position key.
    */
-  public static final String[] TRACKING_POSITION_KEYS = {"tracking-position"};
+  public static final String TRACKING_POSITION_KEY = "tracking-position";
 
   /**
-   * the trail keys.
+   * the trail key.
    */
-  public static final String[] TRAIL_KEYS = {"trail"};
+  public static final String TRAIL_KEY = "trail";
 
   /**
-   * the type keys.
+   * the type key.
    */
-  public static final String[] TYPE_KEYS = {"type"};
+  public static final String TYPE_KEY = "type";
 
   /**
-   * the unlimited tracking keys.
+   * the unlimited tracking key.
    */
-  public static final String[] UNLIMITED_TRACKING_KEYS = {"unlimited-tracking"};
+  public static final String UNLIMITED_TRACKING_KEY = "unlimited-tracking";
 
   /**
-   * the view keys.
+   * the view key.
    */
-  public static final String[] VIEW_KEYS = {"view"};
+  public static final String VIEW_KEY = "view";
 
   /**
-   * the world keys.
+   * the world key.
    */
-  public static final String[] WORLD_KEYS = {"world"};
+  public static final String WORLD_KEY = "world";
 
   /**
-   * the x keys.
+   * the x key.
    */
-  public static final String[] X_KEYS = {"x"};
+  public static final String X_KEY = "x";
 
   /**
-   * the z keys.
+   * the z key.
    */
-  public static final String[] Z_KEYS = {"z"};
+  public static final String Z_KEY = "z";
 
   /**
    * ctor.
@@ -254,46 +255,190 @@ public final class KeyUtil {
   }
 
   /**
-   * gets value at the given keys from the map.
+   * an interface to determine key holders.
    *
-   * @param map the map to get.
-   * @param tClass the t class to get.
-   * @param keys the keys to get.
-   * @param <T> type of the getting value.
-   *
-   * @return value.
+   * @param <T> type of the holder.
    */
-  @NotNull
-  public static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                             @NotNull final String... keys) {
-    return KeyUtil.getOrDefault(map, tClass, new ArrayDeque<>(List.of(keys)));
-  }
+  public interface Holder<T> {
 
-  /**
-   * gets value at the given keys from the map.
-   *
-   * @param map the map to get.
-   * @param tClass the t class to get.
-   * @param keys the keys to get.
-   * @param <T> type of the getting value.
-   *
-   * @return value.
-   */
-  @NotNull
-  public static <T> Optional<T> getOrDefault(@NotNull final Map<String, Object> map, @NotNull final Class<T> tClass,
-                                             @NotNull final Deque<String> keys) {
-    final var key = keys.poll();
-    if (key == null) {
-      return Optional.empty();
+    /**
+     * creates a holder from a map.
+     *
+     * @param map the map to create.
+     *
+     * @return a newly created holder.
+     */
+    @NotNull
+    static Holder<Map<String, Object>> map(@NotNull final Map<String, Object> map) {
+      return new Holder<>() {
+        @Override
+        public <E> void add(@NotNull final String key, @Nullable final E object, @NotNull final Class<E> cls) {
+          map.put(key, object);
+        }
+
+        @NotNull
+        @Override
+        public <T> Optional<T> get(@NotNull final String key, @NotNull final Class<T> cls) {
+          final var value = map.get(key);
+          if (value == null) {
+            return Optional.empty();
+          }
+          if (cls.isAssignableFrom(value.getClass())) {
+            //noinspection unchecked
+            return Optional.of((T) value);
+          }
+          return Optional.empty();
+        }
+
+        @NotNull
+        @Override
+        public Map<String, Object> getHolder() {
+          return map;
+        }
+      };
     }
-    if (!map.containsKey(key)) {
-      return KeyUtil.getOrDefault(map, tClass, keys);
+
+    /**
+     * creates a holder from a transformed data.
+     *
+     * @param transformedData the transformed data to create.
+     *
+     * @return a newly created holder.
+     */
+    @NotNull
+    static Holder<TransformedData> transformedData(@NotNull final TransformedData transformedData) {
+      return new Holder<>() {
+        @Override
+        public <E> void add(@NotNull final String key, @Nullable final E object, @NotNull final Class<E> cls) {
+          transformedData.add(key, object, cls);
+        }
+
+        @Override
+        public <E> void addAsCollection(@NotNull final String key, @NotNull final Collection<E> collection,
+                                        @NotNull final Class<E> cls) {
+          transformedData.addCollection(key, collection, cls);
+        }
+
+        @Override
+        public <K, V> void addAsMap(@NotNull final String key, @NotNull final Map<K, V> object,
+                                    @NotNull final Class<K> keyClass, @NotNull final Class<V> valueClass) {
+          transformedData.addAsMap(key, object, keyClass, valueClass);
+        }
+
+        @NotNull
+        @Override
+        public <E> Optional<E> get(@NotNull final String key, @NotNull final Class<E> cls) {
+          return transformedData.get(key, cls);
+        }
+
+        @NotNull
+        @Override
+        public <E> Optional<List<E>> getAsList(@NotNull final String key, @NotNull final Class<E> cls) {
+          return transformedData.getAsList(key, cls);
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Optional<Map<K, V>> getAsMap(@NotNull final String key, @NotNull final Class<K> keyClass,
+                                                   @NotNull final Class<V> valueClass) {
+          return transformedData.getAsMap(key, keyClass, valueClass);
+        }
+
+        @NotNull
+        @Override
+        public TransformedData getHolder() {
+          return transformedData;
+        }
+      };
     }
-    final var object = map.get(key);
-    if (tClass.isAssignableFrom(object.getClass())) {
-      // noinspection unchecked
-      return Optional.of((T) object);
+
+    /**
+     * adds the object to the key.
+     *
+     * @param key the key to add.
+     * @param object the object to add.
+     * @param cls the cls to add.
+     * @param <E> type of the object.
+     */
+    <E> void add(@NotNull String key, @Nullable E object, @NotNull Class<E> cls);
+
+    /**
+     * adds the collection to the key.
+     *
+     * @param key the key to add.
+     * @param collection the collection to add.
+     * @param cls the cls to add.
+     * @param <E> type of the element.
+     */
+    default <E> void addAsCollection(@NotNull final String key, @NotNull final Collection<E> collection, @NotNull final Class<E> cls) {
+      this.add(key, collection, Collection.class);
     }
-    return KeyUtil.getOrDefault(map, tClass, keys);
+
+    /**
+     * adds the object to the key.
+     *
+     * @param key the key to add.
+     * @param object the object to add.
+     * @param keyClass the key class to add.
+     * @param valueClass the value class to add.
+     * @param <K> type of the key.
+     * @param <V> type of the value.
+     */
+    default <K, V> void addAsMap(@NotNull final String key, @NotNull final Map<K, V> object, @NotNull final Class<K> keyClass,
+                                 @NotNull final Class<V> valueClass) {
+      this.add(key, object, Map.class);
+    }
+
+    /**
+     * gets the value at key.
+     *
+     * @param key the key to get.
+     * @param cls the cls to get.
+     * @param <E> type of the value.
+     *
+     * @return value at key.
+     */
+    @NotNull <E> Optional<E> get(@NotNull String key, @NotNull Class<E> cls);
+
+    /**
+     * gets the value at key as list.
+     *
+     * @param key the key to get.
+     * @param cls the cls to get.
+     * @param <E> type of the element.
+     *
+     * @return value at key as list.
+     */
+    @NotNull
+    default <E> Optional<List<E>> getAsList(@NotNull final String key, @NotNull final Class<E> cls) {
+      return this.get(key, List.class)
+        .map(list -> (List<E>) list);
+    }
+
+    /**
+     * gets the value at key as map.
+     *
+     * @param key the key to get.
+     * @param keyClass the key class to get.
+     * @param valueClass the value class to get.
+     * @param <K> type of of the key.
+     * @param <V> type of the value.
+     *
+     * @return value at key as map.
+     */
+    @NotNull
+    default <K, V> Optional<Map<K, V>> getAsMap(@NotNull final String key, @NotNull final Class<K> keyClass,
+                                                @NotNull final Class<V> valueClass) {
+      return this.get(key, Map.class)
+        .map(map -> (Map<K, V>) map);
+    }
+
+    /**
+     * obtains the holder.
+     *
+     * @return holder
+     */
+    @NotNull
+    T getHolder();
   }
 }

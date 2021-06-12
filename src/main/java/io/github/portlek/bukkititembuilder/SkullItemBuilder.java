@@ -27,7 +27,6 @@ package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.SkullUtils;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
@@ -73,16 +72,16 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   }
 
   /**
-   * creates skull item builder from serialized map.
+   * creates skull item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created skull item builder instance.
    */
   @NotNull
-  public static SkullItemBuilder from(@NotNull final Map<String, Object> map) {
-    return SkullItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static SkullItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return SkullItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -101,12 +100,10 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
-    map.put(KeyUtil.SKULL_TEXTURE_KEYS[0], SkullUtils.getSkinValue(this.getItemMeta()));
-    return map;
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
+    holder.add(KeyUtil.SKULL_TEXTURE_KEY, SkullUtils.getSkinValue(this.getItemMeta()), String.class);
   }
 
   /**
@@ -141,19 +138,19 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
    * a class that represents deserializer of {@link SkullMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<SkullItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<SkullItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<SkullItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<SkullItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asSkull();
-      KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS)
+      holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class)
         .ifPresent(builder::setOwner);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

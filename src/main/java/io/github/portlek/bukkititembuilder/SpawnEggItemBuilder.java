@@ -27,7 +27,6 @@ package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.entity.EntityType;
@@ -74,16 +73,16 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   }
 
   /**
-   * creates spawn egg item builder from serialized map.
+   * creates spawn egg item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created spawn egg item builder instance.
    */
   @NotNull
-  public static SpawnEggItemBuilder from(@NotNull final Map<String, Object> map) {
-    return SpawnEggItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static SpawnEggItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return SpawnEggItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -102,12 +101,10 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
-    map.put(KeyUtil.CREATURE_KEYS[0], this.getItemMeta().getSpawnedType().getName());
-    return map;
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
+    holder.add(KeyUtil.CREATURE_KEY, this.getItemMeta().getSpawnedType().getName(), String.class);
   }
 
   /**
@@ -147,19 +144,19 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
    * a class that represents deserializer of {@link SpawnEggMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<SpawnEggItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<SpawnEggItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<SpawnEggItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<SpawnEggItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asSpawnEgg();
-      KeyUtil.getOrDefault(map, String.class, KeyUtil.CREATURE_KEYS)
+      holder.get(KeyUtil.CREATURE_KEY, String.class)
         .ifPresent(builder::setSpawnedType);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

@@ -718,7 +718,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   public static final class ItemMetaDeserializer<B extends Builder<?, ?>> implements
-    Function<@NotNull Map<String, Object>, @NotNull B> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull B> {
 
     /**
      * the builder.
@@ -728,28 +728,25 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
 
     @NotNull
     @Override
-    public B apply(@NotNull final Map<String, Object> map) {
+    public B apply(@NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = this.builder.getItemStack(false);
       final var itemMeta = itemStack.getItemMeta();
       if (itemMeta == null) {
         return this.builder;
       }
       if (itemMeta instanceof SkullMeta) {
-        KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS).ifPresent(s ->
+        holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class).ifPresent(s ->
           SkullUtils.applySkin(itemMeta, s));
       }
-      KeyUtil.getOrDefault(map, String.class, KeyUtil.DISPLAY_NAME_KEYS)
+      holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class)
         .map(ColorUtil::colored)
         .ifPresent(this.builder::setName);
-      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.LORE_KEYS)
-        .map(list -> (Collection<String>) list)
+      holder.getAsList(KeyUtil.LORE_KEY, String.class)
         .map(ColorUtil::colored)
         .ifPresent(this.builder::setLore);
-      KeyUtil.getOrDefault(map, Map.class, KeyUtil.ENCHANTMENT_KEYS)
-        .map(enchantments -> (Map<String, Integer>) enchantments)
+      holder.getAsMap(KeyUtil.ENCHANTMENT_KEY, String.class, Integer.class)
         .ifPresent(this.builder::addSerializedEnchantments);
-      KeyUtil.getOrDefault(map, Collection.class, KeyUtil.FLAG_KEYS)
-        .map(flags -> (Collection<String>) flags)
+      holder.getAsList(KeyUtil.FLAG_KEY, String.class)
         .ifPresent(this.builder::addFlags);
       itemStack.setItemMeta(itemMeta);
       return this.builder;
@@ -760,34 +757,31 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * a class that represents deserializers of {@link ItemStack}.
    */
   public static final class ItemStackDeserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStack>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<ItemStack>> {
 
     @NotNull
     @Override
-    public Optional<ItemStack> apply(@NotNull final Map<String, Object> map) {
-      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
+    public Optional<ItemStack> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var materialOptional = holder.get(KeyUtil.MATERIAL_KEY, String.class)
         .flatMap(ItemStackUtil::parseMaterial);
       if (materialOptional.isEmpty()) {
         return Optional.empty();
       }
       final var material = materialOptional.get();
-      final int amount = KeyUtil.getOrDefault(map, Number.class, KeyUtil.AMOUNT_KEYS)
-        .map(Number::intValue)
+      final int amount = holder.get(KeyUtil.AMOUNT_KEY, int.class)
         .orElse(1);
       final ItemStack itemStack;
       if (Builder.VERSION < 13) {
         itemStack = new ItemStack(material, amount);
-        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS)
-          .map(Number::shortValue)
+        holder.get(KeyUtil.DAMAGE_KEY, short.class)
           .ifPresent(itemStack::setDurability);
-        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DATA_KEYS)
-          .map(Number::byteValue)
+        holder.get(KeyUtil.DATA_KEY, byte.class)
           .map(material::getNewData)
           .ifPresent(itemStack::setData);
       } else {
         itemStack = new ItemStack(material, amount);
-        KeyUtil.getOrDefault(map, Number.class, KeyUtil.DAMAGE_KEYS).ifPresent(integer ->
-          itemStack.setDurability(integer.shortValue()));
+        holder.get(KeyUtil.DAMAGE_KEY, short.class)
+          .ifPresent(itemStack::setDurability);
       }
       return Optional.of(itemStack);
     }
@@ -797,12 +791,12 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    * a class that represents simple deserializers of {@link ItemStack}.
    */
   public static final class SimpleItemStackDeserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<ItemStackBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<ItemStackBuilder>> {
 
     @NotNull
     @Override
-    public Optional<ItemStackBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var materialOptional = KeyUtil.getOrDefault(map, String.class, KeyUtil.MATERIAL_KEYS)
+    public Optional<ItemStackBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var materialOptional = holder.get(KeyUtil.MATERIAL_KEY, String.class)
         .flatMap(ItemStackUtil::parseMaterial);
       if (materialOptional.isEmpty()) {
         return Optional.empty();
