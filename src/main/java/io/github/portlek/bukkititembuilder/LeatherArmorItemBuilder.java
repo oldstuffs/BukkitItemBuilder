@@ -27,7 +27,6 @@ package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XItemStack;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.Color;
@@ -76,16 +75,16 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   }
 
   /**
-   * creates leather armor item builder from serialized map.
+   * creates leather armor item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created leather armor item builder instance.
    */
   @NotNull
-  public static LeatherArmorItemBuilder from(@NotNull final Map<String, Object> map) {
-    return LeatherArmorItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static LeatherArmorItemBuilder from(@NotNull final KeyUtil.Holder holder) {
+    return LeatherArmorItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -104,14 +103,12 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var color = this.getItemMeta().getColor();
-    map.put(KeyUtil.COLOR_KEYS[0], String.format("%d, %d, %d",
-      color.getRed(), color.getGreen(), color.getBlue()));
-    return map;
+    holder.add(KeyUtil.COLOR_KEY, String.format("%d, %d, %d",
+      color.getRed(), color.getGreen(), color.getBlue()), String.class);
   }
 
   /**
@@ -143,19 +140,19 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
    * a class that represents deserializer of {@link LeatherArmorMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<LeatherArmorItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<LeatherArmorItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<LeatherArmorItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<LeatherArmorItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asLeatherArmor();
-      KeyUtil.getOrDefault(map, String.class, KeyUtil.SKULL_TEXTURE_KEYS)
+      holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class)
         .ifPresent(builder::setColor);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

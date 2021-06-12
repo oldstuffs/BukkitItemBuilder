@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.DyeColor;
@@ -74,16 +73,16 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   }
 
   /**
-   * creates banner item builder from serialized map.
+   * creates banner item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created banner item builder instance.
    */
   @NotNull
-  public static BannerItemBuilder from(@NotNull final Map<String, Object> map) {
-    return BannerItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static BannerItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return BannerItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -115,15 +114,13 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var patterns = new HashMap<String, Object>();
-    map.put(KeyUtil.PATTERNS_KEYS[0], patterns);
     this.getItemMeta().getPatterns()
       .forEach(pattern -> patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
-    return map;
+    holder.addAsMap(KeyUtil.PATTERNS_KEY, patterns, String.class, Object.class);
   }
 
   /**
@@ -196,18 +193,17 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    * a class that represents deserializer of {@link BannerMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<BannerItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<BannerItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<BannerItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<BannerItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asBanner();
-      KeyUtil.getOrDefault(map, Map.class, KeyUtil.PATTERNS_KEYS)
-        .map(m -> (Map<String, Object>) m)
+      holder.getAsMap(KeyUtil.PATTERNS_KEY, String.class, Object.class)
         .ifPresent(patterns -> patterns.forEach((key, value) -> {
           var type = PatternType.getByIdentifier(key);
           if (type == null) {
@@ -225,7 +221,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
           }
           builder.addPatterns(new Pattern(color, type));
         }));
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

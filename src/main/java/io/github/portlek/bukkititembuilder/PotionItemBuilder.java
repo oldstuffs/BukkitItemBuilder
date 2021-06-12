@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -95,16 +94,16 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   }
 
   /**
-   * creates potion item builder from serialized map.
+   * creates potion item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created potion item builder instance.
    */
   @NotNull
-  public static PotionItemBuilder from(@NotNull final Map<String, Object> map) {
-    return PotionItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static PotionItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return PotionItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -169,40 +168,33 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var itemStack = this.getItemStack(false);
     final var itemMeta = this.getItemMeta();
     if (Builder.VERSION >= 9) {
-      final var customEffectKey = KeyUtil.CUSTOM_EFFECTS_KEYS[0];
-      final var baseEffectKey = KeyUtil.BASE_EFFECT_KEYS[0];
       final var customEffects = itemMeta.getCustomEffects();
       final var effects = customEffects.stream()
         .map(effect ->
           String.format("%s, %d, %d", effect.getType().getName(), effect.getDuration(), effect.getAmplifier()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(customEffects.size())));
-      map.put(customEffectKey, effects);
+      holder.addAsCollection(KeyUtil.CUSTOM_EFFECTS_KEY, effects, String.class);
       final var potionData = itemMeta.getBasePotionData();
-      map.put(baseEffectKey, String.format("%s, %s, %s",
-        potionData.getType().name(), potionData.isExtended(), potionData.isUpgraded()));
+      holder.add(KeyUtil.BASE_EFFECT_KEY, String.format("%s, %s, %s",
+        potionData.getType().name(), potionData.isExtended(), potionData.isUpgraded()), String.class);
       if (Builder.VERSION >= 11) {
-        final var colorKey = KeyUtil.COLOR_KEYS[0];
         final var color = itemMeta.getColor();
         if (itemMeta.hasColor() && color != null) {
-          map.put(colorKey, color.asRGB());
+          holder.add(KeyUtil.COLOR_KEY, color.asRGB(), int.class);
         }
       }
     } else if (itemStack.getDurability() != 0) {
-      final var baseEffectKey = KeyUtil.BASE_EFFECT_KEYS[0];
-      final var levelKey = KeyUtil.LEVEL_KEYS[0];
       final var potion = Potion.fromItemStack(itemStack);
-      map.put(levelKey, potion.getLevel());
-      map.put(baseEffectKey, String.format("%s, %s, %s",
-        potion.getType().name(), potion.hasExtendedDuration(), potion.isSplash()));
+      holder.add(KeyUtil.LEVEL_KEY, potion.getLevel(), int.class);
+      holder.add(KeyUtil.BASE_EFFECT_KEY, String.format("%s, %s, %s",
+        potion.getType().name(), potion.hasExtendedDuration(), potion.isSplash()), String.class);
     }
-    return map;
   }
 
   /**
@@ -338,27 +330,26 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
    * a class that represents deserializer of {@link PotionMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<PotionItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<PotionItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<PotionItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<PotionItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asPotion();
-      final var level = KeyUtil.getOrDefault(map, Integer.class, KeyUtil.LEVEL_KEYS)
+      final var level = holder.get(KeyUtil.LEVEL_KEY, int.class)
         .orElse(1);
-      final var baseEffect = KeyUtil.getOrDefault(map, String.class, KeyUtil.BASE_EFFECT_KEYS);
-      final var color = KeyUtil.getOrDefault(map, Integer.class, KeyUtil.COLOR_KEYS);
-      final var customEffects = KeyUtil.getOrDefault(map, Collection.class, KeyUtil.CUSTOM_EFFECTS_KEYS)
-        .map(collection -> (Collection<String>) collection)
+      final var baseEffect = holder.get(KeyUtil.BASE_EFFECT_KEY, String.class);
+      final var color = holder.get(KeyUtil.COLOR_KEY, int.class);
+      final var customEffects = holder.getAsList(KeyUtil.CUSTOM_EFFECTS_KEY, String.class)
         .orElse(Collections.emptyList());
       color.ifPresent(builder::setColor);
       builder.addCustomEffects(customEffects, true);
       baseEffect.ifPresent(s -> builder.setBasePotionData(s, level));
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

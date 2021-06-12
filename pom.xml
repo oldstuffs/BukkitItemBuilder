@@ -29,6 +29,11 @@
       <version>2.2.11</version>
     </dependency>
     <dependency>
+      <groupId>com.github.portlek</groupId>
+      <artifactId>transformer</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+    <dependency>
       <groupId>com.github.cryptomorin</groupId>
       <artifactId>XSeries</artifactId>
     </dependency>
@@ -47,7 +52,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.5-R0.1-SNAPSHOT</version>
+      <version>1.17-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

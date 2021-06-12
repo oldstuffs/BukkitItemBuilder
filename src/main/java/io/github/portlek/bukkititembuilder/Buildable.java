@@ -27,7 +27,6 @@ package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
@@ -296,47 +295,37 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   /**
    * serializes the {@link #getItemStack()} into a map.
    *
-   * @return serialized map.
+   * @param holder the holder to serialize.
    */
-  @NotNull
-  default Map<String, Object> serialize() {
-    final var map = new HashMap<String, Object>();
-    final var materialKey = KeyUtil.MATERIAL_KEYS[0];
-    final var amountKey = KeyUtil.AMOUNT_KEYS[0];
-    final var damageKey = KeyUtil.DAMAGE_KEYS[0];
-    final var dataKey = KeyUtil.DATA_KEYS[0];
-    final var displayNameKey = KeyUtil.DISPLAY_NAME_KEYS[0];
-    final var loreKey = KeyUtil.LORE_KEYS[0];
-    final var enchantmentKey = KeyUtil.ENCHANTMENT_KEYS[0];
-    final var flagKey = KeyUtil.FLAG_KEYS[0];
+  default void serialize(@NotNull final KeyUtil.Holder<?> holder) {
     final var itemStack = this.getItemStack();
-    map.put(materialKey, itemStack.getType().toString());
+    holder.add(itemStack.getType().toString(), KeyUtil.MATERIAL_KEY, String.class);
     if (itemStack.getAmount() != 1) {
-      map.put(amountKey, itemStack.getAmount());
+      holder.add(KeyUtil.AMOUNT_KEY, itemStack.getAmount(), int.class);
     }
     if ((int) itemStack.getDurability() != 0) {
-      map.put(damageKey, (int) itemStack.getDurability());
+      holder.add(KeyUtil.DAMAGE_KEY, itemStack.getDurability(), short.class);
     }
     if (Builder.VERSION < 13) {
       Optional.ofNullable(itemStack.getData())
         .filter(materialData -> (int) materialData.getData() != 0)
         .ifPresent(materialData ->
-          map.put(dataKey, (int) materialData.getData()));
+          holder.add(KeyUtil.DATA_KEY, materialData.getData(), byte.class));
     }
     Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
       if (itemMeta.hasDisplayName()) {
-        map.put(displayNameKey, itemMeta.getDisplayName().replace("§", "&"));
+        holder.add(KeyUtil.DISPLAY_NAME_KEY, itemMeta.getDisplayName().replace("§", "&"), String.class);
       }
       Optional.ofNullable(itemMeta.getLore()).ifPresent(lore ->
-        map.put(loreKey,
+        holder.addAsCollection(KeyUtil.LORE_KEY,
           lore.stream()
             .map(s -> s.replace("§", "&"))
-            .collect(Collectors.toList())));
+            .collect(Collectors.toList()), String.class));
       final var flags = itemMeta.getItemFlags();
       if (!flags.isEmpty()) {
-        map.put(flagKey, flags.stream()
+        holder.addAsCollection(KeyUtil.FLAG_KEY, flags.stream()
           .map(Enum::name)
-          .collect(Collectors.toList()));
+          .collect(Collectors.toList()), String.class);
       }
     });
     final var enchants = itemStack.getEnchantments();
@@ -344,9 +333,8 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
       final var enchantments = new HashMap<String, Integer>();
       enchants.forEach((enchantment, integer) ->
         enchantments.put(enchantment.getName(), integer));
-      map.put(enchantmentKey, enchantments);
+      holder.addAsMap(KeyUtil.ENCHANTMENT_KEY, enchantments, String.class, Integer.class);
     }
-    return map;
   }
 
   /**

@@ -96,16 +96,16 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   }
 
   /**
-   * creates firework item builder from serialized map.
+   * creates firework item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created firework item builder instance.
    */
   @NotNull
-  public static FireworkItemBuilder from(@NotNull final Map<String, Object> map) {
-    return FireworkItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static FireworkItemBuilder from(@NotNull final KeyUtil.Holder holder) {
+    return FireworkItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -174,36 +174,34 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var itemMeta = this.getItemMeta();
     final var firework = new HashMap<>();
-    map.put(KeyUtil.FIREWORK_KEYS[0], firework);
-    map.put(KeyUtil.POWER_KEYS[0], itemMeta.getPower());
+    holder.add(KeyUtil.POWER_KEY, itemMeta.getPower(), int.class);
     final var effects = itemMeta.getEffects();
     IntStream.range(0, effects.size()).forEach(index -> {
       final var effect = effects.get(index);
       final var section = new HashMap<>();
       firework.put(index, section);
-      section.put(KeyUtil.TYPE_KEYS[0], effect.getType().name());
-      section.put(KeyUtil.FLICKER_KEYS[0], effect.hasFlicker());
-      section.put(KeyUtil.TRAIL_KEYS[0], effect.hasTrail());
+      section.put(KeyUtil.TYPE_KEY, effect.getType().name());
+      section.put(KeyUtil.FLICKER_KEY, effect.hasFlicker());
+      section.put(KeyUtil.TRAIL_KEY, effect.hasTrail());
       final var fwBaseColors = effect.getColors();
       final var fwFadeColors = effect.getFadeColors();
       final var colors = new HashMap<>();
-      section.put(KeyUtil.COLORS_KEYS[0], colors);
+      section.put(KeyUtil.COLORS_KEY, colors);
       final var baseColors = fwBaseColors.stream()
         .map(color -> String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwBaseColors.size())));
       final var fadeColors = fwFadeColors.stream()
         .map(color -> String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwFadeColors.size())));
-      colors.put(KeyUtil.BASE_KEYS[0], baseColors);
-      colors.put(KeyUtil.FADE_KEYS[0], fadeColors);
+      colors.put(KeyUtil.BASE_KEY, baseColors);
+      colors.put(KeyUtil.FADE_KEY, fadeColors);
     });
-    return map;
+    holder.addAsMap(KeyUtil.FIREWORK_KEY, firework, Object.class, Object.class);
   }
 
   /**
@@ -236,51 +234,59 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
    * a class that represents deserializer of {@link FireworkMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<FireworkItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<FireworkItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<FireworkItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<FireworkItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asFirework();
-      final var power = KeyUtil.getOrDefault(map, Number.class, KeyUtil.POWER_KEYS)
+      final var power = holder.get(KeyUtil.POWER_KEY, int.class)
         .orElse(1);
-      builder.setPower(power.intValue());
-      KeyUtil.getOrDefault(map, Map.class, KeyUtil.FIREWORK_KEYS)
-        .map(m -> (Map<String, Object>) m)
+      builder.setPower(power);
+      holder.getAsMap(KeyUtil.FIREWORK_KEY, String.class, Map.class)
         .ifPresent(firework -> {
           final var fireworkBuilder = FireworkEffect.builder();
           firework.forEach((key, value) -> {
-            final var fw = (Map<String, Object>) value;
-            final var flicker = KeyUtil.getOrDefault(fw, Boolean.class, KeyUtil.FLICKER_KEYS)
+            final var flicker = Optional.ofNullable(value.get(KeyUtil.FLICKER_KEY))
+              .filter(Boolean.class::isInstance)
+              .map(Boolean.class::cast)
               .orElse(false);
-            final var trail = KeyUtil.getOrDefault(fw, Boolean.class, KeyUtil.TRAIL_KEYS)
+            final var trail = Optional.ofNullable(value.get(KeyUtil.TRAIL_KEY))
+              .filter(Boolean.class::isInstance)
+              .map(Boolean.class::cast)
               .orElse(false);
-            final var type = KeyUtil.getOrDefault(fw, String.class, KeyUtil.TYPE_KEYS)
+            final var type = Optional.ofNullable(value.get(KeyUtil.TYPE_KEY))
+              .filter(String.class::isInstance)
+              .map(String.class::cast)
               .map(s -> s.toUpperCase(Locale.ROOT));
             FireworkEffect.Type effectType;
             try {
-              effectType = type.map(s -> FireworkEffect.Type.valueOf(s)).orElse(FireworkEffect.Type.STAR);
+              effectType = type.map(FireworkEffect.Type::valueOf)
+                .orElse(FireworkEffect.Type.STAR);
             } catch (final Exception e) {
               effectType = FireworkEffect.Type.STAR;
             }
             fireworkBuilder.flicker(flicker)
               .trail(trail)
               .with(effectType);
-            KeyUtil.getOrDefault(fw, Map.class, KeyUtil.COLORS_KEYS)
-              .map(m -> (Map<String, Object>) m)
+            Optional.ofNullable(value.get(KeyUtil.COLORS_KEY))
+              .filter(Map.class::isInstance)
+              .map(object -> (Map<String, Object>) object)
               .ifPresent(colorSection -> {
-                final var baseColors = KeyUtil.getOrDefault(colorSection, Collection.class, KeyUtil.BASE_KEYS)
-                  .map(collection -> (Collection<String>) collection)
+                final var baseColors = Optional.ofNullable(colorSection.get(KeyUtil.BASE_KEY))
+                  .filter(Collection.class::isInstance)
+                  .map(object -> (Collection<String>) object)
                   .map(strings -> strings.stream()
                     .map(XItemStack::parseColor)
                     .collect(Collectors.toSet()))
                   .orElse(Collections.emptySet());
-                final var fadeColors = KeyUtil.getOrDefault(colorSection, Collection.class, KeyUtil.BASE_KEYS)
-                  .map(collection -> (Collection<String>) collection)
+                final var fadeColors = Optional.ofNullable(colorSection.get(KeyUtil.BASE_KEY))
+                  .filter(Collection.class::isInstance)
+                  .map(object -> (Collection<String>) object)
                   .map(strings -> strings.stream()
                     .map(XItemStack::parseColor)
                     .collect(Collectors.toSet()))
@@ -291,7 +297,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
             builder.addEffect(fireworkBuilder.build());
           });
         });
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

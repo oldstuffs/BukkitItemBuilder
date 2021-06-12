@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
@@ -85,16 +84,16 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
   }
 
   /**
-   * creates book item builder from serialized map.
+   * creates book item builder from serialized holder.
    *
-   * @param map the map to create.
+   * @param holder the holder to create.
    *
    * @return a newly created book item builder instance.
    */
   @NotNull
-  public static BookItemBuilder from(@NotNull final Map<String, Object> map) {
-    return BookItemBuilder.getDeserializer().apply(map).orElseThrow(() ->
-      new IllegalArgumentException(String.format("The given map is incorrect!\n%s", map)));
+  public static BookItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return BookItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+      new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
   /**
@@ -126,23 +125,21 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
     return this;
   }
 
-  @NotNull
   @Override
-  public Map<String, Object> serialize() {
-    final var map = super.serialize();
+  public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var book = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
-    map.put(KeyUtil.BOOKS_KEYS[0], book);
-    book.put(KeyUtil.TITLE_KEYS[0], itemMeta.getTitle());
-    book.put(KeyUtil.AUTHOR_KEYS[0], itemMeta.getAuthor());
+    book.put(KeyUtil.TITLE_KEY, itemMeta.getTitle());
+    book.put(KeyUtil.AUTHOR_KEY, itemMeta.getAuthor());
     if (Builder.VERSION >= 10) {
       final var generation = itemMeta.getGeneration();
       if (generation != null) {
-        book.put(KeyUtil.GENERATION_KEYS[0], generation.toString());
+        book.put(KeyUtil.GENERATION_KEY, generation.toString());
       }
     }
-    book.put(KeyUtil.PAGES_KEYS[0], itemMeta.getPages());
-    return map;
+    book.put(KeyUtil.PAGES_KEY, itemMeta.getPages());
+    holder.addAsMap(KeyUtil.BOOKS_KEY, book, String.class, Object.class);
   }
 
   /**
@@ -229,42 +226,49 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    * a class that represents deserializer of {@link BookMeta}.
    */
   public static final class Deserializer implements
-    Function<@NotNull Map<String, Object>, @NotNull Optional<BookItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<BookItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<BookItemBuilder> apply(@NotNull final Map<String, Object> map) {
-      final var itemStack = Builder.getItemStackDeserializer().apply(map);
+    public Optional<BookItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+      final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asBook();
-      KeyUtil.getOrDefault(map, Map.class, KeyUtil.BOOKS_KEYS)
-        .map(m -> (Map<String, Object>) m)
+      holder.getAsMap(KeyUtil.BOOKS_KEY, String.class, Object.class)
         .ifPresent(book -> {
-          final var title = KeyUtil.getOrDefault(book, String.class, KeyUtil.TITLE_KEYS)
+          final var title = Optional.ofNullable(book.get(KeyUtil.TITLE_KEY))
+            .filter(String.class::isInstance)
+            .map(String.class::cast)
             .orElse(null);
-          final var author = KeyUtil.getOrDefault(book, String.class, KeyUtil.AUTHOR_KEYS)
+          final var author = Optional.ofNullable(book.get(KeyUtil.AUTHOR_KEY))
+            .filter(String.class::isInstance)
+            .map(String.class::cast)
             .orElse(null);
-          final var pages = KeyUtil.getOrDefault(book, List.class, KeyUtil.PAGES_KEYS)
-            .map(collection -> (List<String>) collection)
+          final var pages = Optional.ofNullable(book.get(KeyUtil.PAGES_KEY))
+            .filter(List.class::isInstance)
+            .map(object -> (List<String>) object)
             .orElse(Collections.emptyList());
           builder.setTitle(title);
           builder.setAuthor(author);
           builder.setPages(pages);
           if (Builder.VERSION >= 10) {
-            KeyUtil.getOrDefault(book, String.class, KeyUtil.GENERATION_KEYS).ifPresent(generationString -> {
-              BookMeta.Generation generation;
-              try {
-                generation = BookMeta.Generation.valueOf(generationString);
-              } catch (final Exception e) {
-                generation = null;
-              }
-              builder.setGeneration(generation);
-            });
+            Optional.ofNullable(book.get(KeyUtil.GENERATION_KEY))
+              .filter(String.class::isInstance)
+              .map(String.class::cast)
+              .ifPresent(generationString -> {
+                BookMeta.Generation generation;
+                try {
+                  generation = BookMeta.Generation.valueOf(generationString);
+                } catch (final Exception e) {
+                  generation = null;
+                }
+                builder.setGeneration(generation);
+              });
           }
         });
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(map));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }
