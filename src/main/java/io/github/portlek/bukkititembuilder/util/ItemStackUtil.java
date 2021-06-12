@@ -133,6 +133,7 @@ public final class ItemStackUtil {
    * serializes the given item stack into map.
    *
    * @param itemStack the item stack to serialize.
+   * @param holder the holder to serialize.
    */
   public static void serialize(@NotNull final ItemStack itemStack, @NotNull final KeyUtil.Holder<?> holder) {
     final var builder = ItemStackBuilder.from(itemStack);

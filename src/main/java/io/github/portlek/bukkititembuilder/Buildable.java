@@ -294,6 +294,8 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
 
   /**
    * serializes the {@link #getItemStack()} into a map.
+   *
+   * @param holder the holder to serialize.
    */
   default void serialize(@NotNull final KeyUtil.Holder<?> holder) {
     final var itemStack = this.getItemStack();
