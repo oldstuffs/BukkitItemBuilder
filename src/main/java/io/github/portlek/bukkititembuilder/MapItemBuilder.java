@@ -139,7 +139,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
         map.put("location", itemMeta.getLocationName());
       }
       final var color = itemMeta.getColor();
-      if (itemMeta.hasColor() && color != null) {
+      if (color != null) {
         map.put("color", String.format("%d, %d, %d",
           color.getRed(), color.getGreen(), color.getBlue()));
       }
