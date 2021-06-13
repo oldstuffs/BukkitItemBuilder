@@ -31,7 +31,7 @@
     <dependency>
       <groupId>com.github.portlek</groupId>
       <artifactId>transformer</artifactId>
-      <version>1.4.4</version>
+      <version>1.4.6</version>
     </dependency>
     <dependency>
       <groupId>com.github.cryptomorin</groupId>
