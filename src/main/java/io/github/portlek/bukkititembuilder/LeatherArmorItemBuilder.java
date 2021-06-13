@@ -82,7 +82,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
    * @return a newly created leather armor item builder instance.
    */
   @NotNull
-  public static LeatherArmorItemBuilder from(@NotNull final KeyUtil.Holder holder) {
+  public static LeatherArmorItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
     return LeatherArmorItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }

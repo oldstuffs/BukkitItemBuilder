@@ -86,7 +86,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    * @return a newly created crossbow item builder instance.
    */
   @NotNull
-  public static CrossbowItemBuilder from(@NotNull final KeyUtil.Holder holder) {
+  public static CrossbowItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
     return CrossbowItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }

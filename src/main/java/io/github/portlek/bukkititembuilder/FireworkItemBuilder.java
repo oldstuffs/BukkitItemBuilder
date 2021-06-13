@@ -103,7 +103,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
    * @return a newly created firework item builder instance.
    */
   @NotNull
-  public static FireworkItemBuilder from(@NotNull final KeyUtil.Holder holder) {
+  public static FireworkItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
     return FireworkItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }

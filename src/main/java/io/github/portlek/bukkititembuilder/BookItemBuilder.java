@@ -130,8 +130,12 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
     super.serialize(holder);
     final var book = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
-    book.put(KeyUtil.TITLE_KEY, itemMeta.getTitle());
-    book.put(KeyUtil.AUTHOR_KEY, itemMeta.getAuthor());
+    if (itemMeta.hasAuthor()) {
+      book.put(KeyUtil.TITLE_KEY, itemMeta.getTitle());
+    }
+    if (itemMeta.hasAuthor()) {
+      book.put(KeyUtil.AUTHOR_KEY, itemMeta.getAuthor());
+    }
     if (Builder.VERSION >= 10) {
       final var generation = itemMeta.getGeneration();
       if (generation != null) {

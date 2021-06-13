@@ -299,7 +299,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   default void serialize(@NotNull final KeyUtil.Holder<?> holder) {
     final var itemStack = this.getItemStack();
-    holder.add(itemStack.getType().toString(), KeyUtil.MATERIAL_KEY, String.class);
+    holder.add(KeyUtil.MATERIAL_KEY, itemStack.getType().toString(), String.class);
     if (itemStack.getAmount() != 1) {
       holder.add(KeyUtil.AMOUNT_KEY, itemStack.getAmount(), int.class);
     }
