@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder.util;
 
 import io.github.portlek.transformer.TransformedData;
+import io.github.portlek.transformer.declarations.GenericDeclaration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -283,7 +284,22 @@ public final class KeyUtil {
           if (value == null) {
             return Optional.empty();
           }
-          if (cls.isAssignableFrom(value.getClass())) {
+          final var valueClass = value.getClass();
+          if (cls.isAssignableFrom(valueClass)) {
+            //noinspection unchecked
+            return Optional.of((T) value);
+          }
+          if (!GenericDeclaration.isWrapperBoth(cls, valueClass)) {
+            return Optional.empty();
+          }
+          final var clsWrapper = GenericDeclaration.of(cls).toWrapper();
+          final var valueWrapper = GenericDeclaration.of(valueClass).toWrapper();
+          if (clsWrapper.isPresent() &&
+            clsWrapper.get() == (valueWrapper.isPresent() ? valueWrapper.orElseThrow() : valueClass)) {
+            //noinspection unchecked
+            return Optional.of((T) value);
+          }
+          if (valueWrapper.isPresent() && valueWrapper.get() == cls) {
             //noinspection unchecked
             return Optional.of((T) value);
           }
