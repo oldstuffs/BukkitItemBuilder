@@ -78,12 +78,14 @@ final class Test1_16R3 extends Spigot_1_16R3 {
     final var meta = expected.getItemMeta();
     if (meta != null) {
       meta.setDisplayName("Test");
+      meta.setLore(List.of("Test", "Test"));
     }
     expected.setItemMeta(meta);
     final var holder = KeyUtil.Holder.map(Map.of(
       "material", "WOODEN_SWORD",
       "amount", 10,
-      "name", "Test"));
+      "name", "Test",
+      "lore", List.of("Test", "Test")));
     new Assertion<>(
       "Couldn't deserialize the item stack!",
       ItemStackUtil.deserialize(holder).orElseThrow(() ->
