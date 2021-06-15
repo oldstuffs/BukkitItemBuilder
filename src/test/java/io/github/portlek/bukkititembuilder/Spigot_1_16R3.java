@@ -55,7 +55,7 @@ abstract class Spigot_1_16R3 {
     while (!Spigot_1_16R3.checkTpsFilled()) {
       Thread.sleep(5L);
     }
-    Thread.sleep(100L);
+    Thread.sleep(1000L);
   }
 
   static void stopServer() {
