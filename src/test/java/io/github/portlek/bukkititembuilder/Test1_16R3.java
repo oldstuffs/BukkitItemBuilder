@@ -25,12 +25,43 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import java.util.List;
+import org.hamcrest.core.IsEqual;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.llorllale.cactoos.matchers.Assertion;
 
 final class Test1_16R3 extends Spigot_1_16R3 {
 
+  @AfterAll
+  static void stop() {
+    Spigot_1_16R3.stopServer();
+  }
+
+  @BeforeAll
+  static void test() throws Exception {
+    Spigot_1_16R3.startServer();
+  }
+
   @Test
-  void test() {
-      this.runServer(TestUtil.USUAL_TEST);
+  void testColorUtilColored() {
+    final var nonColoredString = "&aTesty";
+    new Assertion<>(
+      "Couldn't colored the string!",
+      ColorUtil.colored(nonColoredString),
+      new IsEqual<>("§aTesty")
+    ).affirm();
+    new Assertion<>(
+      "Couldn't colored the string list!",
+      ColorUtil.colored(nonColoredString, nonColoredString),
+      new IsEqual<>(List.of("§aTesty", "§aTesty"))
+    ).affirm();
+    new Assertion<>(
+      "Couldn't colored the string list!",
+      ColorUtil.colored(List.of(nonColoredString, nonColoredString)),
+      new IsEqual<>(List.of("§aTesty", "§aTesty"))
+    ).affirm();
   }
 }

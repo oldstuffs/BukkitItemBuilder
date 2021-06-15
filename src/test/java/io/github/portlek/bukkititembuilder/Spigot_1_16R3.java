@@ -25,25 +25,60 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import java.io.File;
 import java.lang.reflect.Field;
-import net.minecraft.server.v1_16_R3.Main;
+import java.nio.file.Files;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.Main;
 
-public abstract class Spigot_1_16R3 extends RunServer {
+abstract class Spigot_1_16R3 {
 
-  private Field recentTps;
+  private static Field recentTps;
 
-  @Override
-  protected final boolean checkTpsFilled() throws Exception {
-    if (this.recentTps == null) {
-      this.recentTps = MinecraftServer.class.getDeclaredField("recentTps");
+  private static Thread thread = null;
+
+  static void startServer() throws Exception {
+    final var here = new File(System.getProperty("user.dir"));
+    final var path = here.toPath();
+    final var before = here.getParentFile();
+    final var pathBefore = before.toPath();
+    final var testClassesPath = pathBefore.resolve("test-classes");
+    final var serverProperties = testClassesPath.resolve("server.properties");
+    final var bukkitYml = testClassesPath.resolve("bukkit.yml");
+    final var spigotYml = testClassesPath.resolve("spigot.yml");
+    Files.deleteIfExists(path.resolve("world"));
+    Files.deleteIfExists(path.resolve("world_nether"));
+    Files.deleteIfExists(path.resolve("world_the_end"));
+    System.setProperty("com.mojang.eula.agree", "true");
+    Spigot_1_16R3.thread = new Thread(() -> {
+      Main.main(new String[]{
+        "nogui",
+        "noconsole",
+        "--config=" + serverProperties,
+        "--bukkit-settings=" + bukkitYml,
+        "--spigot-settings=" + spigotYml
+      });
+    });
+    Spigot_1_16R3.thread.start();
+    while (!Spigot_1_16R3.checkTpsFilled()) {
+      Thread.sleep(5L);
     }
-    return MinecraftServer.getServer() != null &&
-      ((double[]) this.recentTps.get(MinecraftServer.getServer()))[0] != 0;
+    Thread.sleep(100L);
   }
 
-  @Override
-  protected final void main(final String[] args) {
-    Main.main(RunServer.parseOptions(args));
+  static void stopServer() {
+    if (Spigot_1_16R3.thread != null) {
+      Bukkit.shutdown();
+      Spigot_1_16R3.thread.interrupt();
+    }
+  }
+
+  private static boolean checkTpsFilled() throws NoSuchFieldException, IllegalAccessException {
+    if (Spigot_1_16R3.recentTps == null) {
+      Spigot_1_16R3.recentTps = MinecraftServer.class.getDeclaredField("recentTps");
+    }
+    return MinecraftServer.getServer() != null &&
+      ((double[]) Spigot_1_16R3.recentTps.get(MinecraftServer.getServer()))[0] != 0;
   }
 }
