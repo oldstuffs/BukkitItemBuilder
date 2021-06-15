@@ -26,15 +26,37 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 
 final class TestUtil {
 
   static final Runnable USUAL_TEST = () -> {
     TestUtil.testXMaterial();
+    TestUtil.testColorUtilColored();
   };
 
   private TestUtil() {
+  }
+
+  private static void testColorUtilColored() {
+    final var nonColoredString = "&aTesty";
+    Assertions.assertEquals(
+      "§aTesty",
+      ColorUtil.colored(nonColoredString),
+      "Couldn't colored the string!"
+    );
+    Assertions.assertEquals(
+      List.of("§aTesty", "§aTesty"),
+      ColorUtil.colored(nonColoredString, nonColoredString),
+      "Couldn't colored the string list!"
+    );
+    Assertions.assertEquals(
+      List.of("§aTesty", "§aTesty"),
+      ColorUtil.colored(List.of(nonColoredString, nonColoredString)),
+      "Couldn't colored the string list!"
+    );
   }
 
   private static void testXMaterial() {

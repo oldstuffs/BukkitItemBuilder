@@ -29,7 +29,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler.version}</version>
         <configuration>
-          <proc>none</proc>
           <source>${java.version}</source>
           <target>${java.version}</target>
           <annotationProcessorPaths>

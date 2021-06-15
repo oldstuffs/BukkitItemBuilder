@@ -27,17 +27,17 @@ package io.github.portlek.bukkititembuilder;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class RunServer {
 
-  private static final OptionParser parser = new OptionParser() {{
+  private static final OptionParser PARSER = new OptionParser() {{
     this.acceptsAll(Arrays.asList("?", "help"), "Show the help");
     this.acceptsAll(Arrays.asList("c", "config"), "Properties file to use")
       .withRequiredArg()
@@ -123,32 +123,33 @@ public abstract class RunServer {
       .describedAs("Yml file");
   }};
 
-  protected abstract boolean checkTpsFilled() throws Exception;
-
-  protected abstract void main(final String[] args);
-
-  protected OptionSet parseOptions(final String[] args) {
+  static OptionSet parseOptions(final String[] args) {
     try {
-      return RunServer.parser.parse(args);
+      return RunServer.PARSER.parse(args);
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  protected void runServer(final Runnable tests) {
+  protected abstract boolean checkTpsFilled() throws Exception;
+
+  protected abstract void main(final String[] args);
+
+  final void runServer(@NotNull final Runnable test) {
+    Thread thread = null;
     try {
-      final File here = new File(System.getProperty("user.dir"));
-      final Path path = here.toPath();
-      final File before = here.getParentFile();
-      final Path pathBefore = before.toPath();
-      final Path testClassesPath = pathBefore.resolve("test-classes");
-      final Path serverProperties = testClassesPath.resolve("server.properties");
-      final Path bukkitYml = testClassesPath.resolve("bukkit.yml");
-      final Path spigotYml = testClassesPath.resolve("spigot.yml");
+      final var here = new File(System.getProperty("user.dir"));
+      final var path = here.toPath();
+      final var before = here.getParentFile();
+      final var pathBefore = before.toPath();
+      final var testClassesPath = pathBefore.resolve("test-classes");
+      final var serverProperties = testClassesPath.resolve("server.properties");
+      final var bukkitYml = testClassesPath.resolve("bukkit.yml");
+      final var spigotYml = testClassesPath.resolve("spigot.yml");
       Files.deleteIfExists(path.resolve("world"));
       Files.deleteIfExists(path.resolve("world_nether"));
       Files.deleteIfExists(path.resolve("world_the_end"));
-      final Thread thread = new Thread(() -> {
+      thread = new Thread(() -> {
         System.setProperty("com.mojang.eula.agree", "true");
         this.main(new String[]{
           "nogui",
@@ -163,12 +164,15 @@ public abstract class RunServer {
         Thread.sleep(5L);
       }
       Thread.sleep(1000L);
-      tests.run();
+      test.run();
       Thread.sleep(1000L);
-      Bukkit.shutdown();
-      thread.interrupt();
     } catch (final Exception e) {
       throw new RuntimeException(e);
+    } finally {
+      if (thread != null) {
+        Bukkit.shutdown();
+        thread.interrupt();
+      }
     }
   }
 }

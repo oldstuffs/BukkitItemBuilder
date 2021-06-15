@@ -34,7 +34,7 @@ public abstract class Spigot_1_16R3 extends RunServer {
   private Field recentTps;
 
   @Override
-  protected boolean checkTpsFilled() throws Exception {
+  protected final boolean checkTpsFilled() throws Exception {
     if (this.recentTps == null) {
       this.recentTps = MinecraftServer.class.getDeclaredField("recentTps");
     }
@@ -43,7 +43,7 @@ public abstract class Spigot_1_16R3 extends RunServer {
   }
 
   @Override
-  protected void main(final String[] args) {
-    Main.main(this.parseOptions(args));
+  protected final void main(final String[] args) {
+    Main.main(RunServer.parseOptions(args));
   }
 }
