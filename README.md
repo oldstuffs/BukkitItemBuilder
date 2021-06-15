@@ -2,6 +2,7 @@
 
 ![master](https://github.com/portlek/BukkitItemBuilder/workflows/build/badge.svg)
 [![Release](https://jitpack.io/v/portlek/BukkitItemBuilder.svg)](https://jitpack.io/#portlek/BukkitItemBuilder)
+[![codecov](https://codecov.io/gh/portlek/BukkitItemBuilder/branch/master/graph/badge.svg?token=UC0UR5QJPI)](https://codecov.io/gh/portlek/BukkitItemBuilder)
 
 ## How to Use
 
