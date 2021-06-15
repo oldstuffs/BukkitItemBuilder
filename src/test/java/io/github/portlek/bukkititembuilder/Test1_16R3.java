@@ -34,16 +34,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
 
-final class Test1_17R1 extends Spigot_1_17R1 {
+final class Test1_16R3 extends Spigot_1_16R3 {
 
   @BeforeAll
   static void setup() throws Exception {
-    Spigot_1_17R1.startServer();
+    Spigot_1_16R3.startServer();
   }
 
   @AfterAll
   static void teardown() {
-    Spigot_1_17R1.stopServer();
+    Spigot_1_16R3.stopServer();
   }
 
   @Test

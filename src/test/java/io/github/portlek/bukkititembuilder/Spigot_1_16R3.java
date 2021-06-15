@@ -27,11 +27,11 @@ package io.github.portlek.bukkititembuilder;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.v1_16_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.Main;
 
-abstract class Spigot_1_17R1 {
+abstract class Spigot_1_16R3 {
 
   private static Field recentTps;
 
@@ -43,7 +43,7 @@ abstract class Spigot_1_17R1 {
       .toPath()
       .resolve("test-classes");
     System.setProperty("com.mojang.eula.agree", "true");
-    Spigot_1_17R1.thread = new Thread(() ->
+    Spigot_1_16R3.thread = new Thread(() ->
       Main.main(new String[]{
         "nogui",
         "noconsole",
@@ -51,25 +51,25 @@ abstract class Spigot_1_17R1 {
         "--bukkit-settings=" + path.resolve("bukkit.yml"),
         "--spigot-settings=" + path.resolve("spigot.yml")
       }));
-    Spigot_1_17R1.thread.start();
-    while (!Spigot_1_17R1.checkTpsFilled()) {
+    Spigot_1_16R3.thread.start();
+    while (!Spigot_1_16R3.checkTpsFilled()) {
       Thread.sleep(5L);
     }
     Thread.sleep(1000L);
   }
 
   static void stopServer() {
-    if (Spigot_1_17R1.thread != null) {
+    if (Spigot_1_16R3.thread != null) {
       Bukkit.shutdown();
-      Spigot_1_17R1.thread.interrupt();
+      Spigot_1_16R3.thread.interrupt();
     }
   }
 
   private static boolean checkTpsFilled() throws NoSuchFieldException, IllegalAccessException {
-    if (Spigot_1_17R1.recentTps == null) {
-      Spigot_1_17R1.recentTps = MinecraftServer.class.getDeclaredField("recentTps");
+    if (Spigot_1_16R3.recentTps == null) {
+      Spigot_1_16R3.recentTps = MinecraftServer.class.getDeclaredField("recentTps");
     }
     return MinecraftServer.getServer() != null &&
-      ((double[]) Spigot_1_17R1.recentTps.get(MinecraftServer.getServer()))[0] != 0;
+      ((double[]) Spigot_1_16R3.recentTps.get(MinecraftServer.getServer()))[0] != 0;
   }
 }
