@@ -27,7 +27,6 @@ package io.github.portlek.bukkititembuilder;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.Main;
@@ -39,25 +38,18 @@ abstract class Spigot_1_16R3 {
   private static Thread thread = null;
 
   static void startServer() throws Exception {
-    final var here = new File(System.getProperty("user.dir"));
-    final var path = here.toPath();
-    final var before = here.getParentFile();
-    final var pathBefore = before.toPath();
-    final var testClassesPath = pathBefore.resolve("test-classes");
-    final var serverProperties = testClassesPath.resolve("server.properties");
-    final var bukkitYml = testClassesPath.resolve("bukkit.yml");
-    final var spigotYml = testClassesPath.resolve("spigot.yml");
-    Files.deleteIfExists(path.resolve("world"));
-    Files.deleteIfExists(path.resolve("world_nether"));
-    Files.deleteIfExists(path.resolve("world_the_end"));
+    final var path = new File(System.getProperty("user.dir"))
+      .getParentFile()
+      .toPath()
+      .resolve("test-classes");
     System.setProperty("com.mojang.eula.agree", "true");
     Spigot_1_16R3.thread = new Thread(() ->
       Main.main(new String[]{
         "nogui",
         "noconsole",
-        "--config=" + serverProperties,
-        "--bukkit-settings=" + bukkitYml,
-        "--spigot-settings=" + spigotYml
+        "--config=" + path.resolve("server.properties"),
+        "--bukkit-settings=" + path.resolve("bukkit.yml"),
+        "--spigot-settings=" + path.resolve("spigot.yml")
       }));
     Spigot_1_16R3.thread.start();
     while (!Spigot_1_16R3.checkTpsFilled()) {
