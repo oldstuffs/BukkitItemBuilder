@@ -42,10 +42,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
 
   @AfterAll
   static void teardown() {
-    try {
-      Spigot_1_16R3.stopServer();
-    } catch (final Exception ignored) {
-    }
+    Spigot_1_16R3.stopServer();
   }
 
   @Test

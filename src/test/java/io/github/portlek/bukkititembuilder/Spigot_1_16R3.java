@@ -61,6 +61,7 @@ abstract class Spigot_1_16R3 {
   static void stopServer() {
     if (Spigot_1_16R3.thread != null) {
       Bukkit.shutdown();
+      Spigot_1_16R3.thread.interrupt();
     }
   }
 
