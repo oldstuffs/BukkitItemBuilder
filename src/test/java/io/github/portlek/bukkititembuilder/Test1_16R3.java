@@ -35,18 +35,18 @@ import org.llorllale.cactoos.matchers.Assertion;
 
 final class Test1_16R3 extends Spigot_1_16R3 {
 
-  @AfterAll
-  static void stop() {
-    Spigot_1_16R3.stopServer();
-  }
-
   @BeforeAll
-  static void test() throws Exception {
+  static void setup() throws Exception {
     Spigot_1_16R3.startServer();
   }
 
+  @AfterAll
+  static void teardown() {
+    Spigot_1_16R3.stopServer();
+  }
+
   @Test
-  void testColorUtilColored() {
+  void colorUtilColored() {
     final var nonColoredString = "&aTesty";
     new Assertion<>(
       "Couldn't colored the string!",
