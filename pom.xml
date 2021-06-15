@@ -140,7 +140,7 @@
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot</artifactId>
           <version>1.16.5-R0.1-SNAPSHOT</version>
-          <scope>provided</scope>
+          <scope>test</scope>
         </dependency>
       </dependencies>
       <id>1_16R3</id>
