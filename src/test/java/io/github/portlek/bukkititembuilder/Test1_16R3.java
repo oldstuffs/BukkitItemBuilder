@@ -25,12 +25,16 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.hamcrest.core.IsEqual;
@@ -91,6 +95,61 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       ItemStackUtil.deserialize(holder).orElseThrow(() ->
         new IllegalStateException("Couldn't create the item stack!")).isSimilar(expected),
       new IsTrue()
+    ).affirm();
+    final var serialized = new HashMap<String, Object>();
+    ItemStackUtil.serialize(expected, KeyUtil.Holder.map(serialized));
+    new Assertion<>(
+      "Couldn't serialize the item stack!",
+      serialized,
+      new IsEqual<>(Map.of(
+        "material", "WOODEN_SWORD",
+        "amount", 10,
+        "name", "Test",
+        "lore", List.of("Test", "Test")))
+    ).affirm();
+    final var serializedFirework = new HashMap<String, Object>();
+    ItemStackUtil.serialize(
+      ItemStackBuilder.from(XMaterial.FIREWORK_ROCKET)
+        .setName("&aTest")
+        .addLore("&aTestLore", "&aTestLore")
+        .setAmount(10)
+        .addEnchantments("DAMAGE_ALL:10")
+        .asFirework()
+        .setPower(10)
+        .addEffect(FireworkEffect.builder()
+          .flicker(true)
+          .trail(true)
+          .with(FireworkEffect.Type.STAR)
+          .withColor(Color.fromRGB(255, 255, 255))
+          .withFade(Color.fromRGB(255, 255, 255))
+          .build())
+        .getItemStack(),
+      KeyUtil.Holder.map(serializedFirework));
+    final var expectedFireworkMap = Map.of(
+      "material", "FIREWORK_ROCKET",
+      "power", 10,
+      "amount", 10,
+      "name", "&aTest",
+      "lore", List.of("&aTestLore", "&aTestLore"),
+      "enchants", Map.of(
+        "DAMAGE_ALL", 10
+      ),
+      "firework", Map.of(
+        0, Map.of(
+          "trail", true,
+          "flicker", true,
+          "type", "STAR",
+          "colors", Map.of(
+            "fade", List.of("255, 255, 255"),
+            "base", List.of("255, 255, 255")
+          )
+        )
+      )
+    );
+    new Assertion<>(
+      "Couldn't serialize the firework!",
+      serializedFirework,
+      new IsEqual<>(expectedFireworkMap)
     ).affirm();
   }
 }
