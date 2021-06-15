@@ -18,7 +18,7 @@ jobs:
           java-version: 11
 
       - run: |
-          mvn package -Pcheckstyle,1_16R3
+          mvn package -Pcheckstyle,1_16R3 -B
           mvn test -Pcoverage jacoco:report
 
       - uses: codecov/codecov-action@v1.0.14
