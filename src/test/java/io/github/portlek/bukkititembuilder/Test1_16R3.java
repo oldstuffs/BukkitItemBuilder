@@ -27,6 +27,7 @@ package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import java.util.List;
+import org.bukkit.ChatColor;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,17 +52,17 @@ final class Test1_16R3 extends Spigot_1_16R3 {
     new Assertion<>(
       "Couldn't colored the string!",
       ColorUtil.colored(nonColoredString),
-      new IsEqual<>("§aTesty")
+      new IsEqual<>(ChatColor.GREEN + "Testy")
     ).affirm();
     new Assertion<>(
       "Couldn't colored the string list!",
       ColorUtil.colored(nonColoredString, nonColoredString),
-      new IsEqual<>(List.of("§aTesty", "§aTesty"))
+      new IsEqual<>(List.of(ChatColor.GREEN + "Testy", ChatColor.GREEN + "Testy"))
     ).affirm();
     new Assertion<>(
       "Couldn't colored the string list!",
       ColorUtil.colored(List.of(nonColoredString, nonColoredString)),
-      new IsEqual<>(List.of("§aTesty", "§aTesty"))
+      new IsEqual<>(List.of(ChatColor.GREEN + "Testy", ChatColor.GREEN + "Testy"))
     ).affirm();
   }
 }
