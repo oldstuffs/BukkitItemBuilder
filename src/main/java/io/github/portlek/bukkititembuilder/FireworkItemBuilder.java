@@ -178,20 +178,18 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
     super.serialize(holder);
     final var itemMeta = this.getItemMeta();
-    final var firework = new HashMap<>();
+    final var firework = new HashMap<Integer, Object>();
     holder.add(KeyUtil.POWER_KEY, itemMeta.getPower(), int.class);
     final var effects = itemMeta.getEffects();
     IntStream.range(0, effects.size()).forEach(index -> {
       final var effect = effects.get(index);
       final var section = new HashMap<>();
-      firework.put(index, section);
       section.put(KeyUtil.TYPE_KEY, effect.getType().name());
       section.put(KeyUtil.FLICKER_KEY, effect.hasFlicker());
       section.put(KeyUtil.TRAIL_KEY, effect.hasTrail());
       final var fwBaseColors = effect.getColors();
       final var fwFadeColors = effect.getFadeColors();
       final var colors = new HashMap<>();
-      section.put(KeyUtil.COLORS_KEY, colors);
       final var baseColors = fwBaseColors.stream()
         .map(color -> String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue()))
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwBaseColors.size())));
@@ -200,8 +198,10 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
         .collect(Collectors.toCollection(() -> new ArrayList<>(fwFadeColors.size())));
       colors.put(KeyUtil.BASE_KEY, baseColors);
       colors.put(KeyUtil.FADE_KEY, fadeColors);
+      section.put(KeyUtil.COLORS_KEY, colors);
+      firework.put(index, section);
     });
-    holder.addAsMap(KeyUtil.FIREWORK_KEY, firework, Object.class, Object.class);
+    holder.addAsMap(KeyUtil.FIREWORK_KEY, firework, Integer.class, Object.class);
   }
 
   /**
