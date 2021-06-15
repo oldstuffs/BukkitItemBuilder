@@ -51,15 +51,14 @@ abstract class Spigot_1_16R3 {
     Files.deleteIfExists(path.resolve("world_nether"));
     Files.deleteIfExists(path.resolve("world_the_end"));
     System.setProperty("com.mojang.eula.agree", "true");
-    Spigot_1_16R3.thread = new Thread(() -> {
+    Spigot_1_16R3.thread = new Thread(() ->
       Main.main(new String[]{
         "nogui",
         "noconsole",
         "--config=" + serverProperties,
         "--bukkit-settings=" + bukkitYml,
         "--spigot-settings=" + spigotYml
-      });
-    });
+      }));
     Spigot_1_16R3.thread.start();
     while (!Spigot_1_16R3.checkTpsFilled()) {
       Thread.sleep(5L);
@@ -70,7 +69,6 @@ abstract class Spigot_1_16R3 {
   static void stopServer() {
     if (Spigot_1_16R3.thread != null) {
       Bukkit.shutdown();
-      Spigot_1_16R3.thread.interrupt();
     }
   }
 
