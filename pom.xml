@@ -139,11 +139,11 @@
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot</artifactId>
-          <version>1.16.5-R0.1-SNAPSHOT</version>
+          <version>1.17-R0.1-SNAPSHOT</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
-      <id>1_16R3</id>
+      <id>1_17R1</id>
     </profile>
   </profiles>
 </project>
