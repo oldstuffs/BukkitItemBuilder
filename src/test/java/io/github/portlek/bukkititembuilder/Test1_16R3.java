@@ -26,13 +26,19 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
+import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.IsTrue;
 
 final class Test1_16R3 extends Spigot_1_16R3 {
 
@@ -47,7 +53,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
   }
 
   @Test
-  void colorUtilColored() {
+  void colorUtil() {
     final var nonColoredString = "&aTesty";
     new Assertion<>(
       "Couldn't colored the string!",
@@ -63,6 +69,26 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       "Couldn't colored the string list!",
       ColorUtil.colored(List.of(nonColoredString, nonColoredString)),
       new IsEqual<>(List.of(ChatColor.GREEN + "Testy", ChatColor.GREEN + "Testy"))
+    ).affirm();
+  }
+
+  @Test
+  void itemStackUtil() {
+    final var expected = new ItemStack(Material.WOODEN_SWORD, 10);
+    final var meta = expected.getItemMeta();
+    if (meta != null) {
+      meta.setDisplayName("Test");
+    }
+    expected.setItemMeta(meta);
+    final var holder = KeyUtil.Holder.map(Map.of(
+      "material", "WOODEN_SWORD",
+      "amount", 10,
+      "name", "Test"));
+    new Assertion<>(
+      "Couldn't deserialize the item stack!",
+      ItemStackUtil.deserialize(holder).orElseThrow(() ->
+        new IllegalStateException("Couldn't create the item stack!")).isSimilar(expected),
+      new IsTrue()
     ).affirm();
   }
 }
