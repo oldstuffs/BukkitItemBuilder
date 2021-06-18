@@ -43,7 +43,7 @@
     <dependency>
       <groupId>com.github.portlek</groupId>
       <artifactId>transformer</artifactId>
-      <version>1.5.8</version>
+      <version>1.5.10</version>
     </dependency>
     <dependency>
       <groupId>com.github.cryptomorin</groupId>
