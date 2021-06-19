@@ -96,6 +96,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       "Couldn't deserialize the item stack!",
       ItemStackUtil.deserialize(holder)
         .orElseThrow(() -> new IllegalStateException("Couldn't create the item stack!"))
+        .getItemStack()
         .isSimilar(expected),
       new IsTrue()
     ).affirm();
