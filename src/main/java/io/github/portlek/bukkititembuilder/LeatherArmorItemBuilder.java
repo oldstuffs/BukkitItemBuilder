@@ -28,7 +28,7 @@ package io.github.portlek.bukkititembuilder;
 import com.cryptomorin.xseries.XItemStack;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -77,13 +77,15 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
   /**
    * creates leather armor item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created leather armor item builder instance.
    */
   @NotNull
-  public static LeatherArmorItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return LeatherArmorItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static LeatherArmorItemBuilder from(@Nullable final Builder<?, ?> field,
+                                             @NotNull final KeyUtil.Holder<?> holder) {
+    return LeatherArmorItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -140,11 +142,12 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
    * a class that represents deserializer of {@link LeatherArmorMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<LeatherArmorItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<LeatherArmorItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<LeatherArmorItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<LeatherArmorItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                                   @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -152,7 +155,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
       final var builder = ItemStackBuilder.from(itemStack.get()).asLeatherArmor();
       holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class)
         .ifPresent(builder::setColor);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

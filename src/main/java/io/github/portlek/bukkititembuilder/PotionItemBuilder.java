@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
@@ -96,13 +96,14 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
   /**
    * creates potion item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created potion item builder instance.
    */
   @NotNull
-  public static PotionItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return PotionItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static PotionItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return PotionItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -330,11 +331,12 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
    * a class that represents deserializer of {@link PotionMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<PotionItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<PotionItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<PotionItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<PotionItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                             @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -349,7 +351,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
       color.ifPresent(builder::setColor);
       builder.addCustomEffects(customEffects, true);
       baseEffect.ifPresent(s -> builder.setBasePotionData(s, level));
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

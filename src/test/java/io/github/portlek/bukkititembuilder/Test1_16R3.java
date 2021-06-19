@@ -29,6 +29,8 @@ import com.cryptomorin.xseries.XMaterial;
 import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import io.github.portlek.replaceable.RpList;
+import io.github.portlek.replaceable.RpString;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,8 +94,9 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       "lore", List.of("Test", "Test")));
     new Assertion<>(
       "Couldn't deserialize the item stack!",
-      ItemStackUtil.deserialize(holder).orElseThrow(() ->
-        new IllegalStateException("Couldn't create the item stack!")).isSimilar(expected),
+      ItemStackUtil.deserialize(holder)
+        .orElseThrow(() -> new IllegalStateException("Couldn't create the item stack!"))
+        .isSimilar(expected),
       new IsTrue()
     ).affirm();
     final var serialized = new HashMap<String, Object>();
@@ -151,5 +154,16 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       serializedFirework,
       new IsEqual<>(expectedFireworkMap)
     ).affirm();
+    final var field = ItemStackBuilder.from(Material.DIAMOND)
+      .setDynamicName(RpString.from("dynamic name %test%")
+        .regex("%test%"))
+      .setDynamicLore(RpList.from("dynamic lore %test%")
+        .regex("%test%"));
+    final var holderWithField = KeyUtil.Holder.map(Map.of(
+      "material", "DIAMOND",
+      "name", "dynamic name 2 %test%",
+      "lore", List.of("dynamic lore 2 %test%")
+    ));
+    System.out.println(ItemStackUtil.deserialize(field, holderWithField).orElseThrow());
   }
 }

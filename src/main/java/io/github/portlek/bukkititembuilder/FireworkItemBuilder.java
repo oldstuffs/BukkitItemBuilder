@@ -34,13 +34,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.bukkit.FireworkEffect;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents crossbow item builders.
@@ -98,13 +99,14 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
   /**
    * creates firework item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created firework item builder instance.
    */
   @NotNull
-  public static FireworkItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return FireworkItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static FireworkItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return FireworkItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -234,11 +236,12 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
    * a class that represents deserializer of {@link FireworkMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<FireworkItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<FireworkItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<FireworkItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<FireworkItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                               @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -297,7 +300,7 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
             builder.addEffect(fireworkBuilder.build());
           });
         });
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

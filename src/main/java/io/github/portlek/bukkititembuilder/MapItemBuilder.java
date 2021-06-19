@@ -30,7 +30,7 @@ import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
@@ -102,13 +102,14 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
   /**
    * creates holder item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created holder item builder instance.
    */
   @NotNull
-  public static MapItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return MapItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static MapItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return MapItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -247,11 +248,12 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
    * a class that represents deserializer of {@link MapMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<MapItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<MapItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<MapItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<MapItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                          @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -334,7 +336,7 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
                 }));
           }
         });
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

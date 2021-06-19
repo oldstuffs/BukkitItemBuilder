@@ -28,7 +28,6 @@ package io.github.portlek.bukkititembuilder.util;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.portlek.bukkititembuilder.BannerItemBuilder;
 import io.github.portlek.bukkititembuilder.BookItemBuilder;
-import io.github.portlek.bukkititembuilder.Buildable;
 import io.github.portlek.bukkititembuilder.Builder;
 import io.github.portlek.bukkititembuilder.CrossbowItemBuilder;
 import io.github.portlek.bukkititembuilder.FireworkItemBuilder;
@@ -38,10 +37,14 @@ import io.github.portlek.bukkititembuilder.MapItemBuilder;
 import io.github.portlek.bukkititembuilder.PotionItemBuilder;
 import io.github.portlek.bukkititembuilder.SkullItemBuilder;
 import io.github.portlek.bukkititembuilder.SpawnEggItemBuilder;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that contains utility methods for {@link ItemStack}.
@@ -57,52 +60,99 @@ public final class ItemStackUtil {
   /**
    * deserializes the given holder into item stack.
    *
-   * @param holder the holder to serialize.
+   * @param holder the holder to deserialize.
    *
    * @return serialized object.
    */
   @NotNull
   public static Optional<ItemStack> deserialize(@NotNull final KeyUtil.Holder<?> holder) {
+    return ItemStackUtil.deserialize(null, holder);
+  }
+
+  /**
+   * deserializes the given holder into item stack.
+   *
+   * @param field the field to deserialize.
+   * @param holder the holder to deserialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static Optional<ItemStack> deserialize(@Nullable final Builder<?, ?> field,
+                                                @NotNull final KeyUtil.Holder<?> holder) {
+    return ItemStackUtil.deserialize(field, holder, Collections.emptyMap());
+  }
+
+  /**
+   * deserializes the given holder into item stack.
+   *
+   * @param holder the holder to deserialize.
+   * @param entries the entries to deserialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static Optional<ItemStack> deserialize(@NotNull final KeyUtil.Holder<?> holder,
+                                                @NotNull final Map<String, Supplier<String>> entries) {
+    return ItemStackUtil.deserialize(null, holder, entries);
+  }
+
+  /**
+   * deserializes the given holder into item stack.
+   *
+   * @param field the field to deserialize.
+   * @param holder the holder to deserialize.
+   * @param entries the entries to deserialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static Optional<ItemStack> deserialize(@Nullable final Builder<?, ?> field,
+                                                @NotNull final KeyUtil.Holder<?> holder,
+                                                @NotNull final Map<String, Supplier<String>> entries) {
+    return ItemStackUtil.deserialize(field, holder, entries, entries);
+  }
+
+  /**
+   * deserializes the given holder into item stack.
+   *
+   * @param field the field to deserialize.
+   * @param holder the holder to deserialize.
+   * @param loreEntries the entries to deserialize.
+   * @param nameEntries the entries to deserialize.
+   *
+   * @return serialized object.
+   */
+  @NotNull
+  public static Optional<ItemStack> deserialize(@Nullable final Builder<?, ?> field,
+                                                @NotNull final KeyUtil.Holder<?> holder,
+                                                @NotNull final Map<String, Supplier<String>> nameEntries,
+                                                @NotNull final Map<String, Supplier<String>> loreEntries) {
     return Builder.getSimpleItemStackDeserializer().apply(holder)
       .flatMap(builder -> {
+        final Optional<? extends Builder<?, ?>> finalBuilder;
         if (builder.isFirework()) {
-          return FireworkItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
+          finalBuilder = FireworkItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isLeatherArmor()) {
+          finalBuilder = LeatherArmorItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isMap()) {
+          finalBuilder = MapItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isPotion()) {
+          finalBuilder = PotionItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isBanner()) {
+          finalBuilder = BannerItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isBook()) {
+          finalBuilder = BookItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isCrossbow()) {
+          finalBuilder = CrossbowItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isSkull()) {
+          finalBuilder = SkullItemBuilder.getDeserializer().apply(field, holder);
+        } else if (builder.isSpawnEgg()) {
+          finalBuilder = SpawnEggItemBuilder.getDeserializer().apply(field, holder);
+        } else {
+          finalBuilder = ItemStackBuilder.getDeserializer().apply(field, holder);
         }
-        if (builder.isLeatherArmor()) {
-          return LeatherArmorItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isMap()) {
-          return MapItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isPotion()) {
-          return PotionItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isBanner()) {
-          return BannerItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isBook()) {
-          return BookItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isCrossbow()) {
-          return CrossbowItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isSkull()) {
-          return SkullItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        if (builder.isSpawnEgg()) {
-          return SpawnEggItemBuilder.getDeserializer().apply(holder)
-            .map(Buildable::getItemStack);
-        }
-        return ItemStackBuilder.getDeserializer().apply(holder)
-          .map(Buildable::getItemStack);
+        return finalBuilder.map(built -> built.getItemStack(nameEntries, loreEntries));
       });
   }
 
