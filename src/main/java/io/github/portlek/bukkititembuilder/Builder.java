@@ -532,13 +532,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     return this.getSelf();
   }
 
-  /**
-   * sets item instance itself.
-   *
-   * @param itemStack the item stack to set.
-   *
-   * @return {@code this} for builder chain.
-   */
   @NotNull
   @Override
   public final X setItemStack(@NotNull final ItemStack itemStack) {
@@ -549,8 +542,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   @Override
   public final ItemStack getItemStack(final boolean update) {
-    if (update &&
-      !Objects.equals(this.itemStack.getItemMeta(), this.itemMeta)) {
+    if (update && !Objects.equals(this.itemStack.getItemMeta(), this.itemMeta)) {
       this.itemStack.setItemMeta(this.itemMeta);
     }
     return this.itemStack;
