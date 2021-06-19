@@ -183,6 +183,7 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
         .map(KeyUtil.Holder::map)
         .map(ItemStackUtil::deserialize)
         .flatMap(Optional::stream)
+        .map(Buildable::getItemStack)
         .collect(Collectors.toList()));
       return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
