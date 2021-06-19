@@ -164,6 +164,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       "name", "dynamic name 2 %test%",
       "lore", List.of("dynamic lore 2 %test%")
     ));
-    System.out.println(ItemStackUtil.deserialize(field, holderWithField, Map.of("%test%", () -> "test-1")).orElseThrow());
+    System.out.println(ItemStackUtil.deserialize(field, holderWithField).orElseThrow()
+      .getItemStack(Map.of("%test%", () -> "test-1")));
   }
 }
