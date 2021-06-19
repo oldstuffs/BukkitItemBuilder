@@ -30,7 +30,7 @@ import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.bukkit.inventory.ItemStack;
@@ -81,13 +81,14 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
   /**
    * creates crossbow item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created crossbow item builder instance.
    */
   @NotNull
-  public static CrossbowItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return CrossbowItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static CrossbowItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return CrossbowItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -166,24 +167,25 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
    * a class that represents deserializer of {@link CrossbowMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<CrossbowItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<CrossbowItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<CrossbowItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<CrossbowItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                               @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
       }
       final var builder = ItemStackBuilder.from(itemStack.get()).asCrossbow();
-      final var collect = holder.getAsMap(KeyUtil.PROJECTILES_KEY, String.class, Object.class)
+      builder.setChargedProjectiles(holder.getAsMap(KeyUtil.PROJECTILES_KEY, String.class, Object.class)
         .stream()
         .map(KeyUtil.Holder::map)
         .map(ItemStackUtil::deserialize)
         .flatMap(Optional::stream)
-        .collect(Collectors.toList());
-      builder.setChargedProjectiles(collect);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+        .map(Buildable::getItemStack)
+        .collect(Collectors.toList()));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

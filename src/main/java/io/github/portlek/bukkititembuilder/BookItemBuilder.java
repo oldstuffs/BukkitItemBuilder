@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
@@ -86,13 +86,14 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
   /**
    * creates book item builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created book item builder instance.
    */
   @NotNull
-  public static BookItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return BookItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static BookItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return BookItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -230,11 +231,12 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
    * a class that represents deserializer of {@link BookMeta}.
    */
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<BookItemBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<BookItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<BookItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<BookItemBuilder> apply(@Nullable final Builder<?, ?> field,
+                                           @NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -272,7 +274,7 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
               });
           }
         });
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
     }
   }
 }

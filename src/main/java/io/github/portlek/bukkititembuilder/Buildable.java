@@ -26,8 +26,13 @@
 package io.github.portlek.bukkititembuilder;
 
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
+import io.github.portlek.replaceable.RpList;
+import io.github.portlek.replaceable.RpString;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -41,6 +46,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * an interface to determine buildable objects.
@@ -57,7 +63,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default BannerItemBuilder asBanner() {
-    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack());
+    return new BannerItemBuilder(this.validateMeta(BannerMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -67,7 +73,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default BookItemBuilder asBook() {
-    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack());
+    return new BookItemBuilder(this.validateMeta(BookMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -82,7 +88,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
     if (Builder.VERSION < 14) {
       throw new IllegalStateException("This method is for only 14 and newer versions!");
     }
-    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack());
+    return new CrossbowItemBuilder(this.validateMeta(CrossbowMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -92,7 +98,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default FireworkItemBuilder asFirework() {
-    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack());
+    return new FireworkItemBuilder(this.validateMeta(FireworkMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -102,7 +108,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default LeatherArmorItemBuilder asLeatherArmor() {
-    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack());
+    return new LeatherArmorItemBuilder(this.validateMeta(LeatherArmorMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -112,7 +118,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default MapItemBuilder asMap() {
-    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack());
+    return new MapItemBuilder(this.validateMeta(MapMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -122,7 +128,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default PotionItemBuilder asPotion() {
-    return new PotionItemBuilder(this.validateMeta(PotionMeta.class), this.getItemStack());
+    return new PotionItemBuilder(this.validateMeta(PotionMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -132,7 +138,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default SkullItemBuilder asSkull() {
-    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack());
+    return new SkullItemBuilder(this.validateMeta(SkullMeta.class), this.getItemStack(false));
   }
 
   /**
@@ -145,8 +151,24 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
     if (Builder.VERSION < 11) {
       throw new IllegalStateException("This method is for only 11 and newer versions!");
     }
-    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack());
+    return new SpawnEggItemBuilder(this.validateMeta(SpawnEggMeta.class), this.getItemStack(false));
   }
+
+  /**
+   * obtains the dynamic lore.
+   *
+   * @return dynamic lore.
+   */
+  @Nullable
+  RpList getDynamicLore();
+
+  /**
+   * obtains the dynamic name.
+   *
+   * @return dynamic name.
+   */
+  @Nullable
+  RpString getDynamicName();
 
   /**
    * obtains the item meta.
@@ -165,7 +187,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
    */
   @NotNull
   default ItemStack getItemStack() {
-    return this.getItemStack(true);
+    return this.getItemStack(Collections.emptyMap());
   }
 
   /**
@@ -181,15 +203,79 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   /**
    * obtains the item stack.
    * <p>
-   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta, updates
-   * it.
+   * if {@link #getItemMeta()} not equals to the current item stack's item meta updates it.
    *
-   * @param update the update to obtain.
+   * @param entries the entries to get.
    *
    * @return item stack.
    */
   @NotNull
-  ItemStack getItemStack(boolean update);
+  default ItemStack getItemStack(@NotNull final Map<String, Supplier<String>> entries) {
+    return this.getItemStack(entries, entries);
+  }
+
+  /**
+   * obtains the item stack.
+   * <p>
+   * if {@link #getItemMeta()} not equals to the current item stack's item meta updates it.
+   *
+   * @param nameEntries the name entries to get.
+   * @param loreEntries the lore entries to get.
+   *
+   * @return item stack.
+   */
+  @NotNull
+  default ItemStack getItemStack(@NotNull final Map<String, Supplier<String>> nameEntries,
+                                 @NotNull final Map<String, Supplier<String>> loreEntries) {
+    return this.getItemStack(nameEntries, loreEntries, true);
+  }
+
+  /**
+   * obtains the item stack.
+   * <p>
+   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta, updates
+   * it.
+   *
+   * @param update the update to get.
+   *
+   * @return item stack.
+   */
+  @NotNull
+  default ItemStack getItemStack(final boolean update) {
+    return this.getItemStack(Collections.emptyMap(), update);
+  }
+
+  /**
+   * obtains the item stack.
+   * <p>
+   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta, updates
+   * it.
+   *
+   * @param entries the entries to get.
+   * @param update the update to get.
+   *
+   * @return item stack.
+   */
+  @NotNull
+  default ItemStack getItemStack(@NotNull final Map<String, Supplier<String>> entries, final boolean update) {
+    return this.getItemStack(entries, entries, update);
+  }
+
+  /**
+   * obtains the item stack.
+   * <p>
+   * if the given update is true and if {@link #getItemMeta()} not equals to the current item stack's item meta, updates
+   * it.
+   *
+   * @param nameEntries the name entries to get.
+   * @param loreEntries the lore entries to get.
+   * @param update the update to get.
+   *
+   * @return item stack.
+   */
+  @NotNull
+  ItemStack getItemStack(@NotNull Map<String, Supplier<String>> nameEntries,
+                         @NotNull Map<String, Supplier<String>> loreEntries, boolean update);
 
   /**
    * obtains the self instance for builder chain.
@@ -312,28 +398,44 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
         .ifPresent(materialData ->
           holder.add(KeyUtil.DATA_KEY, materialData.getData(), byte.class));
     }
-    Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
-      if (itemMeta.hasDisplayName()) {
+    final var itemMeta = itemStack.getItemMeta();
+    final var dynamicName = this.getDynamicName();
+    final var dynamicLore = this.getDynamicLore();
+    if (itemMeta != null) {
+      if (dynamicName != null) {
+        holder.add(KeyUtil.DISPLAY_NAME_KEY, dynamicName.getValue(), String.class);
+      } else if (itemMeta.hasDisplayName()) {
         holder.add(KeyUtil.DISPLAY_NAME_KEY, itemMeta.getDisplayName().replace("§", "&"), String.class);
       }
-      Optional.ofNullable(itemMeta.getLore()).ifPresent(lore ->
+      final var lore = itemMeta.getLore();
+      if (dynamicLore != null) {
+        holder.addAsCollection(KeyUtil.LORE_KEY, dynamicLore.getValue(), String.class);
+      } else if (lore != null) {
         holder.addAsCollection(KeyUtil.LORE_KEY,
           lore.stream()
             .map(s -> s.replace("§", "&"))
-            .collect(Collectors.toList()), String.class));
+            .collect(Collectors.toList()), String.class);
+      }
       final var flags = itemMeta.getItemFlags();
       if (!flags.isEmpty()) {
         holder.addAsCollection(KeyUtil.FLAG_KEY, flags.stream()
           .map(Enum::name)
           .collect(Collectors.toList()), String.class);
       }
-    });
-    final var enchants = itemStack.getEnchantments();
-    if (!enchants.isEmpty()) {
-      final var enchantments = new HashMap<String, Integer>();
-      enchants.forEach((enchantment, integer) ->
-        enchantments.put(enchantment.getName(), integer));
-      holder.addAsMap(KeyUtil.ENCHANTMENT_KEY, enchantments, String.class, Integer.class);
+      final var enchants = itemMeta.getEnchants();
+      if (!enchants.isEmpty()) {
+        final var enchantments = new HashMap<String, Integer>();
+        enchants.forEach((enchantment, integer) ->
+          enchantments.put(enchantment.getName(), integer));
+        holder.addAsMap(KeyUtil.ENCHANTMENT_KEY, enchantments, String.class, Integer.class);
+      }
+    } else {
+      if (dynamicName != null) {
+        holder.add(KeyUtil.DISPLAY_NAME_KEY, dynamicName.getValue(), String.class);
+      }
+      if (dynamicLore != null) {
+        holder.addAsCollection(KeyUtil.LORE_KEY, dynamicLore.getValue(), String.class);
+      }
     }
   }
 
@@ -351,7 +453,7 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
   default <I extends ItemMeta> I validateMeta(@NotNull final Class<I> meta) {
     if (!this.isMeta(meta)) {
       throw new IllegalArgumentException(String.format("%s's meta is not a %s!",
-        this.getItemStack(), meta.getSimpleName()));
+        this.getItemStack(false), meta.getSimpleName()));
     }
     //noinspection unchecked
     return (I) this.getItemMeta();

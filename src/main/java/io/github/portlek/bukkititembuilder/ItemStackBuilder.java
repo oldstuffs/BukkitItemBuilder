@@ -30,11 +30,14 @@ import io.github.bananapuncher714.nbteditor.NBTEditor;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents regular item stack builders.
@@ -64,7 +67,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> {
 
   /**
-   * the item stack deserializer.
+   * the deserializer.
    */
   private static final Deserializer DESERIALIZER = new Deserializer();
 
@@ -134,13 +137,14 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   /**
    * creates item stack builder from serialized holder.
    *
+   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created item stack builder instance.
    */
   @NotNull
-  public static ItemStackBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
-    return ItemStackBuilder.getDeserializer().apply(holder).orElseThrow(() ->
+  public static ItemStackBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    return ItemStackBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -163,16 +167,18 @@ public final class ItemStackBuilder extends Builder<ItemStackBuilder, ItemMeta> 
   /**
    * a class that represents deserializer of {@link ItemMeta}.
    */
+  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   public static final class Deserializer implements
-    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<ItemStackBuilder>> {
+    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<ItemStackBuilder>> {
 
     @NotNull
     @Override
-    public Optional<ItemStackBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<ItemStackBuilder> apply(@Nullable final Builder<?, ?> field,
+                                            @NotNull final KeyUtil.Holder<?> holder) {
       return Builder.getItemStackDeserializer().apply(holder)
         .map(ItemStackBuilder::from)
         .map(Builder::getItemMetaDeserializer)
-        .map(deserializer -> deserializer.apply(holder));
+        .map(deserializer -> deserializer.apply(field, holder));
     }
   }
 }
