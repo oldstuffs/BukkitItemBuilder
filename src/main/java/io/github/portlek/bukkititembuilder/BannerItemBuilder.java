@@ -118,6 +118,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var patterns = new HashMap<String, Object>();
     this.getItemMeta().getPatterns()
       .forEach(pattern -> patterns.put(pattern.getPattern().name(), pattern.getColor().name()));

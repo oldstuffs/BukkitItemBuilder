@@ -171,6 +171,7 @@ public final class PotionItemBuilder extends Builder<PotionItemBuilder, PotionMe
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var itemStack = this.getItemStack(false);
     final var itemMeta = this.getItemMeta();
     if (Builder.VERSION >= 9) {

@@ -107,6 +107,7 @@ public final class LeatherArmorItemBuilder extends Builder<LeatherArmorItemBuild
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
+    super.serialize(holder);
     final var color = this.getItemMeta().getColor();
     holder.add(KeyUtil.COLOR_KEY, String.format("%d, %d, %d",
       color.getRed(), color.getGreen(), color.getBlue()), String.class);
