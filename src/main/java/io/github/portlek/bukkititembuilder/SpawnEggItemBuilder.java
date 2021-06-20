@@ -105,7 +105,6 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     final var name = this.getItemMeta().getSpawnedType().getName();
     if (name != null) {
       holder.add(KeyUtil.CREATURE_KEY, name, String.class);

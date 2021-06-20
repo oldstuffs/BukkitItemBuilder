@@ -126,13 +126,12 @@ public final class CrossbowItemBuilder extends Builder<CrossbowItemBuilder, Cros
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     final var projectiles = new HashMap<String, Object>();
     final var chargedProjectiles = this.getItemMeta().getChargedProjectiles();
     IntStream.range(0, chargedProjectiles.size()).forEach(index -> {
       final var projectile = chargedProjectiles.get(index);
       final var section = KeyUtil.Holder.map(new HashMap<>());
-      ItemStackUtil.serialize(projectile, section);
+      ItemStackUtil.serialize(ItemStackBuilder.from(projectile), section);
       projectiles.put(String.valueOf(index), section.getHolder());
     });
     holder.addAsMap(KeyUtil.PROJECTILES_KEY, projectiles, String.class, Object.class);

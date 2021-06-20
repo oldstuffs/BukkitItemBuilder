@@ -104,7 +104,6 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     holder.add(KeyUtil.SKULL_TEXTURE_KEY, SkullUtils.getSkinValue(this.getItemMeta()), String.class);
   }
 

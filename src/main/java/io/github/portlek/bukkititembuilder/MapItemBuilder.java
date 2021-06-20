@@ -131,7 +131,6 @@ public final class MapItemBuilder extends Builder<MapItemBuilder, MapMeta> {
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     final var map = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
     map.put(KeyUtil.SCALING_KEY, itemMeta.isScaling());

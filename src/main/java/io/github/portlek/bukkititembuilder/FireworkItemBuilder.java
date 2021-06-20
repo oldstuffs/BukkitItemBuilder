@@ -178,7 +178,6 @@ public final class FireworkItemBuilder extends Builder<FireworkItemBuilder, Fire
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     final var itemMeta = this.getItemMeta();
     final var firework = new HashMap<Integer, Object>();
     holder.add(KeyUtil.POWER_KEY, itemMeta.getPower(), int.class);

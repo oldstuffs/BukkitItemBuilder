@@ -128,7 +128,6 @@ public final class BookItemBuilder extends Builder<BookItemBuilder, BookMeta> {
 
   @Override
   public void serialize(@NotNull final KeyUtil.Holder<?> holder) {
-    super.serialize(holder);
     final var book = new HashMap<String, Object>();
     final var itemMeta = this.getItemMeta();
     if (itemMeta.hasAuthor()) {
