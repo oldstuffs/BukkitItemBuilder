@@ -101,7 +101,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
       new IsTrue()
     ).affirm();
     final var serialized = new HashMap<String, Object>();
-    ItemStackUtil.serialize(expected, KeyUtil.Holder.map(serialized));
+    ItemStackUtil.serialize(ItemStackBuilder.from(expected), KeyUtil.Holder.map(serialized));
     new Assertion<>(
       "Couldn't serialize the item stack!",
       serialized,
@@ -126,8 +126,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
           .with(FireworkEffect.Type.STAR)
           .withColor(Color.fromRGB(255, 255, 255))
           .withFade(Color.fromRGB(255, 255, 255))
-          .build())
-        .getItemStack(),
+          .build()),
       KeyUtil.Holder.map(serializedFirework));
     final var expectedFireworkMap = Map.of(
       "material", "FIREWORK_ROCKET",

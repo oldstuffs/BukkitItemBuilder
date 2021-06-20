@@ -129,11 +129,10 @@ public final class ItemStackUtil {
   /**
    * serializes the given item stack into map.
    *
-   * @param itemStack the item stack to serialize.
+   * @param builder the item stack to builder.
    * @param holder the holder to serialize.
    */
-  public static void serialize(@NotNull final ItemStack itemStack, @NotNull final KeyUtil.Holder<?> holder) {
-    final var builder = ItemStackBuilder.from(itemStack);
+  public static void serialize(@NotNull final Builder<?, ?> builder, @NotNull final KeyUtil.Holder<?> holder) {
     if (builder.isFirework()) {
       builder.asFirework().serialize(holder);
     } else if (builder.isLeatherArmor()) {
