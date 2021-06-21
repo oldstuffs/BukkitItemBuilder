@@ -34,8 +34,6 @@ import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import io.github.portlek.bukkitversion.BukkitVersion;
-import io.github.portlek.replaceable.RpList;
-import io.github.portlek.replaceable.RpString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,10 +41,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -68,7 +65,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <X> type of the self class.
  * @param <T> type of the item meta class.
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> implements Buildable<X, T> {
 
   /**
@@ -92,20 +89,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   @NotNull
   @Getter
   private final T itemMeta;
-
-  /**
-   * the dynamic lore.
-   */
-  @Nullable
-  @Getter
-  private RpList dynamicLore;
-
-  /**
-   * the dynamic name.
-   */
-  @Nullable
-  @Getter
-  private RpString dynamicName;
 
   /**
    * the item stack.
@@ -550,31 +533,12 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   }
 
   /**
-   * sets dynamic lore to the item.
+   * sets item instance itself.
    *
-   * @param dynamicLore the dynamic lore to add.
-   *
-   * @return {@code this} for builder chain.
-   */
-  @NotNull
-  public final X setDynamicLore(@NotNull final RpList dynamicLore) {
-    this.dynamicLore = dynamicLore;
-    return this.getSelf();
-  }
-
-  /**
-   * sets dynamic name of the item.
-   *
-   * @param dynamicName the dynamic name to set.
+   * @param itemStack the item stack to set.
    *
    * @return {@code this} for builder chain.
    */
-  @NotNull
-  public final X setDynamicName(@NotNull final RpString dynamicName) {
-    this.dynamicName = dynamicName;
-    return this.getSelf();
-  }
-
   @NotNull
   @Override
   public final X setItemStack(@NotNull final ItemStack itemStack) {
@@ -584,16 +548,9 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
 
   @NotNull
   @Override
-  public final ItemStack getItemStack(@NotNull final Map<String, Supplier<String>> nameEntries,
-                                      @NotNull final Map<String, Supplier<String>> loreEntries,
-                                      final boolean update) {
-    if (this.dynamicName != null) {
-      this.setName(this.dynamicName.build(nameEntries));
-    }
-    if (this.dynamicLore != null) {
-      this.setLore(this.dynamicLore.build(loreEntries));
-    }
-    if (update && !Objects.equals(this.itemStack.getItemMeta(), this.itemMeta)) {
+  public final ItemStack getItemStack(final boolean update) {
+    if (update &&
+      !Objects.equals(this.itemStack.getItemMeta(), this.itemMeta)) {
       this.itemStack.setItemMeta(this.itemMeta);
     }
     return this.itemStack;
@@ -754,16 +711,6 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
     return this.getSelf();
   }
 
-  @Override
-  public final String toString() {
-    return "Builder{" +
-      "itemMeta=" + this.itemMeta +
-      ", dynamicLore=" + this.dynamicLore +
-      ", dynamicName=" + this.dynamicName +
-      ", itemStack=" + this.itemStack +
-      '}';
-  }
-
   /**
    * a class that represents default deserializer of {@link ItemMeta}.
    *
@@ -771,7 +718,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   public static final class ItemMetaDeserializer<B extends Builder<?, ?>> implements
-    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull B> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull B> {
 
     /**
      * the builder.
@@ -781,7 +728,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
 
     @NotNull
     @Override
-    public B apply(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
+    public B apply(@NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = this.builder.getItemStack(false);
       final var itemMeta = itemStack.getItemMeta();
       if (itemMeta == null) {
@@ -791,27 +738,12 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
         holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class).ifPresent(s ->
           SkullUtils.applySkin(itemMeta, s));
       }
-      if (field != null) {
-        final var dynamicName = field.getDynamicName();
-        final var dynamicLore = field.getDynamicLore();
-        if (dynamicName != null) {
-          this.builder.setDynamicName(holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class)
-            .map(dynamicName::value)
-            .orElse(dynamicName));
-        } else {
-          holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class).ifPresent(this.builder::setName);
-        }
-        if (dynamicLore != null) {
-          this.builder.setDynamicLore(holder.getAsList(KeyUtil.LORE_KEY, String.class)
-            .map(dynamicLore::value)
-            .orElse(dynamicLore));
-        } else {
-          holder.getAsList(KeyUtil.LORE_KEY, String.class).ifPresent(this.builder::setLore);
-        }
-      } else {
-        holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class).ifPresent(this.builder::setName);
-        holder.getAsList(KeyUtil.LORE_KEY, String.class).ifPresent(this.builder::setLore);
-      }
+      holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class)
+        .map(ColorUtil::colored)
+        .ifPresent(this.builder::setName);
+      holder.getAsList(KeyUtil.LORE_KEY, String.class)
+        .map(ColorUtil::colored)
+        .ifPresent(this.builder::setLore);
       holder.getAsMap(KeyUtil.ENCHANTMENT_KEY, String.class, Integer.class)
         .ifPresent(this.builder::addSerializedEnchantments);
       holder.getAsList(KeyUtil.FLAG_KEY, String.class)

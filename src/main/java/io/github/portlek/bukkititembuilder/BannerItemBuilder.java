@@ -31,14 +31,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents banner item builders.
@@ -76,14 +75,13 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
   /**
    * creates banner item builder from serialized holder.
    *
-   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created banner item builder instance.
    */
   @NotNull
-  public static BannerItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
-    return BannerItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
+  public static BannerItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return BannerItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -195,12 +193,11 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
    * a class that represents deserializer of {@link BannerMeta}.
    */
   public static final class Deserializer implements
-    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<BannerItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<BannerItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<BannerItemBuilder> apply(@Nullable final Builder<?, ?> field,
-                                             @NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<BannerItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -224,7 +221,7 @@ public final class BannerItemBuilder extends Builder<BannerItemBuilder, BannerMe
           }
           builder.addPatterns(new Pattern(color, type));
         }));
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

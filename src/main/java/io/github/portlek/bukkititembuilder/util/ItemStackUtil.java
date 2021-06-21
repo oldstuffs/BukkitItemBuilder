@@ -28,6 +28,7 @@ package io.github.portlek.bukkititembuilder.util;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.portlek.bukkititembuilder.BannerItemBuilder;
 import io.github.portlek.bukkititembuilder.BookItemBuilder;
+import io.github.portlek.bukkititembuilder.Buildable;
 import io.github.portlek.bukkititembuilder.Builder;
 import io.github.portlek.bukkititembuilder.CrossbowItemBuilder;
 import io.github.portlek.bukkititembuilder.FireworkItemBuilder;
@@ -41,7 +42,6 @@ import java.util.Optional;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that contains utility methods for {@link ItemStack}.
@@ -57,49 +57,52 @@ public final class ItemStackUtil {
   /**
    * deserializes the given holder into item stack.
    *
-   * @param holder the holder to deserialize.
+   * @param holder the holder to serialize.
    *
    * @return serialized object.
    */
   @NotNull
-  public static Optional<Builder<?, ?>> deserialize(@NotNull final KeyUtil.Holder<?> holder) {
-    return ItemStackUtil.deserialize(null, holder);
-  }
-
-  /**
-   * deserializes the given holder into item stack.
-   *
-   * @param field the field to deserialize.
-   * @param holder the holder to deserialize.
-   *
-   * @return serialized object.
-   */
-  @NotNull
-  public static Optional<Builder<?, ?>> deserialize(@Nullable final Builder<?, ?> field,
-                                                    @NotNull final KeyUtil.Holder<?> holder) {
+  public static Optional<ItemStack> deserialize(@NotNull final KeyUtil.Holder<?> holder) {
     return Builder.getSimpleItemStackDeserializer().apply(holder)
       .flatMap(builder -> {
         if (builder.isFirework()) {
-          return FireworkItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isLeatherArmor()) {
-          return LeatherArmorItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isMap()) {
-          return MapItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isPotion()) {
-          return PotionItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isBanner()) {
-          return BannerItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isBook()) {
-          return BookItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isCrossbow()) {
-          return CrossbowItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isSkull()) {
-          return SkullItemBuilder.getDeserializer().apply(field, holder);
-        } else if (builder.isSpawnEgg()) {
-          return SpawnEggItemBuilder.getDeserializer().apply(field, holder);
-        } else {
-          return ItemStackBuilder.getDeserializer().apply(field, holder);
+          return FireworkItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
         }
+        if (builder.isLeatherArmor()) {
+          return LeatherArmorItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isMap()) {
+          return MapItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isPotion()) {
+          return PotionItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isBanner()) {
+          return BannerItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isBook()) {
+          return BookItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isCrossbow()) {
+          return CrossbowItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isSkull()) {
+          return SkullItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        if (builder.isSpawnEgg()) {
+          return SpawnEggItemBuilder.getDeserializer().apply(holder)
+            .map(Buildable::getItemStack);
+        }
+        return ItemStackBuilder.getDeserializer().apply(holder)
+          .map(Buildable::getItemStack);
       });
   }
 
