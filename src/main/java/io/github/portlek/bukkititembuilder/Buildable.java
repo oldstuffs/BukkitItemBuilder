@@ -25,6 +25,7 @@
 
 package io.github.portlek.bukkititembuilder;
 
+import io.github.portlek.bukkititembuilder.util.ColorUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.Optional;
@@ -314,12 +315,12 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
     }
     Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
       if (itemMeta.hasDisplayName()) {
-        holder.add(KeyUtil.DISPLAY_NAME_KEY, itemMeta.getDisplayName().replace("§", "&"), String.class);
+        holder.add(KeyUtil.DISPLAY_NAME_KEY, ColorUtil.uncolored(itemMeta.getDisplayName()), String.class);
       }
       Optional.ofNullable(itemMeta.getLore()).ifPresent(lore ->
         holder.addAsCollection(KeyUtil.LORE_KEY,
           lore.stream()
-            .map(s -> s.replace("§", "&"))
+            .map(ColorUtil::uncolored)
             .collect(Collectors.toList()), String.class));
       final var flags = itemMeta.getItemFlags();
       if (!flags.isEmpty()) {

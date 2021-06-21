@@ -28,7 +28,7 @@ package io.github.portlek.bukkititembuilder.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -78,5 +78,17 @@ public final class ColorUtil {
   @NotNull
   public static String colored(@NotNull final String text) {
     return ChatColor.translateAlternateColorCodes('&', text);
+  }
+
+  /**
+   * un-colorizes the text.
+   *
+   * @param text the text to un-colorize.
+   *
+   * @return un-colorized text.
+   */
+  @NotNull
+  public static String uncolored(@NotNull final String text) {
+    return text.replace('§', '&');
   }
 }
