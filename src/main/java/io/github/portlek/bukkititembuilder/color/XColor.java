@@ -540,27 +540,28 @@ public final class XColor {
    * @return de-colorized text.
    */
   @NotNull
-  public static String deColorize(@NotNull String text, final boolean colorizeBefore) {
+  public static String deColorize(@NotNull final String text, final boolean colorizeBefore) {
+    var replaced = text;
     if (colorizeBefore) {
-      text = XColor.colorize(text);
+      replaced = XColor.colorize(replaced);
     }
-    text = text.replace("§", "&");
-    if (!text.contains("&x")) {
-      return text;
+    replaced = replaced.replace("§", "&");
+    if (!replaced.contains("&x")) {
+      return replaced;
     }
-    final var match = XColor.HEX_DE_COLORIZE_NAME.matcher(text);
+    final var match = XColor.HEX_DE_COLORIZE_NAME.matcher(replaced);
     while (match.find()) {
       final var reg = match.group(3).replace("&", "");
       final var custom = XColor.CUSTOM_BY_HEX.get(reg.toLowerCase());
       if (custom != null && custom.getName() != null) {
-        text = text.replace(match.group(), "{#" + custom.getName()
+        replaced = replaced.replace(match.group(), "{#" + custom.getName()
           .toLowerCase(Locale.ROOT)
           .replace("_", "") + "}");
       } else {
-        text = text.replace(match.group(), "{#" + reg + "}");
+        replaced = replaced.replace(match.group(), "{#" + reg + "}");
       }
     }
-    return text;
+    return replaced;
   }
 
   /**

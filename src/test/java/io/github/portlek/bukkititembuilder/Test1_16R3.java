@@ -26,6 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.github.portlek.bukkititembuilder.color.CustomColors;
 import io.github.portlek.bukkititembuilder.color.XColor;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
@@ -58,6 +59,7 @@ final class Test1_16R3 extends Spigot_1_16R3 {
 
   @Test
   void colorUtil() {
+    CustomColors.registerAll();
     final var nonColoredString = "&aTesty";
     new Assertion<>(
       "Couldn't colored the string!",
