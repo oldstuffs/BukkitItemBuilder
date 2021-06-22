@@ -25,11 +25,12 @@
 
 package io.github.portlek.bukkititembuilder;
 
-import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import io.github.portlek.bukkititembuilder.color.XColor;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import net.minecraft.server.v1_16_R3.ColorUtil;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
@@ -315,13 +316,10 @@ public interface Buildable<X extends Buildable<X, T>, T extends ItemMeta> {
     }
     Optional.ofNullable(itemStack.getItemMeta()).ifPresent(itemMeta -> {
       if (itemMeta.hasDisplayName()) {
-        holder.add(KeyUtil.DISPLAY_NAME_KEY, ColorUtil.uncolored(itemMeta.getDisplayName()), String.class);
+        holder.add(KeyUtil.DISPLAY_NAME_KEY, XColor.deColorize(itemMeta.getDisplayName()), String.class);
       }
       Optional.ofNullable(itemMeta.getLore()).ifPresent(lore ->
-        holder.addAsCollection(KeyUtil.LORE_KEY,
-          lore.stream()
-            .map(ColorUtil::uncolored)
-            .collect(Collectors.toList()), String.class));
+        holder.addAsCollection(KeyUtil.LORE_KEY, XColor.deColorize(lore), String.class));
       final var flags = itemMeta.getItemFlags();
       if (!flags.isEmpty()) {
         holder.addAsCollection(KeyUtil.FLAG_KEY, flags.stream()

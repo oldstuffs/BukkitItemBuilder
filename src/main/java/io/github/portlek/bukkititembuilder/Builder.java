@@ -30,7 +30,7 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Multimap;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
-import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import io.github.portlek.bukkititembuilder.color.XColor;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import io.github.portlek.bukkitversion.BukkitVersion;
@@ -377,7 +377,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
   public final X addLore(@NotNull final List<String> lore, final boolean colored) {
     final var join = Optional.ofNullable(this.itemMeta.getLore())
       .orElse(new ArrayList<>());
-    join.addAll(colored ? ColorUtil.colored(lore) : lore);
+    join.addAll(colored ? XColor.colorize(lore) : lore);
     this.itemMeta.setLore(join);
     return this.getSelf();
   }
@@ -620,7 +620,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setLore(@NotNull final List<String> lore, final boolean colored) {
-    this.itemMeta.setLore(colored ? ColorUtil.colored(lore) : lore);
+    this.itemMeta.setLore(colored ? XColor.colorize(lore) : lore);
     return this.getSelf();
   }
 
@@ -659,7 +659,7 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
    */
   @NotNull
   public final X setName(@NotNull final String name, final boolean colored) {
-    this.itemMeta.setDisplayName(colored ? ColorUtil.colored(name) : name);
+    this.itemMeta.setDisplayName(colored ? XColor.colorize(name) : name);
     return this.getSelf();
   }
 
@@ -739,10 +739,10 @@ public abstract class Builder<X extends Builder<X, T>, T extends ItemMeta> imple
           SkullUtils.applySkin(itemMeta, s));
       }
       holder.get(KeyUtil.DISPLAY_NAME_KEY, String.class)
-        .map(ColorUtil::colored)
+        .map(XColor::colorize)
         .ifPresent(this.builder::setName);
       holder.getAsList(KeyUtil.LORE_KEY, String.class)
-        .map(ColorUtil::colored)
+        .map(XColor::colorize)
         .ifPresent(this.builder::setLore);
       holder.getAsMap(KeyUtil.ENCHANTMENT_KEY, String.class, Integer.class)
         .ifPresent(this.builder::addSerializedEnchantments);

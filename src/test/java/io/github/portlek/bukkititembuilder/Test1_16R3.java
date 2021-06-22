@@ -26,7 +26,7 @@
 package io.github.portlek.bukkititembuilder;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.portlek.bukkititembuilder.util.ColorUtil;
+import io.github.portlek.bukkititembuilder.color.XColor;
 import io.github.portlek.bukkititembuilder.util.ItemStackUtil;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.HashMap;
@@ -61,17 +61,17 @@ final class Test1_16R3 extends Spigot_1_16R3 {
     final var nonColoredString = "&aTesty";
     new Assertion<>(
       "Couldn't colored the string!",
-      ColorUtil.colored(nonColoredString),
+      XColor.colorize(nonColoredString),
       new IsEqual<>(ChatColor.GREEN + "Testy")
     ).affirm();
     new Assertion<>(
       "Couldn't colored the string list!",
-      ColorUtil.colored(nonColoredString, nonColoredString),
+      XColor.colorize(List.of(nonColoredString, nonColoredString)),
       new IsEqual<>(List.of(ChatColor.GREEN + "Testy", ChatColor.GREEN + "Testy"))
     ).affirm();
     new Assertion<>(
       "Couldn't colored the string list!",
-      ColorUtil.colored(List.of(nonColoredString, nonColoredString)),
+      XColor.colorize(List.of(nonColoredString, nonColoredString)),
       new IsEqual<>(List.of(ChatColor.GREEN + "Testy", ChatColor.GREEN + "Testy"))
     ).affirm();
   }
