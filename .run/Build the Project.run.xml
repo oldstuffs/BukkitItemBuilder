@@ -12,7 +12,7 @@
             <list>
               <option value="clean" />
               <option value="install" />
-              <option value="-Pcheckstyle,1_16R3" />
+              <option value="-P1_16R3" />
             </list>
           </option>
           <option name="pomFileName" />

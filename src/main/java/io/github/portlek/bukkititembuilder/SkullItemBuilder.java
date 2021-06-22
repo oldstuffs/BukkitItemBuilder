@@ -28,11 +28,10 @@ package io.github.portlek.bukkititembuilder;
 import com.cryptomorin.xseries.SkullUtils;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents skull item builders.
@@ -75,14 +74,13 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
   /**
    * creates skull item builder from serialized holder.
    *
-   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created skull item builder instance.
    */
   @NotNull
-  public static SkullItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
-    return SkullItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
+  public static SkullItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return SkullItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -140,12 +138,11 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
    * a class that represents deserializer of {@link SkullMeta}.
    */
   public static final class Deserializer implements
-    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<SkullItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<SkullItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<SkullItemBuilder> apply(@Nullable final Builder<?, ?> field,
-                                            @NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<SkullItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -153,7 +150,7 @@ public final class SkullItemBuilder extends Builder<SkullItemBuilder, SkullMeta>
       final var builder = ItemStackBuilder.from(itemStack.get()).asSkull();
       holder.get(KeyUtil.SKULL_TEXTURE_KEY, String.class)
         .ifPresent(builder::setOwner);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }

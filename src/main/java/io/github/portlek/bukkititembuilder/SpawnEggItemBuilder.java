@@ -28,12 +28,11 @@ package io.github.portlek.bukkititembuilder;
 import io.github.portlek.bukkititembuilder.util.KeyUtil;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * a class that represents spawn egg item builders.
@@ -76,14 +75,13 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
   /**
    * creates spawn egg item builder from serialized holder.
    *
-   * @param field the field to create.
    * @param holder the holder to create.
    *
    * @return a newly created spawn egg item builder instance.
    */
   @NotNull
-  public static SpawnEggItemBuilder from(@Nullable final Builder<?, ?> field, @NotNull final KeyUtil.Holder<?> holder) {
-    return SpawnEggItemBuilder.getDeserializer().apply(field, holder).orElseThrow(() ->
+  public static SpawnEggItemBuilder from(@NotNull final KeyUtil.Holder<?> holder) {
+    return SpawnEggItemBuilder.getDeserializer().apply(holder).orElseThrow(() ->
       new IllegalArgumentException(String.format("The given holder is incorrect!\n%s", holder)));
   }
 
@@ -149,12 +147,11 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
    * a class that represents deserializer of {@link SpawnEggMeta}.
    */
   public static final class Deserializer implements
-    BiFunction<@Nullable Builder<?, ?>, KeyUtil.@NotNull Holder<?>, @NotNull Optional<SpawnEggItemBuilder>> {
+    Function<KeyUtil.@NotNull Holder<?>, @NotNull Optional<SpawnEggItemBuilder>> {
 
     @NotNull
     @Override
-    public Optional<SpawnEggItemBuilder> apply(@Nullable final Builder<?, ?> field,
-                                               @NotNull final KeyUtil.Holder<?> holder) {
+    public Optional<SpawnEggItemBuilder> apply(@NotNull final KeyUtil.Holder<?> holder) {
       final var itemStack = Builder.getItemStackDeserializer().apply(holder);
       if (itemStack.isEmpty()) {
         return Optional.empty();
@@ -162,7 +159,7 @@ public final class SpawnEggItemBuilder extends Builder<SpawnEggItemBuilder, Spaw
       final var builder = ItemStackBuilder.from(itemStack.get()).asSpawnEgg();
       holder.get(KeyUtil.CREATURE_KEY, String.class)
         .ifPresent(builder::setSpawnedType);
-      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(field, holder));
+      return Optional.of(Builder.getItemMetaDeserializer(builder).apply(holder));
     }
   }
 }
