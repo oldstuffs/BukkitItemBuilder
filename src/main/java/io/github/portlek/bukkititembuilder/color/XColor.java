@@ -55,142 +55,142 @@ public final class XColor {
   /**
    * the aqua.
    */
-  public static final XColor AQUA = new XColor("Aqua", 'b', 85, 255, 255);
+  public static final XColor AQUA;
 
   /**
    * the black.
    */
-  public static final XColor BLACK = new XColor("Black", '0', 0, 0, 0);
+  public static final XColor BLACK;
 
   /**
    * the blue.
    */
-  public static final XColor BLUE = new XColor("Blue", '9', 85, 85, 255);
+  public static final XColor BLUE;
 
   /**
    * the bold.
    */
-  public static final XColor BOLD = new XColor("Bold", 'l', false);
+  public static final XColor BOLD;
 
   /**
    * the dark aqua.
    */
-  public static final XColor DARK_AQUA = new XColor("Dark_Aqua", '3', 0, 170, 170);
+  public static final XColor DARK_AQUA;
 
   /**
    * the dark blue.
    */
-  public static final XColor DARK_BLUE = new XColor("Dark_Blue", '1', 0, 0, 170);
+  public static final XColor DARK_BLUE;
 
   /**
    * the dark gray.
    */
-  public static final XColor DARK_GRAY = new XColor("Dark_Gray", '8', 85, 85, 85);
+  public static final XColor DARK_GRAY;
 
   /**
    * the dark green.
    */
-  public static final XColor DARK_GREEN = new XColor("Dark_Green", '2', 0, 170, 0);
+  public static final XColor DARK_GREEN;
 
   /**
    * the dark purple.
    */
-  public static final XColor DARK_PURPLE = new XColor("Dark_Purple", '5', 170, 0, 170);
+  public static final XColor DARK_PURPLE;
 
   /**
    * the dark red.
    */
-  public static final XColor DARK_RED = new XColor("Dark_Red", '4', 170, 0, 0);
+  public static final XColor DARK_RED;
 
   /**
    * the gold.
    */
-  public static final XColor GOLD = new XColor("Gold", '6', 255, 170, 0);
+  public static final XColor GOLD;
 
   /**
    * the gray.
    */
-  public static final XColor GRAY = new XColor("Gray", '7', 170, 170, 170);
+  public static final XColor GRAY;
 
   /**
    * the green.
    */
-  public static final XColor GREEN = new XColor("Green", 'a', 85, 255, 85);
+  public static final XColor GREEN;
 
   /**
    * the hex.
    */
-  public static final XColor HEX = new XColor("Hex", 'x', false, false);
+  public static final XColor HEX;
 
   /**
    * the italic.
    */
-  public static final XColor ITALIC = new XColor("Italic", 'o', false);
+  public static final XColor ITALIC;
 
   /**
    * the light purple.
    */
-  public static final XColor LIGHT_PURPLE = new XColor("Light_Purple", 'd', 255, 85, 255);
+  public static final XColor LIGHT_PURPLE;
 
   /**
    * the obfuscated.
    */
-  public static final XColor OBFUSCATED = new XColor("Obfuscated", 'k', false);
+  public static final XColor OBFUSCATED;
 
   /**
    * the red.
    */
-  public static final XColor RED = new XColor("Red", 'c', 255, 85, 85);
+  public static final XColor RED;
 
   /**
    * the reset.
    */
-  public static final XColor RESET = new XColor("Reset", 'r', false, true);
+  public static final XColor RESET;
 
   /**
    * the strikethrough.
    */
-  public static final XColor STRIKETHROUGH = new XColor("Strikethrough", 'm', false);
+  public static final XColor STRIKETHROUGH;
 
   /**
    * the underline.
    */
-  public static final XColor UNDERLINE = new XColor("Underline", 'n', false);
+  public static final XColor UNDERLINE;
 
   /**
    * the white.
    */
-  public static final XColor WHITE = new XColor("White", 'f', 255, 255, 255);
+  public static final XColor WHITE;
 
   /**
    * the yellow.
    */
-  public static final XColor YELLOW = new XColor("Yellow", 'e', 255, 255, 85);
+  public static final XColor YELLOW;
 
   /**
    * the colors by character.
    */
-  private static final Map<Character, XColor> BY_CHAR = new HashMap<>();
+  private static final Map<Character, XColor> BY_CHAR;
 
   /**
    * the colors by name.
    */
-  private static final Map<String, XColor> BY_NAME = new HashMap<>();
+  private static final Map<String, XColor> BY_NAME;
 
   /**
    * the custom colors by hex.
    */
-  private static final Map<String, XColor> CUSTOM_BY_HEX = new LinkedHashMap<>();
+  private static final Map<String, XColor> CUSTOM_BY_HEX;
 
   /**
    * the custom colors by name.
    */
-  private static final Map<String, XColor> CUSTOM_BY_NAME = new HashMap<>();
+  private static final Map<String, XColor> CUSTOM_BY_NAME;
 
   /**
    * the custom colors by rgb.
    */
-  private static final TreeMap<String, XColor> CUSTOM_BY_RGB = new TreeMap<>();
+  private static final TreeMap<String, XColor> CUSTOM_BY_RGB;
 
   /**
    * the format pattern.
@@ -286,6 +286,34 @@ public final class XColor {
   private final boolean reset;
 
   static {
+    BY_CHAR = new HashMap<>();
+    BY_NAME = new HashMap<>();
+    CUSTOM_BY_HEX = new LinkedHashMap<>();
+    CUSTOM_BY_NAME = new HashMap<>();
+    CUSTOM_BY_RGB = new TreeMap<>();
+    AQUA = new XColor("Aqua", 'b', 85, 255, 255);
+    BLACK = new XColor("Black", '0', 0, 0, 0);
+    BLUE = new XColor("Blue", '9', 85, 85, 255);
+    BOLD = new XColor("Bold", 'l', false);
+    DARK_AQUA = new XColor("Dark_Aqua", '3', 0, 170, 170);
+    DARK_BLUE = new XColor("Dark_Blue", '1', 0, 0, 170);
+    DARK_GRAY = new XColor("Dark_Gray", '8', 85, 85, 85);
+    DARK_GREEN = new XColor("Dark_Green", '2', 0, 170, 0);
+    DARK_PURPLE = new XColor("Dark_Purple", '5', 170, 0, 170);
+    DARK_RED = new XColor("Dark_Red", '4', 170, 0, 0);
+    GOLD = new XColor("Gold", '6', 255, 170, 0);
+    GRAY = new XColor("Gray", '7', 170, 170, 170);
+    GREEN = new XColor("Green", 'a', 85, 255, 85);
+    HEX = new XColor("Hex", 'x', false, false);
+    ITALIC = new XColor("Italic", 'o', false);
+    LIGHT_PURPLE = new XColor("Light_Purple", 'd', 255, 85, 255);
+    OBFUSCATED = new XColor("Obfuscated", 'k', false);
+    RED = new XColor("Red", 'c', 255, 85, 85);
+    RESET = new XColor("Reset", 'r', false, true);
+    STRIKETHROUGH = new XColor("Strikethrough", 'm', false);
+    UNDERLINE = new XColor("Underline", 'n', false);
+    WHITE = new XColor("White", 'f', 255, 255, 255);
+    YELLOW = new XColor("Yellow", 'e', 255, 255, 85);
     for (var x = 0.0f; x <= 1.0f; x += (float) 0.1) {
       for (var z = 0.1f; z <= 1.0f; z += (float) 0.1) {
         for (var y = 0.0f; y <= 1.0f; y += (float) 0.03) {
